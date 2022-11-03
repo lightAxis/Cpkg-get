@@ -1,0 +1,16 @@
+{
+    "recommendations": [
+        // computercraft
+        "lemmmy.computercraft-extension-pack", // computercraft extension pack
+        "jackmacwindows.craftos-pc", //computercraft PC emulation integration
+        // lua
+        "sumneko.lua", // lua language server. support various tools
+        // git
+        "donjayamanne.git-extension-pack", // famous git extension pack
+        "mhutchie.git-graph", // git graph visualizaiton
+        // etc
+        "amirha.better-comments-2", // for better comments
+        "pkief.material-icon-theme", // for better icons
+        "davidanson.vscode-markdownlint", // for better readme.md
+    ]
+}
