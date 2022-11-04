@@ -7,7 +7,11 @@ function a.print_color(text, color)
 end
 
 function a.getPkgs()
-    local f = fs.open(CPKG.RootPath .. "/pkgs.sz", "r")
+    if not fs.exists(CPKG.RootPath .. "/pkgs_local.sz", "r") then
+        a.print_color("no local cpkg cache file!", colors.red)
+        a.print_color("use 'cpkg refresh' to initialze", colors.blue)
+    end
+    local f = fs.open(CPKG.RootPath .. "/pkgs_local.sz", "r")
 
     ---@type table<number, CPKG.Package_t>
     local Pkgs = textutils.unserialize(f.readAll())

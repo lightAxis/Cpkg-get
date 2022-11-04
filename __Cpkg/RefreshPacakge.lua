@@ -63,7 +63,7 @@ end
 
 recursivePackageFind(CPKG.RootPath)
 
-local f = fs.open(CPKG.RootPath .. "/pkgs.sz", "w")
+local f = fs.open(CPKG.RootPath .. "/pkgs_local.sz", "w")
 f.write(textutils.serialize(Pkgs))
 f.close()
 
