@@ -1,0 +1,9 @@
+{
+    Name = "Class",
+    Desc = "lua native Classing library.",
+    Author = "kikito",
+    ID = "",
+    Email = "",
+    Version = 1.0,
+    Repo = "https://github.com/kikito/middleclass"
+}

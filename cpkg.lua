@@ -8,7 +8,7 @@ package.path = package.path .. ";" .. CPKG.RootPath .. "/?.lua"
 ---@type table<number, string>
 local args = { ... }
 
-
+local Tool = require("__Cpkg.Tool")
 
 -- args = {}
 -- args[1] = "list"
@@ -16,7 +16,8 @@ local args = { ... }
 -- args[3] = "to"
 ---@enum Cpkg.Enum.Help
 local helpEnum_main = {
-    ["--help"] = "use with : --help, list, version, info, run, update, upgradable, upgrade, install, uninstall, purge",
+    ["--help"] = "use with : --help, refresh, list, version, info, run, update, upgradable, upgrade, install, uninstall, purge",
+    ["refresh"] = "cpkg refresh : refresh the pkg & exec info to pkgs.json",
     ["list"] = "cpkg list <installed | server | exec> : show list of installed pkg | server pkg | execution at pkg",
     ["version"] = "cpkg version : show version of cpkg",
     ["info"] = "cpkg info <package_name> <exec_name> : show info of package or execuatble",
@@ -55,6 +56,11 @@ local function printHelp(argnil, arghelp, name, helpenum)
 end
 
 if printHelp(args[1], args[1], "--help", helpEnum_main) == true then return nil
+
+elseif args[1] == "refresh" then
+    if printHelp(args[1], args[2], "refresh", helpEnum_main) == true then return nil end
+    local isOK = require("__Cpkg.RefreshPacakge")
+
 elseif args[1] == "list" then
     if printHelp(args[2], args[2], "list", helpEnum_main) == true then return nil end
     -- check list next args
@@ -62,11 +68,7 @@ elseif args[1] == "list" then
     if args[2] == "installed" then
         if printHelp(args[2], args[3], "installed", helpEnum_list) == true then return nil end
         -- start list all installed pkgs
-        local exists, pkgList = require("__Cpkg.GetPkgList")()
-        if (exists == false) then print("no exist folder : " .. CPKG.RootPath) return nil end
-        for k, v in pairs(pkgList) do
-            print(k, v)
-        end
+        require("__Cpkg.GetPkgList")
 
     elseif args[2] == "server" then
         if printHelp(args[2], args[3], "server", helpEnum_list) == true then return nil end
@@ -77,18 +79,11 @@ elseif args[1] == "list" then
         -- start execute pkg
         CPKG.Param = {}
         CPKG.Param[1] = args[3]
-        local isExist, execList = require("__Cpkg.GetExecList")()
-        if (isExist == false) then print("no module [" .. args[3] .. "] exist src folder") return nil end
-        for k, v in pairs(execList) do
-            print(k, v)
-        end
+        require("__Cpkg.GetExecList")
 
     else
-        term.setTextColor(colors.red)
-        print("arg is wrong!")
-        term.setTextColor(colors.blue)
-        print(helpEnum_main["list"])
-        term.setTextColor(colors.white)
+        Tool.print_color("arg is wrong!", colors.red)
+        Tool.print_color(helpEnum_main["list"], colors.yellow)
     end
 
 elseif args[1] == "version" then
@@ -104,6 +99,7 @@ elseif args[1] == "info" then
         -- show info of pkgName
         CPKG.Param = {}
         CPKG.Param[1] = pkgName
+        require("__Cpkg.GetPkgInfo")
     else
         -- show info of exec
     end
@@ -133,4 +129,7 @@ elseif args[1] == "uninstall" then
 
 elseif args[1] == "purge" then
     if printHelp(args[2], args[2], "purge", helpEnum_main) == true then return nil end
+else
+    Tool.print_color("arg is missing!", colors.red)
+    Tool.print_color(helpEnum_main["--help"], colors.blue)
 end

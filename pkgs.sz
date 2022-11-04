@@ -1,0 +1,20 @@
+{
+  {
+    RootPath = "Cpkg-get/Class",
+    Execs = {},
+    DescPath = "Cpkg-get/Class/pkg_info.sz",
+    PkgName = "Class",
+    SrcPath = "Cpkg-get/Class/src",
+    IncludePath = "Cpkg-get/Class/include",
+  },
+  {
+    RootPath = "Cpkg-get/EmLua",
+    Execs = {
+      "test",
+    },
+    DescPath = "Cpkg-get/EmLua/pkg_info.sz",
+    PkgName = "EmLua",
+    SrcPath = "Cpkg-get/EmLua/src",
+    IncludePath = "Cpkg-get/EmLua/include",
+  },
+}
