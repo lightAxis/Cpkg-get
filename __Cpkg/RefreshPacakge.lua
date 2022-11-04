@@ -4,12 +4,17 @@ local tool = require("__Cpkg.Tool")
 local function isPackage(path)
     if not fs.exists(path .. "/pkg_init.lua") then
         return false
-    elseif not fs.exists(path .. "/pkg_info.sz") then
+    end
+    if not fs.exists(path .. "/pkg_info.sz") then
         return false
-    elseif not fs.exists(path .. "/include") then
-        return false
-    elseif not fs.exists(path .. "/src") then
-        return false
+    end
+    if not fs.exists(path .. "/include") then
+        -- return false
+        fs.makeDir(path .. "/include")
+    end
+    if not fs.exists(path .. "/src") then
+        -- return false
+        fs.makeDir(path .. "/src")
     end
     return true
 end

@@ -10,6 +10,6 @@ local Class__ = {}
 Class__.middleclass = require("Class.include.middleclass")
 
 ---@class PKG.Class.PATH
-Class__.PATH = args[1]
+Class__.PATH = fs.getDir(args[2])
 
 return Class__

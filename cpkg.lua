@@ -107,9 +107,13 @@ elseif args[1] == "info" then
 
 elseif args[1] == "run" then
     if printHelp(args[2], args[2], "run", helpEnum_main) == true then return nil end
+    if printHelp(args[3], args[3], "run", helpEnum_main) == true then return nil end
     local pkgName = args[2]
     local execName = args[3]
     --- run exec at pkg
+    CPKG.Param[1] = pkgName
+    CPKG.Param[2] = execName
+    require("__Cpkg.RunExec")
 
 elseif args[1] == "update" then
     if printHelp(args[1], args[2], "update", helpEnum_main) == true then return nil end

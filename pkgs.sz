@@ -10,7 +10,7 @@
   {
     RootPath = "Cpkg-get/EmLua",
     Execs = {
-      "test",
+      "GenCode",
     },
     DescPath = "Cpkg-get/EmLua/pkg_info.sz",
     PkgName = "EmLua",
