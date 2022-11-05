@@ -14,6 +14,11 @@
 ---@field Email string
 ---@field Version number
 ---@field Repo string
+---@field Deps table<number, CPKG.Deps_t>
+
+---@class CPKG.Deps_t
+---@field pkg string
+---@field version number
 
 
 
@@ -42,6 +47,7 @@ function t:new_pkgInfo_t()
     a.Email = ""
     a.Version = 0
     a.Repo = ""
+    a.Deps = {}
     return a
 end
 

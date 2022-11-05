@@ -6,7 +6,7 @@ local args = { ... }
 DEPS = DEPS or {}
 ---@class DEPS.EmLua
 DEPS["EmLua"] = {}
-DEPS["EmLua"].Class = require("Class.pkg_init")
+DEPS["EmLua"].middleClass = require("middleClass.pkg_init")
 
 ---pkg module include
 
@@ -17,8 +17,8 @@ local EmLua = {}
 PKGS["EmLua"] = EmLua
 --- absolute path of this pkg when runtime
 EmLua.__PATH = fs.getDir(args[2])
-print(EmLua.__PATH, "pkginit", fs.getDir(args[2]))
 
+--- get all include file
 EmLua.CodeGenerator = require("EmLua.include.CodeGenerator")
 EmLua.StringSeg_t = require("EmLua.include.stringSeg_t")
 EmLua.ScriptSeg_t = require("EmLua.include.scriptSeg_t")

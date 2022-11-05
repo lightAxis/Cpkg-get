@@ -40,13 +40,16 @@ end
 ---@type table<number, CPKG.Package_t>
 local Pkgs = {}
 
-tool.print_color("searching...", colors.blue)
+tool.print_color("searching...", colors.green)
 
 local function recursivePackageFind(path)
     if isPackage(path) then
         local pkg = readPackage(path)
         table.insert(Pkgs, pkg)
-        tool.print_color("find " .. pkg.PkgName .. " at " .. path, colors.blue)
+        tool.colorPrint(colors.blue, "find pkg : " .. pkg.PkgName, colors.cyan, " at " .. path)
+        for k, v in pairs(pkg.Execs) do
+            tool.colorPrint(colors.blue, "find exe : " .. pkg.PkgName .. "/" .. v)
+        end
         return nil
     end
 

@@ -1,11 +1,12 @@
 ---@class EmLua.CodeGenerator
-local CodeGenerator = DEPS.EmLua.Class.middleclass("EmLua.CodeGenerator")
+local CodeGenerator = DEPS.EmLua.middleClass.middleclass("EmLua.CodeGenerator")
 
+local tool = require("__Cpkg.Tool")
 
 ---constructor
 function CodeGenerator:initialize()
 
-    self.getScriptPath = PKGS.EmLua.__PATH .. "/include/CodeGenerator_genScript.lua"
+    self.getScriptPath = PKGS.EmLua.__PATH .. "/temp/CodeGenerator_genScript.lua"
 
     self.__rawScriptLevel = 0
     self.__variableLevel = 0
@@ -67,15 +68,15 @@ function CodeGenerator:GenCode(global, tempPath, outputPath)
     f.close()
 
     ---run genScript
-    print("gen file... " .. outputPath)
+    tool.colorPrint(colors.cyan, "gen file... ", colors.blue, outputPath)
     local f = fs.open(outputPath, "w")
     local script, scriptError = loadfile(self.getScriptPath, "t")
     if (scriptError ~= nil) then
-        print(scriptError)
-        print("failed")
+        tool.colorPrint(colors.red, scriptError)
+        tool.colorPrint(colors.red, "failed")
     else
         script(global, f)
-        print("succes")
+        tool.colorPrint(colors.green, "succes")
     end
     f.close()
 

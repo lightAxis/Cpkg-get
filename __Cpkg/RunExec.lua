@@ -13,7 +13,12 @@ for k, v in pairs(Pkgs) do
 
                 -- require(runPath)
                 local f, error = loadfile(runPath, "t", _ENV)
-                f()
+                if f == nil then
+                    tool.print_color(error, colors.red)
+                    tool.print_color("try 'cpkg refresh' ?", colors.blue)
+                else
+                    f()
+                end
             end
         end
     end

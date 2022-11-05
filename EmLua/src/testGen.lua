@@ -29,5 +29,5 @@ local globalVar = {}
 globalVar["classDef"] = classDeff
 
 code_generator:GenCode(globalVar,
-    PKGS.EmLua.__PATH .. "/include/testCodegenTemplate.em",
-    PKGS.EmLua.__PATH .. "/include/testCodeResult.lua")
+    PKGS.EmLua.__PATH .. "/test/testCodegenTemplate.em",
+    PKGS.EmLua.__PATH .. "/test/testCodeResult.lua")
