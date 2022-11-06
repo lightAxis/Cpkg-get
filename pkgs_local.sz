@@ -1,5 +1,13 @@
 {
   {
+    RootPath = "Cpkg-get/CpkgProtocol",
+    Execs = {},
+    DescPath = "Cpkg-get/CpkgProtocol/pkg_info.sz",
+    PkgName = "CpkgProtocol",
+    SrcPath = "Cpkg-get/CpkgProtocol/src",
+    IncludePath = "Cpkg-get/CpkgProtocol/include",
+  },
+  {
     RootPath = "Cpkg-get/Crotocol",
     Execs = {
       "testGen",

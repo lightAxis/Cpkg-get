@@ -1,6 +1,6 @@
 {
-    Name = "EmLua",
-    Desc = "Minecraft CC template-based code auto generation library in lua. Inspired from empy(python)",
+    Name = "CpkgProtocol",
+    Desc = "Minecraft CC protocol defines for Cpkg between client & server in world server",
     Author = "JiseokLee",
     ID = "jisuk500",
     Email = "jisuk500@gmail.com",
@@ -11,5 +11,10 @@
             pkg = "middleClass",
             version = 1.0
         },
+        {
+            pkg = "EmLua",
+            version = 1.0
+        },
     },
+  
 }
