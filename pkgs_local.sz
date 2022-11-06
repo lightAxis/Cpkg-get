@@ -3,6 +3,8 @@
     RootPath = "Cpkg-get/Crotocol",
     Execs = {
       "testGen",
+      "testHandle",
+      "testLoad",
     },
     DescPath = "Cpkg-get/Crotocol/pkg_info.sz",
     PkgName = "Crotocol",

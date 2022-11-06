@@ -5,11 +5,14 @@ DEPS = DEPS or {}
 ---@class DEPS.Class
 DEPS["middleClass"] = {}
 
+---@class PKGS
+PKGS = PKGS or {}
 ---@class PKG.Class
-local Class__ = {}
-Class__.middleclass = require("middleClass.include.middleclass")
+local middleClass = {}
+PKGS["middleClass"] = middleClass
+middleClass.middleClass = require("middleClass.include.middleclass")
 
----@class PKG.Class.PATH
-Class__.PATH = fs.getDir(args[2])
+---@type string
+middleClass.__PATH = fs.getDir(args[2])
 
-return Class__
+return middleClass

@@ -1,5 +1,5 @@
 ---@class EmLua.CodeGenerator
-local CodeGenerator = DEPS.EmLua.middleClass.middleclass("EmLua.CodeGenerator")
+local CodeGenerator = DEPS.EmLua.middleClass.middleClass("EmLua.CodeGenerator")
 
 local tool = require("__Cpkg.Tool")
 
@@ -129,7 +129,7 @@ function CodeGenerator:__parseDelimeters(line)
             end
         else
             if (index_ ~= 65535 and not continue) then
-                self:__addToSegs(line:sub(1, index_ - 1))
+                self:__addToSegs(line:sub(1, index_ - 1):gsub("\\\"", "\""))
                 self.__variableLevel = self.__variableLevel - 1
                 line = line:sub(index2_ + 1, #line)
                 continue = true

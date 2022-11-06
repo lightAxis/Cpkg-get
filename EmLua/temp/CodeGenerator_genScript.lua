@@ -2,21 +2,48 @@ local args = {...}
 local __GenVariables = args[1]
 local f = args[2]
 
-local classDef = __GenVariables["classDef"]
+local Builder = __GenVariables["Builder"]
+local classIncludeStr = __GenVariables["classIncludeStr"]
 
+f.writeLine("".."---@class "..Builder.Name..".Handle")
+f.writeLine("".."---@field new fun(self:"..Builder.Name..".Handle):"..Builder.Name..".Handle")
+f.writeLine("".."local handle = "..classIncludeStr.."(\""..Builder.Name..".Handle\")")
 f.writeLine("")
-f.writeLine("".."---@class "..classDef.Name)
-for k,v in pairs(classDef.Fields) do
-f.writeLine("".."---@field "..v.param.." "..v.type)
-end
-f.writeLine("".."local "..classDef.tableName.." = {}")
-f.writeLine("")
-f.writeLine("".."--- constructor")
-f.writeLine("".."function "..classDef.tableName..":initialize()")
-for k,v in pairs(classDef.Fields) do
-f.writeLine("".."    ---@type "..v.type)
-f.writeLine("".."    self."..v.param.." = "..v.initValue)
-end
+f.writeLine("".."---constructor")
+f.writeLine("".."function handle:initialize()")
+f.writeLine("".."    ---@type table<"..Builder.Name..".Enum, fun(msg:"..Builder.Name..".Msg, msgstruct:"..Builder:__makeHeaderClassName("IMsgStruct")..")>")
+f.writeLine("".."    self.__MsgStructMap = {}")
 f.writeLine("".."end")
 f.writeLine("")
-f.writeLine("".."return "..classDef.tableName)
+f.writeLine("".."---trigger handler from msg")
+f.writeLine("".."---@param msgStr string")
+f.writeLine("".."function handle:parse(msgStr)")
+f.writeLine("".."    ---@type "..Builder.Name..".Msg")
+f.writeLine("".."    local msg = textutils.unserialize(msgStr)")
+f.writeLine("".."    local func = self.__MsgStructMap[msg.Header]")
+f.writeLine("".."    if func == nil then return nil end")
+f.writeLine("")
+f.writeLine("".."    func(msg, textutils.unserialize(msg.MsgStructStr))")
+f.writeLine("".."end")
+f.writeLine("")
+f.writeLine("".."---attach message handle to header")
+f.writeLine("".."---@param msgType "..Builder.Name..".Header")
+f.writeLine("".."---@param func fun(msg:"..Builder.Name..".Msg, msgstruct:"..Builder:__makeHeaderClassName("IMsgStruct")..")")
+f.writeLine("".."function handle:attachMsgHandle(msgType, func)")
+f.writeLine("".."    self.__MsgStructMap[msgType] = func")
+f.writeLine("".."end")
+f.writeLine("")
+f.writeLine("".."---detach message handle to header")
+f.writeLine("".."---@param msgType "..Builder.Name..".Header")
+f.writeLine("".."function handle:detachMsgHandle(msgType)")
+f.writeLine("".."    self.__MsgStructMap[msgType] = nil")
+f.writeLine("".."end")
+f.writeLine("")
+f.writeLine("".."---clear all message handle")
+f.writeLine("".."function handle:clearAllMsgHandle()")
+f.writeLine("".."    for k,v in self.__MsgStructMap do")
+f.writeLine("".."        self.__MsgStructMap[k] = nil")
+f.writeLine("".."    end")
+f.writeLine("".."end")
+f.writeLine("")
+f.writeLine("".."return handle")

@@ -16,6 +16,7 @@ PKGS = PKGS or {}
 local EmLua = {}
 PKGS["EmLua"] = EmLua
 --- absolute path of this pkg when runtime
+---@type string
 EmLua.__PATH = fs.getDir(args[2])
 
 --- get all include file

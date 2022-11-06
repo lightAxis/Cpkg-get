@@ -16,6 +16,14 @@ PKGS = PKGS or {}
 local Crotocol = {}
 PKGS["Crotocol"] = Crotocol
 --- absolute path of this pkg when runtime
+---@type string
 Crotocol.__PATH = fs.getDir(args[2])
+
+Crotocol.enum_t = require("Crotocol.include.enum_t")
+Crotocol.enumElm_t = require("Crotocol.include.enumElm_t")
+Crotocol.field_t = require("Crotocol.include.field_t")
+Crotocol.struct_t = require("Crotocol.include.struct_t")
+Crotocol.GenTool = require("Crotocol.include.GenTool")
+Crotocol.Builder = require("Crotocol.include.Builder")
 
 return Crotocol
