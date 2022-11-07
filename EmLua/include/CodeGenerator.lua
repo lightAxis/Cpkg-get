@@ -69,6 +69,9 @@ function CodeGenerator:GenCode(global, tempPath, outputPath)
 
     ---run genScript
     tool.colorPrint(colors.cyan, "gen file... ", colors.blue, outputPath)
+
+    os.sleep(0.5)
+
     local f = fs.open(outputPath, "w")
     local script, scriptError = loadfile(self.getScriptPath, "t")
     if (scriptError ~= nil) then

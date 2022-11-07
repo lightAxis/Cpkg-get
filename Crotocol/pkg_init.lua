@@ -3,7 +3,7 @@ local args = { ... }
 
 ---@class DEPS
 DEPS = DEPS or {}
----@class DEPS.EmLua
+---@class DEPS.Crotocol
 DEPS["Crotocol"] = {}
 DEPS["Crotocol"].middleClass = require("middleClass.pkg_init")
 DEPS["Crotocol"].EmLua = require("EmLua.pkg_init")

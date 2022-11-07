@@ -19,7 +19,11 @@ for k, v in pairs(Pkgs) do
                 else
                     f()
                 end
+                return nil
             end
         end
     end
 end
+
+tool.colorPrint(colors.green, "cannot find pkg:" .. CPKG.Param[1] .. " /exec:" .. CPKG.Param[2])
+tool.colorPrint(colors.blue, "try 'cpkg refresh' or typo?")

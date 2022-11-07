@@ -1,18 +1,18 @@
 {
-    Name = "CpkgProtocol",
+    Name = "PkgLink",
     Desc = "Minecraft CC protocol defines for Cpkg between client & server in world server",
     Author = "JiseokLee",
     ID = "jisuk500",
     Email = "jisuk500@gmail.com",
     Version = 1.0,
-    Repo = "https://github.com/lightaxis/Cpkg-get.git,
+    Repo = "https://github.com/lightaxis/Cpkg-get.git",
     Deps = {
         {
             pkg = "middleClass",
             version = 1.0
         },
         {
-            pkg = "EmLua",
+            pkg = "Crotocol",
             version = 1.0
         },
     },
