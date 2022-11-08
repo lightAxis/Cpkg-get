@@ -1,5 +1,8 @@
 ---@class Cpkg.Tool
 local a = {}
+
+local const = require("__Cpkg.Consts")
+
 function a.print_color(text, color)
     term.setTextColor(color)
     print(text)
@@ -41,6 +44,14 @@ function a.getPkgInfo(path)
     local PkgInfo = textutils.unserialize(f.readAll())
     f.close()
     return PkgInfo
+end
+
+---get id of server
+---@return number
+function a.getServerID()
+    local id = rednet.lookup(const.WebConst.Protocol, "server")
+    if id == nil then a.colorPrint(colors.red, "No Cpkg-get server is activated!") end
+    return id
 end
 
 return a

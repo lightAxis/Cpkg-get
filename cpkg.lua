@@ -73,6 +73,7 @@ elseif args[1] == "list" then
     elseif args[2] == "server" then
         if printHelp(args[2], args[3], "server", helpEnum_list) == true then return nil end
         -- start list all server pkgs
+        require("__Cpkg.GetServerList")
 
     elseif args[2] == "exec" then
         if printHelp(args[3], args[3], "exec", helpEnum_list) == true then return nil end

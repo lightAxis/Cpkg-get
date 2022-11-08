@@ -10,4 +10,9 @@ a.colors = {
     ["msg"] = colors.cyan,
 }
 
+---@class Cpkg.WebConst
+a.WebConst = {
+    ["Protocol"] = "Cpkg-get",
+}
+
 return a
