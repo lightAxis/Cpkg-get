@@ -134,6 +134,9 @@ elseif args[1] == "uninstall" then
 
 elseif args[1] == "purge" then
     if printHelp(args[2], args[2], "purge", helpEnum_main) == true then return nil end
+elseif args[1] == "debug" then
+    local server = require("__Cpkg.Web.Server")
+    server.main()
 else
     Tool.print_color("arg is missing!", colors.red)
     Tool.print_color(helpEnum_main["--help"], colors.blue)

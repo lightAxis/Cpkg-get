@@ -10,13 +10,32 @@ server.__Handle = require("__Cpkg.Web.Handle"):new()
 
 function server.main()
 
+    rednet.host(const.WebConst.Protocol, "server")
+
+    server.__Handle:attachMsgHandle(protocol.Header.REQ_PKG_CONTENT,
+        server.__handle_REQ_PKG_CONTENT)
+    server.__Handle:attachMsgHandle(protocol.Header.REQ_PKG_FILE,
+        server.__handle_REQ_PKG_FILE)
+    server.__Handle:attachMsgHandle(protocol.Header.REQ_PKG_INFOS,
+        server.__handle_REQ_PKG_INFOS)
+
+    while true do
+        --- eventname, sender, msg, protocol
+        local a, b, c, d = os.pullEvent("rednet_message")
+
+        print("msg come from : " .. tostring(b) .. "/ protocol:" .. d)
+        if (d == const.WebConst.Protocol) then
+            server.__Handle:parse(c)
+        end
+    end
+
 end
 
 ---handler for req pkg content msg
 ---@param msg __Cpkg.Web.PkgLink.Msg
 ---@param msgstruct __Cpkg.Web.PkgLink.MsgStruct.REQ_PKG_CONTENT
 function server.__handle_REQ_PKG_CONTENT(msg, msgstruct)
-
+    print("start handle REQ_PKG_CONTENT : " .. msgstruct.Name)
     -- get target pkg name
     local targetPkgName = msgstruct.Name
 
@@ -63,10 +82,13 @@ function server.__handle_REQ_PKG_CONTENT(msg, msgstruct)
     replymsg.Header = protocol.Header.PKG_CONTENT
     replymsg.SendID = os.getComputerID()
     replymsg.TargetID = msg.SendID
-    replymsg.MsgStructStr = textutils.serializeJSON(replymsgstruct)
-
+    replymsg.MsgStructStr = textutils.serialize(replymsgstruct)
+    print("reply back result : " .. replymsgstruct.Result)
+    print("reply total " .. tostring(#replymsgstruct.Folders) .. " dirs, "
+        .. tostring(#replymsgstruct.FilePaths) .. " files")
+    print("---")
     --- send back
-    rednet.send(replymsg.TargetID, textutils.serializeJSON(replymsg), const.WebConst.Protocol)
+    rednet.send(replymsg.TargetID, textutils.serialize(replymsg), const.WebConst.Protocol)
 end
 
 function server.__recursive_content_search(currPath, filePathsMap, folderPathsMap)
@@ -74,7 +96,7 @@ function server.__recursive_content_search(currPath, filePathsMap, folderPathsMa
         folderPathsMap[currPath] = 1
         local files = fs.list(currPath)
         for k, v in pairs(files) do
-            server.__recursive_content_search(v, filePathsMap, folderPathsMap)
+            server.__recursive_content_search(fs.combine(currPath, v), filePathsMap, folderPathsMap)
         end
     else
         filePathsMap[currPath] = 1
@@ -85,17 +107,15 @@ end
 ---@param msg __Cpkg.Web.PkgLink.Msg
 ---@param msgstruct __Cpkg.Web.PkgLink.MsgStruct.REQ_PKG_INFOS
 function server.__handle_REQ_PKG_INFOS(msg, msgstruct)
-
+    print("start handle REQ_PKG_INFOS")
     ---@type table<number, CPKG.Package_t>
     local pkgs = tool.getPkgs()
-
     --- parse infos
     local replymsgstruct = protocol.MsgStruct.PKG_INFOS.new()
     for k, v in pairs(pkgs) do
         local pkgInfo = tool.getPkgInfo(v.DescPath)
         table.insert(replymsgstruct.Infos, pkgInfo)
     end
-
     if #replymsgstruct.Infos <= 0 then
         replymsgstruct.Result = protocol.Enum.PKG_INFOS_R.NO_PKGS_AT_SERVER
     else
@@ -107,17 +127,19 @@ function server.__handle_REQ_PKG_INFOS(msg, msgstruct)
     replymsg.Header = protocol.Header.PKG_INFOS
     replymsg.SendID = os.getComputerID()
     replymsg.TargetID = msg.SendID
-    replymsg.MsgStructStr = textutils.serializeJSON(replymsgstruct)
-
+    replymsg.MsgStructStr = textutils.serialize(replymsgstruct)
+    print("reply result :" .. replymsgstruct.Result)
+    print("reply " .. tostring(#replymsgstruct.Infos) .. " pkgs")
+    print("---")
     --- send rednet
-    rednet.send(replymsg.TargetID, textutils.serializeJSON(replymsg), const.WebConst.Protocol)
+    rednet.send(replymsg.TargetID, textutils.serialize(replymsg), const.WebConst.Protocol)
 end
 
 ---handler for req pkg file
 ---@param msg __Cpkg.Web.PkgLink.Msg
 ---@param msgstruct __Cpkg.Web.PkgLink.MsgStruct.REQ_PKG_FILE
 function server.__handle_REQ_PKG_FILE(msg, msgstruct)
-
+    print("start handle REQ_PKG_FILE : " .. msgstruct.reqFilePath)
     -- try open file
     local f = fs.open(msgstruct.reqFilePath, "r")
 
@@ -137,10 +159,12 @@ function server.__handle_REQ_PKG_FILE(msg, msgstruct)
     replymsg.Header = protocol.Header.PKG_FILE
     replymsg.SendID = os.getComputerID()
     replymsg.TargetID = msg.SendID
-    replymsg.MsgStructStr = textutils.serializeJSON(replymsgstruct)
-
+    replymsg.MsgStructStr = textutils.serialize(replymsgstruct)
+    print("reply result : " .. replymsgstruct.Result)
+    print("reply " .. tostring(#replymsgstruct.ContentStr) .. " chars")
+    print("---")
     -- send rednet msg
-    rednet.send(msg.SendID, textutils.serializeJSON(replymsg), const.WebConst.Protocol)
+    rednet.send(msg.SendID, textutils.serialize(replymsg), const.WebConst.Protocol)
 end
 
 return server
