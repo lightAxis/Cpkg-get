@@ -63,10 +63,10 @@ function server.__handle_REQ_PKG_CONTENT(msg, msgstruct)
     replymsg.Header = protocol.Header.PKG_CONTENT
     replymsg.SendID = os.getComputerID()
     replymsg.TargetID = msg.SendID
-    replymsg.MsgStructStr = textutils.serializeJSON(replymsgstruct)
+    replymsg.MsgStructStr = textutils.serialize(replymsgstruct)
 
     --- send back
-    rednet.send(replymsg.TargetID, textutils.serializeJSON(replymsg), const.WebConst.Protocol)
+    rednet.send(replymsg.TargetID, textutils.serialize(replymsg), const.WebConst.Protocol)
 end
 
 function server.__recursive_content_search(currPath, filePathsMap, folderPathsMap)
@@ -107,10 +107,10 @@ function server.__handle_REQ_PKG_INFOS(msg, msgstruct)
     replymsg.Header = protocol.Header.PKG_INFOS
     replymsg.SendID = os.getComputerID()
     replymsg.TargetID = msg.SendID
-    replymsg.MsgStructStr = textutils.serializeJSON(replymsgstruct)
+    replymsg.MsgStructStr = textutils.serialize(replymsgstruct)
 
     --- send rednet
-    rednet.send(replymsg.TargetID, textutils.serializeJSON(replymsg), const.WebConst.Protocol)
+    rednet.send(replymsg.TargetID, textutils.serialize(replymsg), const.WebConst.Protocol)
 end
 
 ---handler for req pkg file
@@ -137,10 +137,10 @@ function server.__handle_REQ_PKG_FILE(msg, msgstruct)
     replymsg.Header = protocol.Header.PKG_FILE
     replymsg.SendID = os.getComputerID()
     replymsg.TargetID = msg.SendID
-    replymsg.MsgStructStr = textutils.serializeJSON(replymsgstruct)
+    replymsg.MsgStructStr = textutils.serialize(replymsgstruct)
 
     -- send rednet msg
-    rednet.send(msg.SendID, textutils.serializeJSON(replymsg), const.WebConst.Protocol)
+    rednet.send(msg.SendID, textutils.serialize(replymsg), const.WebConst.Protocol)
 end
 
 return server

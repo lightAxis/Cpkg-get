@@ -13,6 +13,7 @@ a.colors = {
 ---@class Cpkg.WebConst
 a.WebConst = {
     ["Protocol"] = "Cpkg-get",
+    ["MaxTimeout"] = 10,
 }
 
 return a

@@ -20,10 +20,10 @@ function client.Req_pkgContent(pkgName)
     local msgStruct = protocol.MsgStruct.REQ_PKG_CONTENT.new()
     msgStruct.Name = pkgName
 
-    msg.MsgStructStr = textutils.serializeJSON(msgStruct)
+    msg.MsgStructStr = textutils.serialize(msgStruct)
 
     --- send msg to server
-    rednet.send(msg.TargetID, textutils.serializeJSON(msg), const.WebConst.Protocol)
+    rednet.send(msg.TargetID, textutils.serialize(msg), const.WebConst.Protocol)
 end
 
 ---request file content to server
@@ -40,10 +40,10 @@ function client.Req_pkgFile(absFilePath)
     local msgStruct = protocol.MsgStruct.REQ_PKG_FILE.new()
     msgStruct.reqFilePath = absFilePath
 
-    msg.MsgStructStr = textutils.serializeJSON(msg)
+    msg.MsgStructStr = textutils.serialize(msgStruct)
 
     --- send msg to server
-    rednet.send(msg.TargetID, textutils.serializeJSON(msg), const.WebConst.Protocol)
+    rednet.send(msg.TargetID, textutils.serialize(msg), const.WebConst.Protocol)
 end
 
 function client.Req_pkgInfos()
@@ -57,10 +57,10 @@ function client.Req_pkgInfos()
 
     local msgStruct = protocol.MsgStruct.REQ_PKG_INFOS.new()
 
-    msg.MsgStructStr = textutils.serializeJSON(msgStruct)
+    msg.MsgStructStr = textutils.serialize(msgStruct)
 
     --- send msg to server
-    rednet.send(msg.TargetID, textutils.serializeJSON(msg), const.WebConst.Protocol)
+    rednet.send(msg.TargetID, textutils.serialize(msg), const.WebConst.Protocol)
 end
 
 return client

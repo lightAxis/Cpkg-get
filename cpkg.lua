@@ -134,6 +134,51 @@ elseif args[1] == "uninstall" then
 
 elseif args[1] == "purge" then
     if printHelp(args[2], args[2], "purge", helpEnum_main) == true then return nil end
+elseif args[1] == "debug" then
+    local client = require("__Cpkg.Web.Client")
+    local handle = require("__Cpkg.Web.Handle"):new()
+    local protocol = require("__Cpkg.Web.PkgLink.Include")
+    local consts = require("__Cpkg.Consts")
+
+    handle:attachMsgHandle(protocol.Header.PKG_CONTENT,
+        ---comment
+        ---@param msg __Cpkg.Web.PkgLink.Msg
+        ---@param msgstruct __Cpkg.Web.PkgLink.MsgStruct.PKG_CONTENT
+        function(msg, msgstruct)
+            print("rec! paths..")
+            print("res :" .. tostring(msgstruct.Result))
+            for k, v in pairs(msgstruct.FilePaths) do
+                print(v)
+
+            end
+
+            print("reqest file at:" .. msgstruct.FilePaths[2])
+            client.Req_pkgFile(msgstruct.FilePaths[2])
+        end)
+
+    handle:attachMsgHandle(protocol.Header.PKG_FILE,
+        ---comment
+        ---@param msg __Cpkg.Web.PkgLink.Msg
+        ---@param msgstruct __Cpkg.Web.PkgLink.MsgStruct.PKG_FILE
+        function(msg, msgstruct)
+            print("file rec!")
+            print("file name : " .. msgstruct.Name)
+
+            local f = fs.open(msgstruct.Name, "w")
+            f.write(msgstruct.ContentStr)
+            f.close()
+        end)
+    client.Req_pkgContent("Crotocol")
+
+
+    while true do
+        local a, b, c, d = os.pullEvent("rednet_message")
+        print(a, b, d)
+        if (d == consts.WebConst.Protocol) then
+            handle:parse(c)
+        end
+
+    end
 else
     Tool.print_color("arg is missing!", colors.red)
     Tool.print_color(helpEnum_main["--help"], colors.blue)
