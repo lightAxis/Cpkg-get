@@ -6,6 +6,43 @@ local protocol = require("__Cpkg.Web.PkgLink.Include")
 local const = require("__Cpkg.Consts")
 local tool = require("__Cpkg.Tool")
 
+---request msg with timeout
+---@param targetHeader __Cpkg.Web.PkgLink.Header target recieveing header
+---@param duration number sec
+---@param func fun()
+---@return __Cpkg.Web.PkgLink.Msg|nil
+function client.Req_with_timeout(targetHeader, duration, func)
+    local timer_dur = os.startTimer(duration)
+    local timer_tout = os.startTimer(const.WebConst.MaxTimeout)
+    local serverID = tool.getServerID()
+    func()
+
+    while true do
+        --- rednet_message, senderID, msg, protocol
+        --- timer, timerID
+        local a, b, c, d = os.pullEvent()
+
+        if (a == "rednet_message" and
+            d == const.WebConst.Protocol and
+            b == serverID) then
+            ---@type __Cpkg.Web.PkgLink.Msg
+            local msg = textutils.unserialize(c)
+            if (msg.Header == targetHeader) then
+                return msg
+            end
+        elseif (a == "timer") then
+            if (b == timer_dur) then
+                timer_dur = os.startTimer(duration)
+                func()
+            elseif (b == timer_tout) then
+                return nil
+            end
+        end
+    end
+
+
+end
+
 ---request pkg content
 ---@param pkgName string
 function client.Req_pkgContent(pkgName)

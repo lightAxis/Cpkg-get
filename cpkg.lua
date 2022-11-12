@@ -140,45 +140,46 @@ elseif args[1] == "debug" then
     local protocol = require("__Cpkg.Web.PkgLink.Include")
     local consts = require("__Cpkg.Consts")
 
-    handle:attachMsgHandle(protocol.Header.PKG_CONTENT,
-        ---comment
-        ---@param msg __Cpkg.Web.PkgLink.Msg
-        ---@param msgstruct __Cpkg.Web.PkgLink.MsgStruct.PKG_CONTENT
-        function(msg, msgstruct)
-            print("rec! paths..")
-            print("res :" .. tostring(msgstruct.Result))
-            for k, v in pairs(msgstruct.FilePaths) do
-                print(v)
+    ---@type __Cpkg.Web.PkgLink.Msg
+    local recMsg = nil
+    ---@type __Cpkg.Web.PkgLink.MsgStruct.IMsgStruct
+    local msgStruct = nil
+    recMsg = client.Req_with_timeout(protocol.Header.PKG_CONTENT, 3,
+        function()
+            print("requesting pkg content to server ...")
+            client.Req_pkgContent("testPKG")
+        end
+    )
+    if (recMsg == nil) then error("timeout!") end
+    ---@type __Cpkg.Web.PkgLink.MsgStruct.PKG_CONTENT
+    msgStruct = textutils.unserialize(recMsg.MsgStructStr)
+    if msgStruct.Result < protocol.Enum.PKG_CONTENT_R.NORMAL then
+        print("error when get message back")
+        error("no pkg names " .. "testPKG" .. " at server")
+    end
 
-            end
+    local folderList = msgStruct.Folders
+    local fileList = msgStruct.FilePaths
+    for k, v in pairs(fileList) do
 
-            print("reqest file at:" .. msgstruct.FilePaths[2])
-            client.Req_pkgFile(msgstruct.FilePaths[2])
-        end)
-
-    handle:attachMsgHandle(protocol.Header.PKG_FILE,
-        ---comment
-        ---@param msg __Cpkg.Web.PkgLink.Msg
-        ---@param msgstruct __Cpkg.Web.PkgLink.MsgStruct.PKG_FILE
-        function(msg, msgstruct)
-            print("file rec!")
-            print("file name : " .. msgstruct.Name)
-
-            local f = fs.open(msgstruct.Name, "w")
-            f.write(msgstruct.ContentStr)
-            f.close()
-        end)
-    client.Req_pkgContent("Crotocol")
-
-
-    while true do
-        local a, b, c, d = os.pullEvent("rednet_message")
-        print(a, b, d)
-        if (d == consts.WebConst.Protocol) then
-            handle:parse(c)
+        recMsg = client.Req_with_timeout(protocol.Header.PKG_FILE, 3,
+            function()
+                print("requesting file " .. v)
+                client.Req_pkgFile(v)
+            end)
+        if recMsg == nil then error("timeout!") end
+        ---@type __Cpkg.Web.PkgLink.MsgStruct.PKG_FILE
+        msgStruct = textutils.unserialize(recMsg.MsgStructStr)
+        if (msgStruct.Result < protocol.Enum.PKG_FILE_R.NORMAL) then
+            print("error when get file content")
+            error("no file " .. v .. " in server")
         end
 
+        local f = fs.open(v, "w")
+        f.write(msgStruct.ContentStr)
+        f.close()
     end
+
 else
     Tool.print_color("arg is missing!", colors.red)
     Tool.print_color(helpEnum_main["--help"], colors.blue)
