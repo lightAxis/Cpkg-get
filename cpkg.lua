@@ -2,6 +2,7 @@ CPKG = CPKG or {}
 -- CPKG.RootPath = "/d/git/Cpkg"
 CPKG.RootPath = "Cpkg-get"
 CPKG.Param = {}
+CPKG.ServerID = nil
 
 package.path = package.path .. ";" .. CPKG.RootPath .. "/?.lua"
 
@@ -118,22 +119,29 @@ elseif args[1] == "run" then
 
 elseif args[1] == "update" then
     if printHelp(args[1], args[2], "update", helpEnum_main) == true then return nil end
+    require("__Cpkg.GetUpdateFromServer")
 
-
-elseif args[1] == "updatable" then
-    if printHelp(args[1], args[2], "updatable", helpEnum_main) == true then return nil end
+elseif args[1] == "upgradable" then
+    if printHelp(args[1], args[2], "upgradable", helpEnum_main) == true then return nil end
+    require("__Cpkg.GetUpgradable")
 
 elseif args[1] == "upgrade" then
     if printHelp(args[1], args[2], "upgradable", helpEnum_main) == true then return nil end
-
+    require("__Cpkg.DoUpgrade")
 elseif args[1] == "install" then
     if printHelp(args[2], args[2], "install", helpEnum_main) == true then return nil end
-
+    CPKG.Param[1] = args[2]
+    require("__Cpkg.DoInstallFromServer")
 elseif args[1] == "uninstall" then
     if printHelp(args[2], args[2], "uninstall", helpEnum_main) == true then return nil end
+    CPKG.Param[1] = args[2]
+    require("__Cpkg.DoUninstall")
 
 elseif args[1] == "purge" then
     if printHelp(args[2], args[2], "purge", helpEnum_main) == true then return nil end
+    -- elseif args[1] == "debug" then
+    --     CPKG.Param[1] = "testPKG"
+    --     require("__Cpkg.GetPkgContentFromServer")
 else
     Tool.print_color("arg is missing!", colors.red)
     Tool.print_color(helpEnum_main["--help"], colors.blue)

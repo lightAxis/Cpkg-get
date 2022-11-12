@@ -47,9 +47,9 @@ local function recursivePackageFind(path)
         local pkg = readPackage(path)
         table.insert(Pkgs, pkg)
         tool.colorPrint(colors.blue, "find pkg : " .. pkg.PkgName, colors.cyan, " at " .. path)
-        for k, v in pairs(pkg.Execs) do
-            tool.colorPrint(colors.blue, "find exe : " .. pkg.PkgName .. "/" .. v)
-        end
+        -- for k, v in pairs(pkg.Execs) do
+        --     tool.colorPrint(colors.blue, "find exe : " .. pkg.PkgName .. "/" .. v)
+        -- end
         return nil
     end
 

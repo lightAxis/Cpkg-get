@@ -5,6 +5,7 @@
 ---@field PkgName string
 ---@field SrcPath string
 ---@field Execs table<number, string>
+---@field Upgradable boolean
 
 ---@class CPKG.PackageInfo_t
 ---@field Name string
@@ -15,6 +16,7 @@
 ---@field Version number
 ---@field Repo string
 ---@field Deps table<number, CPKG.Deps_t>
+---@field Upgradable boolean
 
 ---@class CPKG.Deps_t
 ---@field pkg string
@@ -34,6 +36,7 @@ function t:new_pkg_t()
     a.SrcPath = ""
     ---@type table<number, string>
     a.Execs = {}
+    a.Upgradable = false
     return a
 end
 

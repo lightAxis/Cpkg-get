@@ -37,6 +37,15 @@ function a.getPkgs()
     return Pkgs
 end
 
+---@param pkgs table<number, CPKG.Package_t>
+function a.savePkgs(pkgs)
+    local f = fs.open(CPKG.RootPath .. "/pkgs_local.sz", "w")
+    if f == nil then error("cannot write pkginfo to root") end
+    f.write(textutils.serialize(pkgs))
+end
+
+---@param path string
+---@return CPKG.PackageInfo_t
 function a.getPkgInfo(path)
     local f = fs.open(path, "r")
     if (f == nil) then error("cannot read pkginfo : " .. path) end
@@ -46,12 +55,27 @@ function a.getPkgInfo(path)
     return PkgInfo
 end
 
+---@param path string
+---@param info CPKG.PackageInfo_t
+function a.savePkgInfo(path, info)
+    local f = fs.open(path, "w")
+    if (f == nil) then error("cannot write pkginfo : " .. path) end
+    ---@type CPKG.PackageInfo_t
+    f.write(textutils.serialize(info))
+    f.close()
+end
+
 ---get id of server
 ---@return number
 function a.getServerID()
-    local id = rednet.lookup(const.WebConst.Protocol, "server")
-    if id == nil then a.colorPrint(colors.red, "No Cpkg-get server is activated!") end
-    return id
+    if CPKG.ServerID == nil then
+        local id = rednet.lookup(const.WebConst.Protocol, "server")
+        if id == nil then a.colorPrint(colors.red, "No Cpkg-get server is activated!") end
+        CPKG.ServerID = id
+        return id
+    end
+    return CPKG.ServerID
+
 end
 
 return a

@@ -6,13 +6,15 @@ local a = {}
 a.colors = {
     ["succ"] = colors.green,
     ["fail"] = colors.red,
-    ["info"] = colors.blue,
+    ["notice"] = colors.blue,
+    ["state"] = colors.yellow,
     ["msg"] = colors.cyan,
 }
 
 ---@class Cpkg.WebConst
 a.WebConst = {
     ["Protocol"] = "Cpkg-get",
+    ["MaxTimeout"] = 10,
 }
 
 return a
