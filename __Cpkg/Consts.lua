@@ -6,7 +6,8 @@ local a = {}
 a.colors = {
     ["succ"] = colors.green,
     ["fail"] = colors.red,
-    ["info"] = colors.blue,
+    ["notice"] = colors.blue,
+    ["state"] = colors.yellow,
     ["msg"] = colors.cyan,
 }
 

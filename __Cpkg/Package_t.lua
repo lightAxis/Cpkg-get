@@ -16,6 +16,7 @@
 ---@field Version number
 ---@field Repo string
 ---@field Deps table<number, CPKG.Deps_t>
+---@field Upgradable boolean
 
 ---@class CPKG.Deps_t
 ---@field pkg string

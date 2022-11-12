@@ -2,6 +2,7 @@ CPKG = CPKG or {}
 -- CPKG.RootPath = "/d/git/Cpkg"
 CPKG.RootPath = "Cpkg-get"
 CPKG.Param = {}
+CPKG.ServerID = nil
 
 package.path = package.path .. ";" .. CPKG.RootPath .. "/?.lua"
 
@@ -118,68 +119,29 @@ elseif args[1] == "run" then
 
 elseif args[1] == "update" then
     if printHelp(args[1], args[2], "update", helpEnum_main) == true then return nil end
+    require("__Cpkg.GetUpdateFromServer")
 
-
-elseif args[1] == "updatable" then
-    if printHelp(args[1], args[2], "updatable", helpEnum_main) == true then return nil end
+elseif args[1] == "upgradable" then
+    if printHelp(args[1], args[2], "upgradable", helpEnum_main) == true then return nil end
+    require("__Cpkg.GetUpgradable")
 
 elseif args[1] == "upgrade" then
     if printHelp(args[1], args[2], "upgradable", helpEnum_main) == true then return nil end
-
+    require("__Cpkg.DoUpgrade")
 elseif args[1] == "install" then
     if printHelp(args[2], args[2], "install", helpEnum_main) == true then return nil end
-
+    CPKG.Param[1] = args[2]
+    require("__Cpkg.DoInstallFromServer")
 elseif args[1] == "uninstall" then
     if printHelp(args[2], args[2], "uninstall", helpEnum_main) == true then return nil end
+    CPKG.Param[1] = args[2]
+    require("__Cpkg.DoUninstall")
 
 elseif args[1] == "purge" then
     if printHelp(args[2], args[2], "purge", helpEnum_main) == true then return nil end
-elseif args[1] == "debug" then
-    local client = require("__Cpkg.Web.Client")
-    local handle = require("__Cpkg.Web.Handle"):new()
-    local protocol = require("__Cpkg.Web.PkgLink.Include")
-    local consts = require("__Cpkg.Consts")
-
-    ---@type __Cpkg.Web.PkgLink.Msg
-    local recMsg = nil
-    ---@type __Cpkg.Web.PkgLink.MsgStruct.IMsgStruct
-    local msgStruct = nil
-    recMsg = client.Req_with_timeout(protocol.Header.PKG_CONTENT, 3,
-        function()
-            print("requesting pkg content to server ...")
-            client.Req_pkgContent("testPKG")
-        end
-    )
-    if (recMsg == nil) then error("timeout!") end
-    ---@type __Cpkg.Web.PkgLink.MsgStruct.PKG_CONTENT
-    msgStruct = textutils.unserialize(recMsg.MsgStructStr)
-    if msgStruct.Result < protocol.Enum.PKG_CONTENT_R.NORMAL then
-        print("error when get message back")
-        error("no pkg names " .. "testPKG" .. " at server")
-    end
-
-    local folderList = msgStruct.Folders
-    local fileList = msgStruct.FilePaths
-    for k, v in pairs(fileList) do
-
-        recMsg = client.Req_with_timeout(protocol.Header.PKG_FILE, 3,
-            function()
-                print("requesting file " .. v)
-                client.Req_pkgFile(v)
-            end)
-        if recMsg == nil then error("timeout!") end
-        ---@type __Cpkg.Web.PkgLink.MsgStruct.PKG_FILE
-        msgStruct = textutils.unserialize(recMsg.MsgStructStr)
-        if (msgStruct.Result < protocol.Enum.PKG_FILE_R.NORMAL) then
-            print("error when get file content")
-            error("no file " .. v .. " in server")
-        end
-
-        local f = fs.open(v, "w")
-        f.write(msgStruct.ContentStr)
-        f.close()
-    end
-
+    -- elseif args[1] == "debug" then
+    --     CPKG.Param[1] = "testPKG"
+    --     require("__Cpkg.GetPkgContentFromServer")
 else
     Tool.print_color("arg is missing!", colors.red)
     Tool.print_color(helpEnum_main["--help"], colors.blue)
