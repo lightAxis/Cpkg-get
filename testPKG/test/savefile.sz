@@ -1,0 +1,138 @@
+{
+  Headers = {
+    GETHISTORY = {
+      Fields = {
+        {
+          Desc = "count of history",
+          Type = "number",
+          Name = "Count",
+          Init = "0",
+        },
+        {
+          Desc = "owner of this history",
+          Type = "string",
+          Name = "Owner",
+          Init = "\"\"",
+        },
+        {
+          Desc = "history of drinks!",
+          Type = "table<number, Crotocol.testProto.Struct.DRINK>",
+          Name = "Drinks",
+          Init = "{}",
+        },
+        {
+          Desc = "history of eats!",
+          Type = "table<number, Crotocol.testProto.Struct.EAT>",
+          Name = "Eats",
+          Init = "{}",
+        },
+      },
+      Name = "GETHISTORY",
+      Desc = "get history of eat",
+    },
+  },
+  Structs = {
+    DRINK = {
+      Fields = {
+        {
+          Desc = "person who drink the beverage",
+          Type = "string",
+          Name = "Drinker",
+          Init = "\"\"",
+        },
+        {
+          Desc = "drinked bevarage",
+          Type = "Crotocol.testProto.Enum.BEVERAGE",
+          Name = "Bevarage",
+          Init = "-1",
+        },
+      },
+      Name = "DRINK",
+      Desc = "drinkin history",
+    },
+    EAT = {
+      Fields = {
+        {
+          Desc = "person who eat food",
+          Type = "string",
+          Name = "Eater",
+          Init = "\"\"",
+        },
+        {
+          Desc = "eated food",
+          Type = "Crotocol.testProto.Enum.SNACK",
+          Name = "Snack",
+          Init = "-1",
+        },
+        {
+          Desc = "eat time",
+          Type = "number",
+          Name = "Count",
+          Init = "0",
+        },
+      },
+      Name = "EAT",
+      Desc = "eating history",
+    },
+  },
+  Name = "Crotocol.testProto",
+  Enums = {
+    BEVERAGE = {
+      Table = {
+        {
+          Value = -2,
+          Key = "coffee",
+          Desc = "sucks",
+        },
+        {
+          Value = -1,
+          Key = "NONE",
+          Desc = "init",
+        },
+        {
+          Value = 1,
+          Key = "pocari",
+          Desc = "delicious",
+        },
+        {
+          Value = 2,
+          Key = "orangeJuice",
+          Desc = "jeju island!",
+        },
+      },
+      Name = "BEVERAGE",
+      Desc = "drink ! DF",
+    },
+    SNACK = {
+      Table = {
+        {
+          Value = -1,
+          Key = "NONE",
+          Desc = "init",
+        },
+        {
+          Value = 0,
+          Key = "icecream",
+          Desc = "snack1!",
+        },
+        {
+          Value = 1,
+          Key = "sunchip",
+          Desc = "snack2!",
+        },
+        {
+          Value = 2,
+          Key = "pokachip",
+          Desc = "snack3!",
+        },
+        {
+          Value = 3,
+          Key = "otherchip",
+          Desc = "is this snack?",
+        },
+      },
+      Name = "SNACK",
+      Desc = "snack enum!",
+    },
+  },
+}

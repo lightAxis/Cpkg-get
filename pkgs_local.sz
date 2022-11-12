@@ -39,4 +39,16 @@
     SrcPath = "Cpkg-get/middleClass/src",
     IncludePath = "Cpkg-get/middleClass/include",
   },
+  {
+    RootPath = "Cpkg-get/testPKG",
+    Execs = {
+      "testGen",
+      "testHandle",
+      "testLoad",
+    },
+    DescPath = "Cpkg-get/testPKG/pkg_info.sz",
+    PkgName = "testPKG",
+    SrcPath = "Cpkg-get/testPKG/src",
+    IncludePath = "Cpkg-get/testPKG/include",
+  },
 }
