@@ -142,6 +142,9 @@ elseif args[1] == "purge" then
     -- elseif args[1] == "debug" then
     --     CPKG.Param[1] = "testPKG"
     --     require("__Cpkg.GetPkgContentFromServer")
+elseif args[1] == "server_start" then
+    local server = require("__Cpkg.Web.Server")
+    server.main()
 else
     Tool.print_color("arg is missing!", colors.red)
     Tool.print_color(helpEnum_main["--help"], colors.blue)
