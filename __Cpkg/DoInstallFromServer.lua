@@ -37,6 +37,10 @@ for k, v in pairs(msgStruct.Infos) do
     pkgDict[v.Name] = v
 end
 
+if (pkgDict[pkgToInstall] == nil) then
+    error("no pkg named " .. pkgToInstall .. " is at server. use 'cpkg list server' to see available pkgs")
+end
+
 ---@type table<string, __Cpkg.Web.PkgLink.Struct.PkgDep_t>
 local deps = {}
 ---@type __Cpkg.Web.PkgLink.Struct.PkgDep_t
