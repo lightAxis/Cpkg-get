@@ -1,6 +1,6 @@
 ---@class __Cpkg.Web.PkgLink.Handle
 ---@field new fun(self:__Cpkg.Web.PkgLink.Handle):__Cpkg.Web.PkgLink.Handle
-local handle = require("middleClass.include.middleClass")("__Cpkg.Web.PkgLink.Handle")
+local handle = require("middleClass.include.middleclass")("__Cpkg.Web.PkgLink.Handle")
 
 ---constructor
 function handle:initialize()
@@ -34,7 +34,7 @@ end
 
 ---clear all message handle
 function handle:clearAllMsgHandle()
-    for k, v in self.__MsgStructMap do
+    for k,v in self.__MsgStructMap do
         self.__MsgStructMap[k] = nil
     end
 end

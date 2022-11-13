@@ -42,5 +42,5 @@
     PkgName = "middleClass",
     SrcPath = "Cpkg-get/middleClass/src",
     IncludePath = "Cpkg-get/middleClass/include",
-  }
+  },
 }
