@@ -4,6 +4,10 @@ CPKG.RootPath = "Cpkg-get"
 CPKG.Param = {}
 CPKG.ServerID = nil
 
+--- param
+CPKG.rednetSide = nil
+
+
 package.path = package.path .. ";" .. CPKG.RootPath .. "/?.lua"
 
 ---@type table<number, string>
@@ -143,6 +147,7 @@ elseif args[1] == "purge" then
     --     CPKG.Param[1] = "testPKG"
     --     require("__Cpkg.GetPkgContentFromServer")
 elseif args[1] == "server_start" then
+    rednet.open(CPKG.rednetSide)
     local server = require("__Cpkg.Web.Server")
     server.main()
 else
