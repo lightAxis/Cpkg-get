@@ -1,0 +1,10 @@
+{
+    Name = "MathLib",
+    Desc = "Minecraft CC math calcuation & vector library",
+    Author = "JiseokLee",
+    ID = "jisuk500",
+    Email = "jisuk500@gmail.com",
+    Version = 1.0,
+    Repo = "https://github.com/lightaxis/Cpkg-get.git",
+    Deps = {},
+}

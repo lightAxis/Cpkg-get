@@ -1,5 +1,14 @@
 {
   {
+    RootPath = "Cpkg-get/AppLib",
+    Execs = {},
+    Upgradable = false,
+    DescPath = "Cpkg-get/AppLib/pkg_info.sz",
+    PkgName = "AppLib",
+    SrcPath = "Cpkg-get/AppLib/src",
+    IncludePath = "Cpkg-get/AppLib/include",
+  },
+  {
     RootPath = "Cpkg-get/Crotocol",
     Execs = {
       "testGen",
@@ -24,6 +33,15 @@
     IncludePath = "Cpkg-get/EmLua/include",
   },
   {
+    RootPath = "Cpkg-get/MathLib",
+    Execs = {},
+    Upgradable = false,
+    DescPath = "Cpkg-get/MathLib/pkg_info.sz",
+    PkgName = "MathLib",
+    SrcPath = "Cpkg-get/MathLib/src",
+    IncludePath = "Cpkg-get/MathLib/include",
+  },
+  {
     RootPath = "Cpkg-get/PkgLink",
     Execs = {
       "Install",
@@ -33,5 +51,14 @@
     PkgName = "PkgLink",
     SrcPath = "Cpkg-get/PkgLink/src",
     IncludePath = "Cpkg-get/PkgLink/include",
+  },
+  {
+    RootPath = "Cpkg-get/VDef",
+    Execs = {},
+    Upgradable = false,
+    DescPath = "Cpkg-get/VDef/pkg_info.sz",
+    PkgName = "VDef",
+    SrcPath = "Cpkg-get/VDef/src",
+    IncludePath = "Cpkg-get/VDef/include",
   },
 }
