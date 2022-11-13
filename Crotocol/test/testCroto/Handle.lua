@@ -1,6 +1,6 @@
 ---@class Crotocol.testProto.Handle
 ---@field new fun(self:Crotocol.testProto.Handle):Crotocol.testProto.Handle
-local handle = DEPS.Crotocol.middleClass.middleClass("Crotocol.testProto.Handle")
+local handle = require("class.middleclass")("Crotocol.testProto.Handle")
 
 ---constructor
 function handle:initialize()
@@ -34,7 +34,7 @@ end
 
 ---clear all message handle
 function handle:clearAllMsgHandle()
-    for k,v in self.__MsgStructMap do
+    for k, v in self.__MsgStructMap do
         self.__MsgStructMap[k] = nil
     end
 end

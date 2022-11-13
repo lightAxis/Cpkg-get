@@ -5,7 +5,6 @@ local args = { ... }
 DEPS = DEPS or {}
 ---@class DEPS.Crotocol
 DEPS["Crotocol"] = {}
-DEPS["Crotocol"].middleClass = require("middleClass.pkg_init")
 DEPS["Crotocol"].EmLua = require("EmLua.pkg_init")
 
 ---pkg module include

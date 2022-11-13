@@ -6,10 +6,5 @@
     Email = "jisuk500@gmail.com",
     Version = 1.0,
     Repo = "https://github.com/lightaxis/Cpkg-get.git",
-    Deps = {   
-        {
-            pkg = "middleClass",
-            version = 1.0
-        },
-    }
+    Deps = {},
 }

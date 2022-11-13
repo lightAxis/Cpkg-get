@@ -6,7 +6,6 @@ local args = { ... }
 DEPS = DEPS or {}
 ---@class DEPS.EmLua
 DEPS["EmLua"] = {}
-DEPS["EmLua"].middleClass = require("middleClass.pkg_init")
 
 ---pkg module include
 

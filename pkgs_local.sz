@@ -34,13 +34,4 @@
     SrcPath = "Cpkg-get/PkgLink/src",
     IncludePath = "Cpkg-get/PkgLink/include",
   },
-  {
-    RootPath = "Cpkg-get/middleClass",
-    Execs = {},
-    Upgradable = false,
-    DescPath = "Cpkg-get/middleClass/pkg_info.sz",
-    PkgName = "middleClass",
-    SrcPath = "Cpkg-get/middleClass/src",
-    IncludePath = "Cpkg-get/middleClass/include",
-  },
 }

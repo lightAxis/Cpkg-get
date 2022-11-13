@@ -11,6 +11,7 @@ server.__Handle = require("__Cpkg.Web.Handle"):new()
 function server.main()
 
     rednet.host(const.WebConst.Protocol, "server")
+    print("start hosting in protocol:" .. const.WebConst.Protocol .. " name server")
 
     server.__Handle:attachMsgHandle(protocol.Header.REQ_PKG_CONTENT,
         server.__handle_REQ_PKG_CONTENT)

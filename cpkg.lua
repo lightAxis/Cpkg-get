@@ -5,10 +5,11 @@ CPKG.Param = {}
 CPKG.ServerID = nil
 
 --- param
-CPKG.rednetSide = nil
+CPKG.rednetSide = "back"
 
 
-package.path = package.path .. ";" .. CPKG.RootPath .. "/?.lua"
+package.path = package.path .. ";/" .. CPKG.RootPath .. "/?.lua"
+package.path = package.path .. ";/" .. CPKG.RootPath .. "/__Cpkg/DefaultPkgs/?.lua"
 
 ---@type table<number, string>
 local args = { ... }
