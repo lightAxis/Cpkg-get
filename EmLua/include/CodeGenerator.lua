@@ -1,5 +1,5 @@
 ---@class EmLua.CodeGenerator
-local CodeGenerator = require("class.middleclass")("EmLua.CodeGenerator")
+local CodeGenerator = require("Class.middleclass")("EmLua.CodeGenerator")
 
 local tool = require("__Cpkg.Tool")
 

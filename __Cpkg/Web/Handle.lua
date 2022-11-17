@@ -1,6 +1,6 @@
 ---@class __Cpkg.Web.PkgLink.Handle
 ---@field new fun(self:__Cpkg.Web.PkgLink.Handle):__Cpkg.Web.PkgLink.Handle
-local handle = require("class.middleclass")("__Cpkg.Web.PkgLink.Handle")
+local handle = require("Class.middleclass")("__Cpkg.Web.PkgLink.Handle")
 
 ---constructor
 function handle:initialize()

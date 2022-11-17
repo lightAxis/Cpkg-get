@@ -9,4 +9,4 @@ builder.Name = "Crotocol.testProtoLoad"
 builder.RequirePrefix = "Crotocol.test.testCrotoLoad"
 
 builder:generate(thisPkg.__PATH .. "/test/testProtoLoad")
-builder:generateHandler(thisPkg.__PATH .. "/test/testProtoLoad", "require(\"class.middleclass\")")
+builder:generateHandler(thisPkg.__PATH .. "/test/testProtoLoad", "require(\"Class.middleclass\")")

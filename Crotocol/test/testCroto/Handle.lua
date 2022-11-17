@@ -1,6 +1,6 @@
 ---@class Crotocol.testProto.Handle
 ---@field new fun(self:Crotocol.testProto.Handle):Crotocol.testProto.Handle
-local handle = require("class.middleclass")("Crotocol.testProto.Handle")
+local handle = require("Class.middleclass")("Crotocol.testProto.Handle")
 
 ---constructor
 function handle:initialize()

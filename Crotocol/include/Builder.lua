@@ -5,7 +5,7 @@
 ---@field Structs table<string, Crotocol.struct_t>
 ---@field Headers table<string, Crotocol.struct_t>
 ---@field new fun(self:Crotocol.Builder, name?:string, requirePrefix?:string):Crotocol.Builder
-local builder = require("class.middleclass")("Crotocol.Builder")
+local builder = require("Class.middleclass")("Crotocol.Builder")
 
 ---constructor
 ---@param name? string
