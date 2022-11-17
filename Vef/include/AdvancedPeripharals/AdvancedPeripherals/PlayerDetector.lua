@@ -1,10 +1,10 @@
----@class VDef.AP.PlayerDetector
+---@class Vef.AP.PlayerDetector
 ---@field getPlayersInRange fun(range:number):table<number,string>
 ---@field getOnlinePlayers fun():table<number,string>
----@field getPlayerPos fun(player:string):VDef.AP.PlayerDetector.PlayerInfo
+---@field getPlayerPos fun(player:string):Vef.AP.PlayerDetector.PlayerInfo
 --
 --
----@class VDef.AP.PlayerDetector.PlayerInfo
+---@class Vef.AP.PlayerDetector.PlayerInfo
 ---@field dimension string dimension where player is
 ---@field eyeHeight number height of player
 ---@field pitch number player head pitch, up is -90, down is 90

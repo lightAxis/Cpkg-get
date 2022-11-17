@@ -1,0 +1,19 @@
+{
+    Name = "Tabullet",
+    Desc = "Minecraft CC graphic user interface library for application developer",
+    Author = "JiseokLee",
+    ID = "jisuk500",
+    Email = "jisuk500@gmail.com",
+    Version = 1.0,
+    Repo = "https://github.com/lightaxis/Cpkg-get.git",
+    Deps = {
+        {
+            pkg = "MathLib",
+            version = 1.0
+        },
+        {
+            pkg = "AppLib",
+            version = 1.0
+        },
+    },
+}

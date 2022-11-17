@@ -13,10 +13,10 @@ function Router:initialize()
 end
 
 ---properties description
----@class EventRouter.Router
+---@class AppLib.EventRounter
 ---@field _eventCallbacks table<AppLib.EventEnum, table<number, fun(a:string, b:string, c:string, d:string)>|nil>
 ---@field _rednetCallbacks table<string, table<number, fun(a:string, b:string, c:string, d:string)>|nil>
----@field new fun(self:EventRouter.Router):EventRouter.Router
+---@field new fun(self:AppLib.EventRounter):AppLib.EventRounter
 
 ---attack event callback method to router
 ---@param event AppLib.EventEnum
@@ -86,38 +86,6 @@ end
 function Router:removeRednetEventCallBack(protocol)
     self._rednetCallbacks[protocol] = nil
 end
-
--- ---attach UIRunner to this Router
--- ---@param UIrunner UIRunner
--- function Router:attachUIRunner(UIrunner)
-
---     self:attachEventCallback(JLib.AppLib.EventEnum.mouse_click, function(a, b,
---                                                                            c, d)
---         UIrunner:MouseClickEventCallback(a, b, c, d)
---     end)
-
---     self:attachEventCallback(JLib.AppLib.EventEnum.mouse_scroll, function(a,
---                                                                             b,
---                                                                             c, d)
---         UIrunner:ScrollEventCallback(a, b, c, d)
---     end)
-
---     self:attachEventCallback(JLib.AppLib.EventEnum.key, function(a, b, c, d)
---         UIrunner:KeyInputEventCallback(a, b, c, d)
---     end)
-
---     self:attachEventCallback(JLib.AppLib.EventEnum.char, function(a, b, c, d)
---         UIrunner:CharEventCallback(a, b, c, d)
---     end)
-
---     self:attachEventCallback(JLib.AppLib.EventEnum.monitor_touch, function(a,
---                                                                              b,
---                                                                              c,
---                                                                              d)
---         UIrunner:MonitorTouchEventCallback(a, b, c, d)
---     end)
-
--- end
 
 ---run callback table
 ---@param functionTable table<number, fun(a:string, b:string, c:string, d:string)>|nil

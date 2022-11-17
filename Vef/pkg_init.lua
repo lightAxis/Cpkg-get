@@ -4,17 +4,17 @@ local args = { ... }
 ---@class DEPS
 DEPS = DEPS or {}
 ---@class DEPS.PkgLink
-DEPS["VDef"] = {}
+DEPS["Vef"] = {}
 
 ---pkg module include
 
 ---@class PKGS
 PKGS = PKGS or {}
----@class PKG.VDef
-local VDef = {}
-PKGS["VDef"] = VDef
+---@class PKG.Vef
+local Vef = {}
+PKGS["Vef"] = Vef
 --- absolute path of this pkg when runtime
 ---@type string
-VDef.__PATH = fs.getDir(args[2])
+Vef.__PATH = fs.getDir(args[2])
 
-return VDef
+return Vef

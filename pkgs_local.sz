@@ -53,12 +53,23 @@
     IncludePath = "Cpkg-get/PkgLink/include",
   },
   {
-    RootPath = "Cpkg-get/VDef",
+    RootPath = "Cpkg-get/Tabullet",
+    Execs = {
+      "demoProj",
+    },
+    Upgradable = false,
+    DescPath = "Cpkg-get/Tabullet/pkg_info.sz",
+    PkgName = "Tabullet",
+    SrcPath = "Cpkg-get/Tabullet/src",
+    IncludePath = "Cpkg-get/Tabullet/include",
+  },
+  {
+    RootPath = "Cpkg-get/Vef",
     Execs = {},
     Upgradable = false,
-    DescPath = "Cpkg-get/VDef/pkg_info.sz",
-    PkgName = "VDef",
-    SrcPath = "Cpkg-get/VDef/src",
-    IncludePath = "Cpkg-get/VDef/include",
+    DescPath = "Cpkg-get/Vef/pkg_info.sz",
+    PkgName = "Vef",
+    SrcPath = "Cpkg-get/Vef/src",
+    IncludePath = "Cpkg-get/Vef/include",
   },
 }
