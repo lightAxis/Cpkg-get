@@ -6,7 +6,7 @@ local tool = require("__Cpkg.Tool")
 ---constructor
 function CodeGenerator:initialize()
 
-    self.getScriptPath = PKGS.EmLua.__PATH .. "/temp/CodeGenerator_genScript.lua"
+    self.getScriptPath = PKGS.EmLua.ENV.PATH .. "/temp/CodeGenerator_genScript.lua"
 
     self.__rawScriptLevel = 0
     self.__variableLevel = 0

@@ -13,8 +13,10 @@ PKGS = PKGS or {}
 ---@class PKG.Vef
 local Vef = {}
 PKGS["Vef"] = Vef
+
+Vef.ENV = {}
 --- absolute path of this pkg when runtime
 ---@type string
-Vef.__PATH = fs.getDir(args[2])
+Vef.ENV.PATH = fs.getDir(args[2])
 
 return Vef

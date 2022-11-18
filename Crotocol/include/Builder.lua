@@ -105,7 +105,7 @@ end
 function builder:generate(targetPath)
 
     local generator = DEPS.Crotocol.EmLua.CodeGenerator:new()
-    local tempPath = PKGS.Crotocol.__PATH .. "/templates"
+    local tempPath = PKGS.Crotocol.ENV.PATH .. "/templates"
     local global = {}
     global["Builder"] = self
 
@@ -148,7 +148,7 @@ end
 ---@return Crotocol.Builder
 function builder:generateHandler(targetPath, classIncludeStr)
     local generator = DEPS.Crotocol.EmLua.CodeGenerator:new()
-    local tempPath = PKGS.Crotocol.__PATH .. "/templates"
+    local tempPath = PKGS.Crotocol.ENV.PATH .. "/templates"
     local global = {}
     global["Builder"] = self
     global["classIncludeStr"] = classIncludeStr

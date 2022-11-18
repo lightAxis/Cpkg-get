@@ -80,7 +80,7 @@ builder:addHeader(struct("GETHISTORY", "get history of eat",
     }))
 
 
-builder:generate(thisPkg.__PATH .. "/test/testCroto")
-builder:generateHandler(thisPkg.__PATH .. "/test/testCroto", "require(\"Class.middleclass\")")
-builder:saveTo(thisPkg.__PATH .. "/test/savefile.sz")
+builder:generate(thisPkg.ENV.PATH .. "/test/testCroto")
+builder:generateHandler(thisPkg.ENV.PATH .. "/test/testCroto", "require(\"Class.middleclass\")")
+builder:saveTo(thisPkg.ENV.PATH .. "/test/savefile.sz")
 -- builder:loadFrom(thisPkg.__PATH .. "/test/savefile.sz")

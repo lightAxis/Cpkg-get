@@ -8,6 +8,7 @@ a.Type = {
     ["str"] = "str",
     ["table"] = "table",
     ["custom"] = "custom",
+    ["bool"] = "bool",
     ["nil_"] = "nil_"
 }
 
@@ -26,6 +27,8 @@ function a.makeTypeStr(varType, p1, p2)
             error("p1 & p2 must be string!, p1:" .. tostring(p1) .. "/p2:" .. tostring(p2))
         end
         return "table<" .. p1 .. ", " .. p2 .. ">"
+    elseif varType == a.Type.bool then
+        return "boolean"
     elseif varType == a.Type.custom then
         return p1
     elseif varType == a.Type.nil_ then
@@ -38,10 +41,11 @@ end
 --- - number : (type, number)
 --- - table : (type, keytype, valuetype)
 --- - table(empty) :(type, nil, nil)
+--- - bool : (true or false)
 --- - custom : (type, customInitString)
 --- - nil : (type)
 ---@param varType Crotocol.GenTool.Type
----@param p1? string|number|nil string, number, or table key type
+---@param p1? string|number|boolean|nil string, number, bool, or table key type
 ---@param p2? string|nil table value type
 function a.makeInitStr(varType, p1, p2)
 
@@ -73,6 +77,12 @@ function a.makeInitStr(varType, p1, p2)
             return p1
         else
             error("p1  must be string! p1:" .. tostring(p1))
+        end
+    elseif varType == a.Type.bool then
+        if p1Type == "boolean" then
+            return tostring(p1)
+        else
+            error("p1 must be boolean! p1" .. tostring(p1))
         end
     elseif varType == a.Type.nil_ then
         return "nil"

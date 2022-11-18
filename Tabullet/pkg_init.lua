@@ -18,7 +18,9 @@ PKGS["Tabullet"] = Tabullet
 --- absolute path of this pkg when runtime
 ---@type string
 
-Tabullet.__PATH = fs.getDir(args[2])
+Tabullet.ENV = {}
+Tabullet.ENV.PATH = fs.getDir(args[2])
+
 Tabullet.UIElement = require("Tabullet.include.UIElement")
 Tabullet.UITools = require("Tabullet.include.UITools")
 Tabullet.UIEvent = {}

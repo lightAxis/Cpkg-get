@@ -14,9 +14,11 @@ PKGS = PKGS or {}
 ---@class PKG.EmLua
 local EmLua = {}
 PKGS["EmLua"] = EmLua
+
+EmLua.ENV = {}
 --- absolute path of this pkg when runtime
 ---@type string
-EmLua.__PATH = fs.getDir(args[2])
+EmLua.ENV.PATH = fs.getDir(args[2])
 
 --- get all include file
 EmLua.CodeGenerator = require("EmLua.include.CodeGenerator")

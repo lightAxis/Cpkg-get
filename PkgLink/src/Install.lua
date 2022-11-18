@@ -118,5 +118,5 @@ builder:addHeader(struct("REQ_PKG_FILE", "request file in pkg", {
         "file path to request. must send abs path of pkg")
 }))
 
-builder:generate(PKGS.PkgLink.__PATH .. "/../__Cpkg/Web/PkgLink")
-builder:generateHandler(PKGS.PkgLink.__PATH .. "/../__Cpkg/Web", "require(\"Class.middleclass\")")
+builder:generate(PKGS.PkgLink.ENV.PATH .. "/../__Cpkg/Web/PkgLink")
+builder:generateHandler(PKGS.PkgLink.ENV.PATH .. "/../__Cpkg/Web", "require(\"Class.middleclass\")")

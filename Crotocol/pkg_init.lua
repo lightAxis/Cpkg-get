@@ -14,9 +14,11 @@ PKGS = PKGS or {}
 ---@class PKG.Crotocol
 local Crotocol = {}
 PKGS["Crotocol"] = Crotocol
+
+Crotocol.ENV = {}
 --- absolute path of this pkg when runtime
 ---@type string
-Crotocol.__PATH = fs.getDir(args[2])
+Crotocol.ENV.PATH = fs.getDir(args[2])
 
 Crotocol.enum_t = require("Crotocol.include.enum_t")
 Crotocol.enumElm_t = require("Crotocol.include.enumElm_t")

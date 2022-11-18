@@ -1,18 +1,18 @@
 {
-    Name = "Tabullet",
-    Desc = "Minecraft CC graphic user interface library for application developer",
+    Name = "Golkin",
+    Desc = "Minecraft CC Banking & Bank server application",
     Author = "JiseokLee",
     ID = "jisuk500",
     Email = "jisuk500@gmail.com",
-    Version = 1.1,
+    Version = 1.0,
     Repo = "https://github.com/lightaxis/Cpkg-get.git",
     Deps = {
         {
-            pkg = "MathLib",
+            pkg = "Crotocol",
             version = 1.0
         },
         {
-            pkg = "AppLib",
+            pkg = "Tabullet",
             version = 1.0
         },
     },

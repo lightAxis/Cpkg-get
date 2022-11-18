@@ -14,8 +14,10 @@ PKGS = PKGS or {}
 ---@class PKG.PkgLink
 local PkgLink = {}
 PKGS["PkgLink"] = PkgLink
+
+PkgLink.ENV = {}
 --- absolute path of this pkg when runtime
 ---@type string
-PkgLink.__PATH = fs.getDir(args[2])
+PkgLink.ENV.PATH = fs.getDir(args[2])
 
 return PkgLink
