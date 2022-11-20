@@ -37,6 +37,7 @@
     Execs = {
       "protocol_gen",
       "test_client",
+      "start_server",
     },
     Upgradable = false,
     DescPath = "Cpkg-get/Golkin/pkg_info.sz",
