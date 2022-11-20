@@ -9,6 +9,9 @@ local const = THIS.ENV.CONST
 --- class definition
 ---@class Golkin.Web.Server
 ---@field __handle Golkin.Web.Protocol.Handle
+---@field __bankPath string
+---@field __cacheAccounts table<string, Golkin.Web.Protocol.Struct.Account_t>
+---@field new fun(self:Golkin.Web.Server):Golkin.Web.Server
 
 ---@class Golkin.Web.Server
 local Server = class("Golkin.Web.Server")
@@ -16,7 +19,7 @@ local Server = class("Golkin.Web.Server")
 function Server:initialize()
     self.__handle = handle:new()
 
-    self.__handle:attachMsgHandle(protocol.Header.ACK_GET_ACCOUNT, function(msg, msgstruct)
+    self.__handle:attachMsgHandle(protocol.Header.GET_ACCOUNT, function(msg, msgstruct)
         ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.GET_ACCOUNT
         self:__handle_GET_ACCOUNT(msg, msgstruct)
     end)
@@ -42,6 +45,9 @@ function Server:initialize()
     end)
 
     self.__bankPath = THIS.ENV.PATH .. const.fileDir
+    if fs.exists(self.__bankPath) == false then
+        fs.makeDir(self.__bankPath)
+    end
 
     rednet.host(const.protocol, const.serverName)
 
@@ -55,12 +61,21 @@ function Server:initialize()
         f.close()
         self.__cacheAccounts[account.Name] = account
     end
-
 end
 
 ---main function for running server
 function Server:main()
+    print("start hosting in protocol : " .. const.protocol .. " in node :" .. const.serverName)
 
+    while true do
+        -- rednet_message, fromID, msg, protocol
+        local a, b, c, d = os.pullEvent("rednet_message")
+        if (d == const.protocol) then
+            print("---------------")
+            print("get msg from id : " .. b)
+            self.__handle:parse(c)
+        end
+    end
 end
 
 ---send msg in protocol
@@ -102,7 +117,7 @@ function Server:__getAccount(accountName)
     ---@type Golkin.Web.Protocol.Struct.Account_t
     local account = self:__getCache_byName(accountName)
     if account == nil then
-        local accountPath = self.__bankPath .. "/" .. accountName .. ".lua"
+        local accountPath = self.__bankPath .. "/" .. accountName .. ".sz"
         if (fs.exists(accountPath) == false) then
             return nil
         else
@@ -112,13 +127,15 @@ function Server:__getAccount(accountName)
             return account
         end
     end
+
+    return account
 end
 
 ---save account to server
 ---@param account Golkin.Web.Protocol.Struct.Account_t
 function Server:__saveAccount(account)
-    Server:__saveToCache(account)
-    local accountPath = self.__bankPath .. "/" .. account.Name .. ".lua"
+    self:__saveToCache(account)
+    local accountPath = self.__bankPath .. "/" .. account.Name .. ".sz"
     local f = fs.open(accountPath, "w")
     f.write(textutils.serialize(account))
     f.close()
@@ -127,8 +144,8 @@ end
 ---remove account by name
 ---@param accountName string
 function Server:__removeAccount(accountName)
-    Server:__removeCache_byName(accountName)
-    local accountPath = self.__bankPath .. "/" .. accountName .. ".lua"
+    self:__removeCache_byName(accountName)
+    local accountPath = self.__bankPath .. "/" .. accountName .. ".sz"
     fs.delete(accountPath)
 end
 
@@ -136,6 +153,7 @@ end
 ---@param msg Golkin.Web.Protocol.Msg
 ---@param msgstruct Golkin.Web.Protocol.MsgStruct.GET_ACCOUNT
 function Server:__handle_GET_ACCOUNT(msg, msgstruct)
+    print("handle GET_ACCOUNT msg")
     local replyMsgStruct = protocol.MsgStruct.ACK_GET_ACCOUNT:new()
     local replyHeader = protocol.Header.ACK_GET_ACCOUNT
     local replyEnum = protocol.Enum.ACK_GET_ACCOUNT_R
@@ -150,6 +168,8 @@ function Server:__handle_GET_ACCOUNT(msg, msgstruct)
         replyMsgStruct.State = replyEnum.NO_ACCOUNT_FOR_NAME
         replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("NO_ACCOUNT_FOR_NAME")
         return nil
     end
 
@@ -159,6 +179,8 @@ function Server:__handle_GET_ACCOUNT(msg, msgstruct)
         replyMsgStruct.State = replyEnum.PASSWD_UNMET
         replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("PASSWD_UNMET")
         return nil
     end
 
@@ -167,6 +189,8 @@ function Server:__handle_GET_ACCOUNT(msg, msgstruct)
     replyMsgStruct.State   = replyEnum.SUCCESS
     replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
     self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+    print("good:" .. tostring(replyMsgStruct.State))
+    print("SUCCESS")
     return nil
 
 end
@@ -175,6 +199,7 @@ end
 ---@param msg Golkin.Web.Protocol.Msg
 ---@param msgstruct Golkin.Web.Protocol.MsgStruct.GET_ACCOUNTS
 function Server:__handle_GET_ACCOUNTS(msg, msgstruct)
+    print("handle GET_ACCOUNTS msg")
     local replyMsgStruct = protocol.MsgStruct.ACK_GET_ACCOUNTS:new()
     local replyHeader = protocol.Header.ACK_GET_ACCOUNTS
     local replyEnum = protocol.Enum.ACK_GET_ACCOUNTS_R
@@ -188,11 +213,16 @@ function Server:__handle_GET_ACCOUNTS(msg, msgstruct)
     replyMsgStruct.AccountsList = accountNames
     if (#accountNames <= 0) then
         replyMsgStruct.State = replyEnum.NO_BANK_FILE
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("NO_BANK_FILE")
     else
         replyMsgStruct.State = replyEnum.SUCCESS
+        print("good:" .. tostring(replyMsgStruct.State))
+        print("SUCCESS")
     end
     replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
-    Server:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+    self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+
     return nil
 end
 
@@ -200,6 +230,7 @@ end
 ---@param msg Golkin.Web.Protocol.Msg
 ---@param msgstruct Golkin.Web.Protocol.MsgStruct.GET_OWNER_ACCOUNTS
 function Server:__handle_GET_OWNER_ACCOUNTS(msg, msgstruct)
+    print("handle GET_OWNER_ACCOUNTS msg")
     local replyMsgStruct = protocol.MsgStruct.ACK_GET_OWNER_ACCOUNTS:new()
     local replyHeader = protocol.Header.ACK_GET_OWNER_ACCOUNTS
     local replyEnum = protocol.Enum.ACK_GET_OWNER_ACCOUNTS_R
@@ -215,11 +246,15 @@ function Server:__handle_GET_OWNER_ACCOUNTS(msg, msgstruct)
     replyMsgStruct.Accounts = accountNames
     if #accountNames >= 1 then
         replyMsgStruct.State = replyEnum.SUCCESS
+        print("good:" .. tostring(replyMsgStruct.State))
+        print("SUCCESS")
     else
         replyMsgStruct.State = replyEnum.NO_ACCOUNTS
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("NO_ACCOUNTS")
     end
     replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
-    Server:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+    self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
     return nil
 end
 
@@ -227,24 +262,29 @@ end
 ---@param msg Golkin.Web.Protocol.Msg
 ---@param msgstruct Golkin.Web.Protocol.MsgStruct.REGISTER
 function Server:__handle_REGISTER(msg, msgstruct)
+    print("handle REGISTER msg")
     local replyMsgStruct = protocol.MsgStruct.ACK_REGISTER:new()
     local replyHeader = protocol.Header.ACK_REGISTER
     local replyEnum = protocol.Enum.ACK_REGISTER_R
 
     --- read account
     ---@type Golkin.Web.Protocol.Struct.Account_t|nil
-    local currentAccount = Server:__getAccount(msgstruct.AccountName)
+    local currentAccount = self:__getAccount(msgstruct.AccountName)
 
     --- check is account already exists
     if currentAccount ~= nil then
         --- check owner is met
-        if (currentAccount.Owner == msgstruct.OwnerName) then
+        if (currentAccount.Owner ~= msgstruct.OwnerName) then
             replyMsgStruct.State = replyEnum.ACCOUNT_OWNER_UNMET
+            print("error:" .. tostring(replyMsgStruct.State))
+            print("ACCOUNT_OWNER_UNMET")
         else
             replyMsgStruct.State = replyEnum.ACCOUNT_ALREADY_EXISTS
+            print("error:" .. tostring(replyMsgStruct.State))
+            print("ACCOUNT_ALREADY_EXISTS")
         end
         replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
-        Server:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
         return nil
     end
 
@@ -255,12 +295,14 @@ function Server:__handle_REGISTER(msg, msgstruct)
     newAccount.Password = msgstruct.Password
     newAccount.Histories = {}
     newAccount.Balance = 0
-    Server:__saveAccount(newAccount)
+    self:__saveAccount(newAccount)
 
     --- send SUCCESS
     replyMsgStruct.State = replyEnum.SUCCESS
     replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
-    Server:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+    self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+    print("good:" .. tostring(replyMsgStruct.State))
+    print("SUCCESS")
     return nil
 end
 
@@ -268,6 +310,7 @@ end
 ---@param msg Golkin.Web.Protocol.Msg
 ---@param msgstruct Golkin.Web.Protocol.MsgStruct.SEND
 function Server:__handle_SEND(msg, msgstruct)
+    print("handle SEND msg")
     local replyMsgStruct = protocol.MsgStruct.ACK_SEND:new()
     local replyHeader = protocol.Header.ACK_SEND
     local replyEnum = protocol.Enum.ACK_SEND_R
@@ -276,16 +319,20 @@ function Server:__handle_SEND(msg, msgstruct)
     if msgstruct.Balance < 0 then
         replyMsgStruct.State = replyEnum.BALANCE_CANNOT_BE_NEGATIVE
         replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
-        Server:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("BALANCE_CANNOT_BE_NEGATIVE")
         return nil
     end
 
     --- check if sender account exist
-    local senderAccount = Server:__getAccount(msgstruct.From)
+    local senderAccount = self:__getAccount(msgstruct.From)
     if (senderAccount == nil) then
         replyMsgStruct.State = replyEnum.NO_ACCOUNT_TO_SEND
         replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
-        Server:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("NO_ACCOUNT_TO_SEND")
         return nil
     end
 
@@ -293,7 +340,9 @@ function Server:__handle_SEND(msg, msgstruct)
     if senderAccount.Owner ~= msgstruct.OwnerName then
         replyMsgStruct.State = replyEnum.OWNER_UNMET
         replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
-        Server:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("OWNER_UNMET")
         return nil
     end
 
@@ -301,7 +350,9 @@ function Server:__handle_SEND(msg, msgstruct)
     if senderAccount.Balance < msgstruct.Balance then
         replyMsgStruct.State = replyEnum.NOT_ENOUGHT_BALLANCE_TO_SEND
         replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
-        Server:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("NOT_ENOUGHT_BALLANCE_TO_SEND")
         return nil
     end
 
@@ -309,16 +360,20 @@ function Server:__handle_SEND(msg, msgstruct)
     if senderAccount.Password ~= msgstruct.Password then
         replyMsgStruct.State = replyEnum.PASSWORD_UNMET
         replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
-        Server:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("PASSWORD_UNMET")
         return nil
     end
 
     --- check if reciever account exist
-    local recieverAccount = Server:__getAccount(msgstruct.To)
+    local recieverAccount = self:__getAccount(msgstruct.To)
     if (recieverAccount == nil) then
         replyMsgStruct.State = replyEnum.NO_ACCOUNT_TO_RECIEVE
         replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
-        Server:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("NO_ACCOUNT_TO_RECIEVE")
         return nil
     end
 
@@ -355,12 +410,16 @@ function Server:__handle_SEND(msg, msgstruct)
     end
 
     -- save both account to server
-    Server:__saveAccount(senderAccount)
-    Server:__saveAccount(recieverAccount)
+    self:__saveAccount(senderAccount)
+    self:__saveAccount(recieverAccount)
 
     -- send back success
     replyMsgStruct.State = replyEnum.SUCCESS
     replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
-    Server:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+    self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+    print("good:" .. tostring(replyMsgStruct.State))
+    print("SUCCESS")
     return nil
 end
+
+return Server

@@ -97,7 +97,9 @@ function server.__recursive_content_search(currPath, filePathsMap, folderPathsMa
         folderPathsMap[currPath] = 1
         local files = fs.list(currPath)
         for k, v in pairs(files) do
-            server.__recursive_content_search(fs.combine(currPath, v), filePathsMap, folderPathsMap)
+            if (v ~= "userdata") then
+                server.__recursive_content_search(fs.combine(currPath, v), filePathsMap, folderPathsMap)
+            end
         end
     else
         filePathsMap[currPath] = 1
