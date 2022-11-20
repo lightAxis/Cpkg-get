@@ -36,6 +36,7 @@
     RootPath = "Cpkg-get/Golkin",
     Execs = {
       "protocol_gen",
+      "test_client",
     },
     Upgradable = false,
     DescPath = "Cpkg-get/Golkin/pkg_info.sz",
