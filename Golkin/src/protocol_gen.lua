@@ -83,7 +83,7 @@ builder:addStruct(struct("Account_t", "strcut for bank account info", {
 
 builder:addHeader(struct("GET_ACCOUNT", "get account info from server", {
     field("AccountName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of the account to get"),
-    field("Password", fieldType(efieldType.num), fieldInit(efieldType.nil_), "md5 hashed password for account"),
+    field("Password", fieldType(efieldType.str), fieldInit(efieldType.nil_), "md5 hashed password for account"),
 }))
 
 builder:addHeader(struct("ACK_GET_ACCOUNT", "reply to get_account msg", {
