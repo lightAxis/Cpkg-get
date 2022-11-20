@@ -2,7 +2,7 @@
 ---@field Name string name of this banking history
 ---@field InOut number input and output balance in this banking history
 ---@field BalanceLeft number balance left after this banking history
----@field Daytime table<number, Golkin.Web.Protocol.Struct.Daytime_t> daytime when this history occured
+---@field Daytime Golkin.Web.Protocol.Struct.Daytime_t daytime when this history occured
 ---@field new fun():Golkin.Web.Protocol.Struct.History_t
 local struct = {}
 
@@ -21,8 +21,8 @@ function struct.new()
     ---@type number
     a.BalanceLeft = nil -- balance left after this banking history
     
-    ---@type table<number, Golkin.Web.Protocol.Struct.Daytime_t>
-    a.Daytime = {} -- daytime when this history occured
+    ---@type Golkin.Web.Protocol.Struct.Daytime_t
+    a.Daytime = nil -- daytime when this history occured
     
     return a
 end

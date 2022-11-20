@@ -9,11 +9,11 @@
     Deps = {
         {
             pkg = "MathLib",
-            version = 1.0
+            version = 1.1
         },
         {
             pkg = "AppLib",
-            version = 1.0
+            version = 1.1
         },
     },
 }

@@ -33,6 +33,17 @@
     IncludePath = "Cpkg-get/EmLua/include",
   },
   {
+    RootPath = "Cpkg-get/Golkin",
+    Execs = {
+      "protocol_gen",
+    },
+    Upgradable = false,
+    DescPath = "Cpkg-get/Golkin/pkg_info.sz",
+    PkgName = "Golkin",
+    SrcPath = "Cpkg-get/Golkin/src",
+    IncludePath = "Cpkg-get/Golkin/include",
+  },
+  {
     RootPath = "Cpkg-get/MathLib",
     Execs = {},
     Upgradable = false,

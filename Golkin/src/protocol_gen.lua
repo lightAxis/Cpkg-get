@@ -27,27 +27,31 @@ builder:addEnum(enum("ACK_GET_ACCOUNTS_R", "result enum for ACK_GETACCOUNTS msg"
     enumElm("SUCCESS", 201, "success to get accounts")
 }))
 
-builder:addEnum(enum("ACK_GET_HISTORY_R", "result enum for ACK_GETHISTORY msg", {
-    enumElm("NONE", -1, "none result. this is error!"),
-    enumElm("NO_ACCOUNT", -301, "error when no account in that name account exists"),
-    enumElm("NORMAL", 0, "standard for normal msg"),
-    enumElm("SUCCESS", 301, "success to get histories")
-}))
-
 builder:addEnum(enum("ACK_REGISTER_R", "result enum for ACK_REGISTER msg", {
     enumElm("NONE", -1, "none result. this is error!"),
-    enumElm("ACCOUNT_ALREADY_EXISTS", -401, "account name already exist in server error"),
+    enumElm("ACCOUNT_ALREADY_EXISTS", -301, "account name already exist in server error"),
+    enumElm("ACCOUNT_OWNER_UNMET", -302, "account already exist, and owner is different"),
     enumElm("NORMAL", 0, "standard for normal msg"),
-    enumElm("SUCCESS", 401, "success to register new account to server")
+    enumElm("SUCCESS", 301, "success to register new account to server")
 }))
 
 builder:addEnum(enum("ACK_SEND_R", "result enum for ACK_SEND msg", {
     enumElm("NONE", -1, "none result. this is error!"),
-    enumElm("NO_ACCOUNT_TO_SEND", -501, "no account to send money from"),
-    enumElm("NO_ACCOUNT_TO_RECIEVE", -502, "no account to recieve money"),
-    enumElm("NOT_ENOUGHT_BALLANCE_TO_SEND", -503, "not enough money left in account to send"),
+    enumElm("NO_ACCOUNT_TO_SEND", -401, "no account to send money from"),
+    enumElm("NO_ACCOUNT_TO_RECIEVE", -402, "no account to recieve money"),
+    enumElm("NOT_ENOUGHT_BALLANCE_TO_SEND", -403, "not enough money left in account to send"),
+    enumElm("PASSWORD_UNMET", -404, "password is not corrent"),
+    enumElm("OWNER_UNMET", -405, "Owner is not matching"),
+    enumElm("BALANCE_CANNOT_BE_NEGATIVE", -406, "balance value is less than 0"),
     enumElm("NORMAL", 0, "standard for normal msg"),
-    enumElm("SUCCESS", 501, "success to send money")
+    enumElm("SUCCESS", 401, "success to send money")
+}))
+
+builder:addEnum(enum("ACK_GET_OWNER_ACCOUNTS_R", "result enum for ACK_GET_OWNER_ACCOUNTS", {
+    enumElm("NONE", -1, "none result. this is error"),
+    enumElm("NO_ACCOUNTS", -501, "no accounts for owner"),
+    enumElm("NORMAL", 0, "standard for normal msg"),
+    enumElm("SUCCESS", 501, "success to get accounts list"),
 }))
 
 --- make structs
@@ -60,9 +64,8 @@ builder:addStruct(struct("History_t", "struct for banking history", {
     field("InOut", fieldType(efieldType.num), fieldInit(efieldType.nil_),
         "input and output balance in this banking history"),
     field("BalanceLeft", fieldType(efieldType.num), fieldInit(efieldType.nil_), "balance left after this banking history"),
-    field("Daytime", fieldType(efieldType.table, "number", builder:getStructClassName("Daytime_t")),
-        fieldInit(efieldType.table, nil, nil),
-        "daytime when this history occured"),
+    field("Daytime", fieldType(efieldType.custom, builder:getStructClassName("Daytime_t")),
+        fieldInit(efieldType.nil_), "daytime when this history occured"),
 }))
 
 builder:addStruct(struct("Account_t", "strcut for bank account info", {
@@ -79,8 +82,8 @@ builder:addStruct(struct("Account_t", "strcut for bank account info", {
 --- headers definitions
 
 builder:addHeader(struct("GET_ACCOUNT", "get account info from server", {
-    field("UserName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of the account to get"),
-    field("IDToSendBack", fieldType(efieldType.num), fieldInit(efieldType.nil_), "id to send back account info"),
+    field("AccountName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of the account to get"),
+    field("Password", fieldType(efieldType.num), fieldInit(efieldType.nil_), "md5 hashed password for account"),
 }))
 
 builder:addHeader(struct("ACK_GET_ACCOUNT", "reply to get_account msg", {
@@ -91,8 +94,20 @@ builder:addHeader(struct("ACK_GET_ACCOUNT", "reply to get_account msg", {
         fieldInit(efieldType.num, -1), "result enum")
 }))
 
+builder:addHeader(struct("GET_OWNER_ACCOUNTS", "get accounts of owner from server", {
+    field("Owner", fieldType(efieldType.str), fieldInit(efieldType.nil_), "owner of the accounts"),
+}))
+
+builder:addHeader(struct("ACK_GET_OWNER_ACCOUNTS", "reply to get_owner_account msg",
+    {
+        field("Accounts", fieldType(efieldType.table, "number", builder:getStructClassName("Account_t")),
+            fieldInit(efieldType.table, nil, nil), "accounts list"),
+        field("Success", fieldType(efieldType.bool), fieldInit(efieldType.bool, false), "success the request or not"),
+        field("State", fieldType(efieldType.custom, builder:getEnumClassName("ACK_GET_OWNER_ACCOUNTS_R")),
+            fieldInit(efieldType.num, -1), "result enum")
+    }))
+
 builder:addHeader(struct("GET_ACCOUNTS", "get account list from server", {
-    field("IDToSendBack", fieldType(efieldType.num), fieldInit(efieldType.nil_), "id to send ack msg back")
 }))
 
 builder:addHeader(struct("ACK_GET_ACCOUNTS", "reply msg of get accounts list from server", {
@@ -103,24 +118,10 @@ builder:addHeader(struct("ACK_GET_ACCOUNTS", "reply msg of get accounts list fro
         fieldInit(efieldType.num, -1), "return state of msg"),
 }))
 
-builder:addHeader(struct("GET_HISTORY", "get account history of specific name", {
-    field("UserName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "username to search history"),
-    field("Count", fieldType(efieldType.num), fieldInit(efieldType.num, -1), "count to read at server"),
-    field("IDToSendBack", fieldType(efieldType.num), fieldInit(efieldType.nil_), "id to send back ack on this"),
-}))
-
-builder:addHeader(struct("ACK_GET_HISTORY", "get history of account in count", {
-    field("Histories", fieldType(efieldType.table, "number", builder:getStructClassName("History_t")),
-        fieldInit(efieldType.table, nil, nil), "history of account"),
-    field("Success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success the request or not"),
-    field("State", fieldType(efieldType.custom, builder:getEnumClassName("ACK_GET_HISTORY_R")),
-        fieldInit(efieldType.num, -1), "return state")
-}))
-
 builder:addHeader(struct("REGISTER", "register new account to server", {
     field("AccountName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "account name to create"),
-    field("UserName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "username to register"),
-    field("IDToSendBack", fieldType(efieldType.num), fieldInit(efieldType.num, -1), "id to send reply back"),
+    field("OwnerName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "owner name to register"),
+    field("Password", fieldType(efieldType.str), fieldInit(efieldType.nil_), "password for account"),
 }))
 
 builder:addHeader(struct("ACK_REGISTER", "reply register new account to server", {
@@ -133,10 +134,11 @@ builder:addHeader(struct("ACK_REGISTER", "reply register new account to server",
 builder:addHeader(struct("SEND", "request send money to other account", {
     field("From", fieldType(efieldType.str), fieldInit(efieldType.nil_), "sending money from Account"),
     field("FromMsg", fieldType(efieldType.str), fieldInit(efieldType.nil_), "display msg as in sender history name"),
+    field("OwnerName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "owner of sender account"),
+    field("Password", fieldType(efieldType.str), fieldInit(efieldType.nil_), "password of account"),
     field("To", fieldType(efieldType.str), fieldInit(efieldType.nil_), "recieve money from account"),
     field("ToMsg", fieldType(efieldType.str), fieldInit(efieldType.nil_), "display msg as in reciever history name"),
     field("Balance", fieldType(efieldType.num), fieldInit(efieldType.nil_), "balance to send"),
-    field("IDToSendBack", fieldType(efieldType.num), fieldInit(efieldType.nil_), "ID to send back reply"),
 }))
 
 builder:addHeader(struct("ACK_SEND", "reply send money to other account", {

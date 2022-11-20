@@ -1,7 +1,7 @@
 ---@class Golkin.Web.Protocol.MsgStruct.REGISTER : Golkin.Web.Protocol.MsgStruct.IMsgStruct
 ---@field AccountName string account name to create
----@field UserName string username to register
----@field IDToSendBack number id to send reply back
+---@field OwnerName string owner name to register
+---@field Password string password for account
 ---@field new fun():Golkin.Web.Protocol.MsgStruct.REGISTER
 local struct = {}
 
@@ -15,10 +15,10 @@ function struct.new()
     a.AccountName = nil -- account name to create
     
     ---@type string
-    a.UserName = nil -- username to register
+    a.OwnerName = nil -- owner name to register
     
-    ---@type number
-    a.IDToSendBack = -1 -- id to send reply back
+    ---@type string
+    a.Password = nil -- password for account
     
     return a
 end

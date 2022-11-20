@@ -20,6 +20,11 @@ Golkin.ENV = {}
 --- absolute path of this pkg when runtime
 ---@type string
 Golkin.ENV.PATH = fs.getDir(args[2])
+Golkin.ENV.CONST = require("Golkin.include.Const")
+
+Golkin.Web = {}
+Golkin.Web.Handle = require("Golkin.include.Web.Handle")
+Golkin.Web.Protocol = require("Golkin.include.Web.Protocol.Include")
 
 
 return Golkin

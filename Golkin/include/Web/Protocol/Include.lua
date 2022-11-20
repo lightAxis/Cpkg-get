@@ -20,15 +20,15 @@ protocol.Struct.History_t = require("Golkin.include.Web.Protocol.Struct.History_
 --- include MsgStructs
 ---@class Golkin.Web.Protocol.MsgStruct
 protocol.MsgStruct = {}
+protocol.MsgStruct.GET_OWNER_ACCOUNTS = require("Golkin.include.Web.Protocol.MsgStruct.GET_OWNER_ACCOUNTS")
 protocol.MsgStruct.ACK_REGISTER = require("Golkin.include.Web.Protocol.MsgStruct.ACK_REGISTER")
-protocol.MsgStruct.ACK_GET_HISTORY = require("Golkin.include.Web.Protocol.MsgStruct.ACK_GET_HISTORY")
+protocol.MsgStruct.ACK_GET_ACCOUNT = require("Golkin.include.Web.Protocol.MsgStruct.ACK_GET_ACCOUNT")
 protocol.MsgStruct.ACK_SEND = require("Golkin.include.Web.Protocol.MsgStruct.ACK_SEND")
 protocol.MsgStruct.GET_ACCOUNT = require("Golkin.include.Web.Protocol.MsgStruct.GET_ACCOUNT")
 protocol.MsgStruct.SEND = require("Golkin.include.Web.Protocol.MsgStruct.SEND")
 protocol.MsgStruct.ACK_GET_ACCOUNTS = require("Golkin.include.Web.Protocol.MsgStruct.ACK_GET_ACCOUNTS")
 protocol.MsgStruct.GET_ACCOUNTS = require("Golkin.include.Web.Protocol.MsgStruct.GET_ACCOUNTS")
-protocol.MsgStruct.GET_HISTORY = require("Golkin.include.Web.Protocol.MsgStruct.GET_HISTORY")
 protocol.MsgStruct.REGISTER = require("Golkin.include.Web.Protocol.MsgStruct.REGISTER")
-protocol.MsgStruct.ACK_GET_ACCOUNT = require("Golkin.include.Web.Protocol.MsgStruct.ACK_GET_ACCOUNT")
+protocol.MsgStruct.ACK_GET_OWNER_ACCOUNTS = require("Golkin.include.Web.Protocol.MsgStruct.ACK_GET_OWNER_ACCOUNTS")
 
 return protocol

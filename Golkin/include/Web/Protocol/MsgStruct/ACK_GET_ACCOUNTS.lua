@@ -18,7 +18,7 @@ function struct.new()
     a.Success = false -- success the request or not
     
     ---@type Golkin.Web.Protocol.Enum.ACK_GET_ACCOUNTS_R
-    a.State = {} -- return state of msg
+    a.State = -1 -- return state of msg
     
     return a
 end
