@@ -27,7 +27,7 @@ local Screen_CC = class("Tabullet.Screen")
 
 -- [constructor]
 ---@param screenObj any -- computercraft screen obj
----@param side Tabullet.Enums.Side
+---@param side Tabullet.Enums.Side|string
 function Screen_CC:initialize(screenObj, side)
     if (screenObj == nil) then
         error("screenObj cannot be nil! Screen_CC:initialize(screenObj, side)")
