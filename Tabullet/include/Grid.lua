@@ -6,33 +6,27 @@ local Vector2 = DEPS.Tabullet.MathLib.Vector2
 
 ---public class Grid
 ---@class Tabullet.Grid
-local Grid = class("Tabullet.Grid")
-
---- field description
----@class Tabullet.Grid
----@field targetLen MathLib.Vector2
+---@field TargetLen MathLib.Vector2
 ---@field Offset MathLib.Vector2
 ---@field __horizontalSettings table<number, string>
 ---@field __verticalSettings table<number, string>
 ---@field __LensX table<number, number>
 ---@field __LensY table<number, number>
+---@field new fun(self:Tabullet.Grid, Len:MathLib.Vector2, Pos?:MathLib.Vector2):Tabullet.Grid
+local Grid = class("Tabullet.Grid")
 
 ---constructor
 ---@param Len MathLib.Vector2
 ---@param Pos? MathLib.Vector2 or (1,1)
 function Grid:initialize(Len, Pos)
-    self.targetLen = Len:Copy()
+    self.TargetLen = Len:Copy()
     self.Offset = Pos or Vector2:new(1, 1)
     self.__horizontalSettings = {}
     self.__verticalSettings = {}
-    self.__LensX = {}
-    self.__LensY = {}
+    self.__LensX = nil
+    self.__LensY = nil
+    self.__regist_elems = {}
 end
-
----properties description
----@class Tabullet.Grid
----@field targetLen MathLib.Vector2
----@field new fun(self:Tabullet.Grid, Len:MathLib.Vector2, Pos?:MathLib.Vector2):Tabullet.Grid
 
 ---set horizontal setting, table<number, string>, "num", "num*"
 ---@param setting table<number, string>
@@ -47,8 +41,8 @@ function Grid:updatePosLen()
     local horizontalLength = #(self.__horizontalSettings)
     local verticalLength = #(self.__verticalSettings)
 
-    self.__LensX = self:__getLens(self.targetLen.x, self.__horizontalSettings)
-    self.__LensY = self:__getLens(self.targetLen.y, self.__verticalSettings)
+    self.__LensX = self:__getLens(self.TargetLen.x, self.__horizontalSettings)
+    self.__LensY = self:__getLens(self.TargetLen.y, self.__verticalSettings)
 
     for i = 2, horizontalLength, 1 do
         self.__LensX[i] = self.__LensX[i - 1] + self.__LensX[i]
@@ -75,7 +69,6 @@ end
 ---@return MathLib.Vector2 Pos
 ---@return MathLib.Vector2 Len
 function Grid:getPosLen(col, row, colSpan, rowSpan)
-
     return self:getPosLenWithMargin(col, row, colSpan, rowSpan, 0, 0, 0, 0)
 
 end
@@ -93,6 +86,11 @@ end
 ---@return MathLib.Vector2 Len
 function Grid:getPosLenWithMargin(col, row, colSpan, rowSpan, marginLeft,
                                   marginRight, marginTop, marginBottom)
+
+    if self.__LensX == nil or self.__LensY == nil then
+        error("gridbox Verticies is nil!, did you do Grid:updatePosLen() ?")
+    end
+
     local colspan = colSpan or 1
     local rowspan = rowSpan or 1
 
@@ -101,7 +99,7 @@ function Grid:getPosLenWithMargin(col, row, colSpan, rowSpan, marginLeft,
 
     if (col == 1) then
         Pos.x = 1
-        Len.x = self.__LensX[colSpan]
+        Len.x = self.__LensX[colspan]
     else
         Pos.x = self.__LensX[col - 1] + 1
         Len.x = self.__LensX[col + colspan - 1] - self.__LensX[col - 1]
@@ -109,7 +107,7 @@ function Grid:getPosLenWithMargin(col, row, colSpan, rowSpan, marginLeft,
 
     if (row == 1) then
         Pos.y = 1
-        Len.y = self.__LensY[rowSpan]
+        Len.y = self.__LensY[rowspan]
     else
         Pos.y = self.__LensY[row - 1] + 1
         Len.y = self.__LensY[row + rowspan - 1] - self.__LensY[row - 1]
@@ -130,12 +128,55 @@ function Grid:getPosLenWithMargin(col, row, colSpan, rowSpan, marginLeft,
 
     Len.y = Len.y - marginBottom
 
-    Len.x = math.min(Len.x, self.targetLen.x)
-    Len.y = math.min(Len.y, self.targetLen.y)
+    Len.x = math.min(Len.x, self.TargetLen.x)
+    Len.y = math.min(Len.y, self.TargetLen.y)
 
     Pos = THIS.UITools.calcRelativeOffset(Pos, self.Offset)
 
     return Pos, Len
+end
+
+---get Position and length to UIElement
+---@param elem Tabullet.UIElement target UI element to set PosLen
+---@param col number column number > 1
+---@param row number row number > 1
+---@param colSpan? number column span number > 1
+---@param rowSpan? number row span number > 1
+function Grid:setPosLen(elem, col, row, colSpan, rowSpan)
+    elem.PosRel, elem.Len = self:getPosLen(col, row, colSpan, rowSpan)
+end
+
+---set Position and length with margin applied to UIElement
+---@param elem Tabullet.UIElement target UIELement to set Pos len with margin
+---@param col number column number > 1
+---@param row number row number > 1
+---@param colSpan? number column span number > 1
+---@param rowSpan? number row span number > 1
+---@param marginLeft? number margin > 0
+---@param marginRight? number margin >0
+---@param marginTop? number margin >0
+---@param marginBottom? number margin >0
+function Grid:setPosLenMargin(elem, col, row, colSpan, rowSpan, marginLeft,
+                              marginRight, marginTop, marginBottom)
+    elem.PosRel, elem.Len = self:getPosLenWithMargin(col, row, colSpan, rowSpan,
+        marginLeft, marginRight, marginTop, marginBottom)
+end
+
+---gen sub grid
+---@param grid Tabullet.Grid|nil grid obj ro nil to make new
+---@param col number column number > 1
+---@param row number row number > 1
+---@param colSpan? number column span number > 1
+---@param rowSpan? number row span number > 1
+function Grid:genSubGrid(grid, col, row, colSpan, rowSpan)
+    local p, l = self:getPosLen(col, row, colSpan, rowSpan)
+    if grid == nil then
+        return THIS.Grid:new(l, p)
+    else
+        grid.TargetLen = l
+        grid.Offset = p
+        return grid
+    end
 end
 
 ---get length segments array
@@ -163,7 +204,9 @@ function Grid:__getLens(len, segStr)
             LenSum = LenSum + temp_ts[index].num
         end
     end
-    if (len < LenSum) then error("segStr total static len is larger than targetLen!") end
+    if (len < LenSum) then error("segStr total static len is larger than TargetLen!. len : " ..
+            tostring(len) .. "/ lensum : " .. tostring(LenSum))
+    end
     starUnitLen = (len - LenSum) / starSum
 
     local resultLens = {}
