@@ -9,7 +9,9 @@ temp.Param = require("Golkin.App.param")
 
 -- local LAYOUT = require("Golkin.App.Layout.Cover"):new(mon_term, temp)
 -- local LAYOUT = require("Golkin.App.Layout.Login_BioScan"):new(mon_term, temp)
-local LAYOUT = require("Golkin.App.Layout.Login_List"):new(mon_term, temp)
+-- local LAYOUT = require("Golkin.App.Layout.Login_List"):new(mon_term, temp)
+-- local LAYOUT = require("Golkin.App.Layout.PIN"):new(mon_term, temp)
+local LAYOUT = require("Golkin.App.Layout.OwnerMenu"):new(mon_term, temp)
 
 LAYOUT.attachingScreen:clear()
 LAYOUT.rootScreenCanvas:render()

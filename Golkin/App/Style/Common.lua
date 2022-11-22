@@ -84,4 +84,20 @@ function a.BT.keypad(bt)
     bt:setTextColor(TBL.Enums.Color.black)
 end
 
+---style for hyperlink button
+---@param bt Tabullet.Button
+function a.BT.Hyperlink(bt)
+    a.BT.ToCenter(bt)
+    bt:setBackgroundColor(TBL.Enums.Color.None)
+    bt:setTextColor(TBL.Enums.Color.blue)
+end
+
+---style for important function
+---@param bt Tabullet.Button
+function a.BT.ImportantFunc(bt)
+    a.BT.ToCenter(bt)
+    bt:setBackgroundColor(TBL.Enums.Color.cyan)
+    bt:setTextColor(TBL.Enums.Color.black)
+end
+
 return a

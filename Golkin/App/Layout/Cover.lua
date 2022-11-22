@@ -21,13 +21,13 @@ function SCENE_L:initialize(attachedScreen, projNamespace)
     self.tb_title = TBL.TextBlock:new(self.rootScreenCanvas, self.attachingScreen,
         "tb_title")
     self.tb_title:setText("Welcome to Golkin!")
-    self.tb_title.PosRel, self.tb_title.Len = grid:getPosLen(2, 2, 1, 1)
+    grid:setPosLen(self.tb_title, 2, 2, 1, 1)
     self.PROJ.Style.TB.title(self.tb_title)
 
     self.bt_login = TBL.Button:new(self.rootScreenCanvas, self.attachingScreen,
         "bt_login")
     self.bt_login:setText("Login")
-    self.bt_login.PosRel, self.bt_login.Len = grid:getPosLenWithMargin(2, 4, 1, 1, 4, 4, 0, 0)
+    grid:setPosLenMargin(self.bt_login, 2, 4, 1, 1, 4, 4, 0, 0)
     self.PROJ.Style.BT.Good(self.bt_login)
 end
 
