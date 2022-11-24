@@ -65,7 +65,7 @@ function SCENE_L:initialize(attachedScreen, projNamespace)
     local grid_sidebar_pos, grid_sidebar_len = grid:getPosLen(5, 3, 1, 3)
     local grid_sidebar = TBL.Grid:new(grid_sidebar_len, grid_sidebar_pos)
     -- local grid_sidebar = grid:genSubGrid(nil, 5, 3, 1, 3)
-    grid_sidebar:setHorizontalSetting({ "*", "5", "1" })
+    grid_sidebar:setHorizontalSetting({ "*", "3", "1" })
     grid_sidebar:setVerticalSetting({ "*", "3", "*" })
     grid_sidebar:updatePosLen()
 

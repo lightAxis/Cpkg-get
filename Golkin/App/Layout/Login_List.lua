@@ -57,7 +57,7 @@ function SCENE_L:initialize(attachedScreen, projNamespace)
 
     -- grid to display left side arrow
     local grid4_GotoLeft = grid:genSubGrid(nil, 1, 3, 5, 1)
-    grid4_GotoLeft:setHorizontalSetting({ "1", "5", "*" })
+    grid4_GotoLeft:setHorizontalSetting({ "1", "3", "*" })
     grid4_GotoLeft:setVerticalSetting({ "*", "3", "*" })
     grid4_GotoLeft:updatePosLen()
     self.grid4_GotoLeft = grid4_GotoLeft

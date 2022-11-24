@@ -33,6 +33,8 @@ local layout_Login_BioScan = require("Golkin.App.Layout.Login_BioScan")
 local layout_Login_List    = require("Golkin.App.Layout.Login_List")
 local layout_PIN           = require("Golkin.App.Layout.PIN")
 local layout_OwnerMenu     = require("Golkin.App.Layout.OwnerMenu")
+local layout_SendMoney     = require("Golkin.App.Layout.SendMoney")
+local layout_Histories     = require("Golkin.App.Layout.Histories")
 
 GolkinApp.Layout               = {}
 GolkinApp.Layout.Cover         = layout_Cover:new(main_screen, GolkinApp)
@@ -40,6 +42,8 @@ GolkinApp.Layout.Login_BioScan = layout_Login_BioScan:new(main_screen, GolkinApp
 GolkinApp.Layout.Login_List    = layout_Login_List:new(main_screen, GolkinApp)
 GolkinApp.Layout.PIN           = layout_PIN:new(main_screen, GolkinApp)
 GolkinApp.Layout.OwnerMenu     = layout_OwnerMenu:new(main_screen, GolkinApp)
+GolkinApp.Layout.SendMoney     = layout_SendMoney:new(main_screen, GolkinApp)
+GolkinApp.Layout.Histories     = layout_Histories:new(main_screen, GolkinApp)
 
 ------------ SCENE --------------
 GolkinApp.Scene               = {}
@@ -48,6 +52,8 @@ GolkinApp.Scene.Login_BioScan = require("Golkin.App.Scene.Login_BioScan"):new(Go
 GolkinApp.Scene.Login_List    = require("Golkin.App.Scene.Login_List"):new(GolkinApp, GolkinApp.Layout.Login_List)
 GolkinApp.Scene.PIN           = require("Golkin.App.Scene.PIN"):new(GolkinApp, GolkinApp.Layout.PIN)
 GolkinApp.Scene.OwnerMenu     = require("Golkin.App.Scene.OwnerMenu"):new(GolkinApp, GolkinApp.Layout.OwnerMenu)
+GolkinApp.Scene.SendMoney     = require("Golkin.App.Scene.SendMoney"):new(GolkinApp, GolkinApp.Layout.SendMoney)
+GolkinApp.Scene.Histories     = require("Golkin.App.Scene.Histories"):new(GolkinApp, GolkinApp.Layout.Histories)
 
 ------------ peripherals --------
 GolkinApp.Peripheral = {}
