@@ -161,6 +161,42 @@ function ListBox:_makeListBoxItemWithTemplate(obj)
     return listBoxItem
 end
 
+---set even index gb
+---@param bg Tabullet.Enums.Color
+function ListBox:setEvenIndexBG(bg)
+    self.__EvenIndexBG = bg
+end
+
+---set odd index bg
+---@param bg Tabullet.Enums.Color
+function ListBox:setOddIndexBG(bg)
+    self.__OddIndexBG = bg
+end
+
+---set even index fg
+---@param fg Tabullet.Enums.Color
+function ListBox:setEvenIndexFG(fg)
+    self.__EvenIndexFG = fg
+end
+
+---set odd index fg
+---@param fg Tabullet.Enums.Color
+function ListBox:setOddIndexFG(fg)
+    self.__OddIndexFG = fg
+end
+
+---set selected index bg
+---@param bg Tabullet.Enums.Color
+function ListBox:setSelectedIndexBG(bg)
+    self.__SelectedIndexBG = bg
+end
+
+---set selected index fg
+---@param fg Tabullet.Enums.Color
+function ListBox:setSelectedIndexFG(fg)
+    self.__SelectedIndexFG = fg
+end
+
 function ListBox:_updateViewportItems()
 
     -- wrap scroll
