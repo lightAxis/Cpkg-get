@@ -383,7 +383,7 @@ function Server:__handle_SEND(msg, msgstruct)
 
     --- make new histories
     local nowTime = protocol.Struct.Daytime_t:new()
-    nowTime.Realtime = os.date()
+    nowTime.Realtime = os.date('%y/%m/%d %H:%M %a')
     local senderHistory = protocol.Struct.History_t:new()
     local recieverHistory = protocol.Struct.History_t:new()
 
