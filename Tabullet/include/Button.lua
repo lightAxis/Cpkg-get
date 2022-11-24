@@ -45,6 +45,20 @@ end
 
 --- override functions
 
+---@param color Tabullet.Enums.Color
+function Button:setTextColor(color)
+    self._TextArea.FG = color
+    self.FG = color
+    self.FGUnpressed = color
+end
+
+---@param color Tabullet.Enums.Color
+function Button:setBackgroundColor(color)
+    self.BG = color
+    self._TextArea.BG = color
+    self.BGUnpressed = color
+end
+
 ---overrided from TextBlock
 -- ---@param color Enums.Color
 -- function Button:setBackgroundColor(color)
