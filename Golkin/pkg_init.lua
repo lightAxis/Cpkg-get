@@ -24,10 +24,10 @@ Golkin.ENV = {}
 Golkin.ENV.PATH = fs.getDir(args[2])
 Golkin.ENV.CONST = require("Golkin.include.Const")
 
-Golkin.Web = {}
-Golkin.Web.Protocol = require("Golkin.include.Web.Protocol.Include")
-Golkin.Web.Handle = require("Golkin.include.Web.Handle")
-Golkin.Web.Client = require("Golkin.include.Web.Client")
-Golkin.Web.Server = require("Golkin.include.Web.Server")
+-- Golkin.Web = {}
+-- Golkin.Web.Protocol = require("Golkin.include.Web.Protocol.Include")
+-- Golkin.Web.Handle = require("Golkin.include.Web.Handle")
+-- Golkin.Web.Client = require("Golkin.include.Web.Client")
+-- Golkin.Web.Server = require("Golkin.include.Web.Server")
 
 return Golkin

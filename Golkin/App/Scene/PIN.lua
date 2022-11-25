@@ -123,7 +123,8 @@ function SCENE:cb_bt_enterPIN()
         self.CurrentPrevScene == self.ePrevScene.List then
 
         self.PROJ.Handle:attachMsgHandle(protocol.Header.ACK_OWNER_LOGIN, function(msg, msgstruct)
-            self:cb_ack_register_owner(msg, msgstruct)
+            ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.ACK_OWNER_LOGIN
+            self:cb_ack_owner_login(msg, msgstruct)
         end)
     else
         self:goto_PINCheck()
@@ -132,7 +133,7 @@ end
 
 ---@param msg Golkin.Web.Protocol.Msg
 ---@param msgstruct Golkin.Web.Protocol.MsgStruct.ACK_OWNER_LOGIN
-function SCENE:cb_ack_register_owner(msg, msgstruct)
+function SCENE:cb_ack_owner_login(msg, msgstruct)
     local replyEnum = protocol.Enum.ACK_OWNER_LOGIN_R
     if (msgstruct.Success == false) then
         if msgstruct.State == replyEnum.NO_OWNER_EXIST then

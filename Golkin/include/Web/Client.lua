@@ -63,11 +63,9 @@ end
 ---send msg OWNER_LOGIN to server
 ---@param name string
 ---@param password string
----@param bioscaned boolean
-function client:send_OWNER_LOGIN(name, password, bioscaned)
+function client:send_OWNER_LOGIN(name, password)
     local msgStruct = protocol.MsgStruct.OWNER_LOGIN:new()
     msgStruct.Name = name
-    msgStruct.BioScaned = bioscaned
     msgStruct.Password = password
     self:__sendMsg(protocol.Header.OWNER_LOGIN, msgStruct)
 end

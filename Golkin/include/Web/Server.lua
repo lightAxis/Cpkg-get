@@ -20,6 +20,11 @@ local Server = class("Golkin.Web.Server")
 function Server:initialize()
     self.__handle = handle:new()
 
+    self.__handle:attachMsgHandle(protocol.Header.OWNER_LOGIN, function(msg, msgstruct)
+        ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.OWNER_LOGIN
+        self:__handle_OWNER_LOGIN(msg, msgstruct)
+    end)
+
     self.__handle:attachMsgHandle(protocol.Header.GET_ACCOUNT, function(msg, msgstruct)
         ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.GET_ACCOUNT
         self:__handle_GET_ACCOUNT(msg, msgstruct)

@@ -113,7 +113,6 @@ builder:addStruct(struct("Owner_t", "struct for bank account owners", {
 builder:addHeader(struct("OWNER_LOGIN", "login owner", {
     field("Name", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of the owner"),
     field("Password", fieldType(efieldType.str), fieldInit(efieldType.nil_), "password for login. MD5 hashed"),
-    field("BioScaned", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "is bioscaned, no need to check passwd"),
 }))
 
 builder:addHeader(struct("GET_OWNERS", "get all owner list from server", {

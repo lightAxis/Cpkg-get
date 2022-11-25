@@ -42,6 +42,12 @@ function SCENE:initialize(ProjNamespace, UILayout)
         end
     end
 
+    self.Layout.bt_enter_pin.ClickEvent = function(obj, e)
+        if e.Button == TBL.Enums.MouseButton.left then
+            self:cb_bt_done()
+        end
+    end
+
     self.original_password = ""
     self.password = ""
     self.maximumCount = 8
@@ -66,7 +72,35 @@ function SCENE:cb_bt_back()
 end
 
 function SCENE:cb_bt_done()
-    -- self.PROJ.Handle:attachMsgHandle()
+
+    if self.original_password ~= self.password then
+        self.Layout.tb_info:setText("Password is not same! try again")
+        self.PROJ.Style.TB.InfoFail(self.Layout.tb_info)
+        return nil
+    end
+
+    self.PROJ.Handle:attachMsgHandle(procotol.Header.ACK_REGISTER_OWNER, function(msg, msgstruct)
+        ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.ACK_REGISTER_OWNER
+        self:cb_ack_register_owner(msg, msgstruct)
+    end)
+
+    -- self.PROJ.Client:send_OWNER_LOGIN()
+
+end
+
+---comment
+---@param msg Golkin.Web.Protocol.Msg
+---@param msgstruct Golkin.Web.Protocol.MsgStruct.ACK_REGISTER_OWNER
+function SCENE:cb_ack_register_owner(msg, msgstruct)
+    local replyEnum = procotol.Enum.ACK_REGISTER_OWNER_R
+    if msgstruct.Success == false then
+        if msgstruct.State == replyEnum.OWNER_ALREADY_EXISTS then
+            self.Layout.tb_info:setText("OWNER_ALREADY_EXISTS")
+            self.PROJ.Style.TB.InfoFail(self.Layout.tb_info)
+        end
+    else
+        self:cb_bt_back()
+    end
 end
 
 function SCENE:goto_Login_BioScan()
