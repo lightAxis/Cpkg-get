@@ -21,14 +21,14 @@ function SCENE_L:main_layout()
     grid:setHorizontalSetting({ "*", "1", "*", "1", "*" })
     grid:setVerticalSetting({ "1", "1", "*", "3" })
     grid:updatePosLen()
-    self.grid = grid
+    -- self.grid = grid
 
     --- title block
     local title_textblock = TBL.TextBlock:new(self.rootScreenCanvas, self.attachingScreen, "title_textblock")
     grid:setPosLen(title_textblock, 1, 1, 5, 1)
     title_textblock:setText("Histories : yourSendingAccount")
     self.PROJ.Style.TB.title(title_textblock)
-    self.tb_title = title_textblock
+    -- self.tb_title = title_textblock
 
     --- info block
     local info_tb = TBL.TextBlock:new(self.rootScreenCanvas, self.attachingScreen, "info_textblock")

@@ -14,7 +14,7 @@ local SCENE = class("Golkin.App.Scene.Cover", TBL.UIScene)
 function SCENE:initialize(ProjNamespace, UILayout)
     TBL.UIScene.initialize(self, ProjNamespace, UILayout)
 
-    self.Layout.bt_login.ClickEvent = function()
+    self.Layout.bt_login.ClickEvent = function(obj, e)
         self:goto_Login_BioScan()
     end
 
@@ -22,7 +22,16 @@ end
 
 function SCENE:goto_Login_BioScan()
     self.PROJ.Scene.Login_BioScan:reset()
+    self.PROJ.Scene.Login_BioScan:detachHandlers();
     self.PROJ.UIRunner:attachScene(self.PROJ.Scene.Login_BioScan)
+end
+
+function SCENE:reset()
+
+end
+
+function SCENE:detachHandlers()
+    self.PROJ.Handle:clearAllMsgHandle()
 end
 
 return SCENE

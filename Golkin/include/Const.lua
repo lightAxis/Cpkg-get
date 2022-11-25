@@ -2,7 +2,8 @@
 local a = {
     ["protocol"] = "Golkin",
     ["serverName"] = "server",
-    ["fileDir"] = "/userdata/accounts",
+    ["accountDir"] = "/userdata/accounts",
+    ["ownerDir"] = "/userdate/owners",
     ["maximumHistoryCount"] = 100
 }
 

@@ -16,16 +16,41 @@ end
 ---@param tb Tabullet.TextBlock
 function a.TB.ListTitle(tb)
     a.TB.ToCenter(tb)
-    tb:setTextColor(TBL.Enums.Color.white)
     tb:setBackgroundColor(TBL.Enums.Color.purple)
+    tb:setTextColor(TBL.Enums.Color.white)
+
 end
 
 ---get info textblock style
 ---@param tb Tabullet.TextBlock
 function a.TB.Info(tb)
     a.TB.ToCenter(tb)
-    tb:setTextColor(TBL.Enums.Color.black)
     tb:setBackgroundColor(TBL.Enums.Color.lime)
+    tb:setTextColor(TBL.Enums.Color.black)
+end
+
+---get success info style textblock
+---@param tb Tabullet.TextBlock
+function a.TB.InfoSuccess(tb)
+    a.TB.ToCenter(tb)
+    tb:setBackgroundColor(TBL.Enums.Color.green)
+    tb:setTextColor(TBL.Enums.Color.white)
+end
+
+---get waring info style textblock
+---@param tb Tabullet.TextBlock
+function a.TB.InfoWarning(tb)
+    a.TB.ToCenter(tb)
+    tb:setBackgroundColor(TBL.Enums.Color.orange)
+    tb:setTextColor(TBL.Enums.Color.black)
+end
+
+---get fail info style textblock
+---@param tb Tabullet.TextBlock
+function a.TB.InfoFail(tb)
+    a.TB.ToCenter(tb)
+    tb:setBackgroundColor(TBL.Enums.Color.red)
+    tb:setTextColor(TBL.Enums.Color.black)
 end
 
 ---style for scene title
@@ -52,6 +77,14 @@ function a.TB.infoContent(bt)
     bt:setTextVerticalAlignment(TBL.Enums.VerticalAlignmentMode.center)
     bt:setBackgroundColor(TBL.Enums.Color.lightBlue)
     bt:setTextColor(TBL.Enums.Color.white)
+end
+
+---type for info content when editted
+---@param bt Tabullet.TextBlock
+function a.TB.infoContentEdit(bt)
+    a.TB.infoContent(bt)
+    bt:setBackgroundColor(TBL.Enums.Color.blue)
+    bt:setTextColor(TBL.Enums.Color.black)
 end
 
 a.BT = {}

@@ -33,9 +33,9 @@ function SCENE_L:main_layout()
     --- info block
     local info_tb = TBL.TextBlock:new(self.rootScreenCanvas, self.attachingScreen, "info_textblock")
     grid:setPosLen(info_tb, 1, 2, 5, 1)
-    info_tb:setText("Select your name")
+    info_tb:setText("fill send msg & recieve msg")
     self.PROJ.Style.TB.Info(info_tb)
-    info_tb.Visible = false
+    info_tb.Visible = true
     self.tb_info = info_tb
 
     --- bt back
@@ -53,12 +53,12 @@ function SCENE_L:main_layout()
     -- self.bt_refresh_list = bt_refresh_list
 
     --- bt send
-    local bt_send = TBL.Button:new(self.rootScreenCanvas, self.attachingScreen,
-        "bt_send")
-    bt_send:setText("Send")
-    grid:setPosLen(bt_send, 5, 4)
-    self.PROJ.Style.BT.func(bt_send)
-    self.bt_send = bt_send
+    local bt_next = TBL.Button:new(self.rootScreenCanvas, self.attachingScreen,
+        "bt_next")
+    bt_next:setText("Next")
+    grid:setPosLen(bt_next, 5, 4)
+    self.PROJ.Style.BT.func(bt_next)
+    self.bt_next = bt_next
 
     self:make_send_profile(grid)
 end

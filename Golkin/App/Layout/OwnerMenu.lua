@@ -207,15 +207,15 @@ function SCENE_L:make_menu()
     bts_menu.Send = self:make_menu_bt("Send")
     bts_menu.Inquire = self:make_menu_bt("Inquire")
     bts_menu.Register = self:make_menu_bt("Register")
-    bts_menu.Delete = self:make_menu_bt("Delete")
+    bts_menu.Remove = self:make_menu_bt("Remove")
     grid_menu:setPosLen(bts_menu.Send, 1, 2, 2, 1)
     grid_menu:setPosLen(bts_menu.Inquire, 1, 3, 2, 1)
     grid_menu:setPosLen(bts_menu.Register, 1, 4, 2, 1)
-    grid_menu:setPosLen(bts_menu.Delete, 1, 5, 2, 1)
-    bts_menu.Send.Visible = false
-    bts_menu.Inquire.Visible = false
-    bts_menu.Register.Visible = false
-    bts_menu.Delete.Visible = false
+    grid_menu:setPosLen(bts_menu.Remove, 1, 5, 2, 1)
+    bts_menu.Send.Visible = true
+    bts_menu.Inquire.Visible = true
+    bts_menu.Register.Visible = true
+    bts_menu.Remove.Visible = true
     self.bts_menu = bts_menu
 
 end

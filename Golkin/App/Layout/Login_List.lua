@@ -17,14 +17,14 @@ function SCENE_L:initialize(attachedScreen, projNamespace)
     grid:setHorizontalSetting({ "*", "1", "*", "1", "*" })
     grid:setVerticalSetting({ "1", "1", "*", "3" })
     grid:updatePosLen()
-    self.grid = grid
+    -- self.grid = grid
 
     --- title block
     local title_textblock = TBL.TextBlock:new(self.rootScreenCanvas, self.attachingScreen, "title_textblock")
     grid:setPosLen(title_textblock, 1, 1, 5, 1)
     title_textblock:setText("Sign In - Select Profile")
     self.PROJ.Style.TB.title(title_textblock)
-    self.tb_title = title_textblock
+    -- self.tb_title = title_textblock
 
     --- info block
     local info_tb = TBL.TextBlock:new(self.rootScreenCanvas, self.attachingScreen, "info_textblock")
@@ -60,14 +60,14 @@ function SCENE_L:initialize(attachedScreen, projNamespace)
     grid4_GotoLeft:setHorizontalSetting({ "1", "3", "*" })
     grid4_GotoLeft:setVerticalSetting({ "*", "3", "*" })
     grid4_GotoLeft:updatePosLen()
-    self.grid4_GotoLeft = grid4_GotoLeft
+    -- self.grid4_GotoLeft = grid4_GotoLeft
 
     -- button to go login_register
-    local bt_goto_login_register = TBL.Button:new(self.rootScreenCanvas, self.attachingScreen, "bt_goto_login_register")
-    grid4_GotoLeft:setPosLen(bt_goto_login_register, 2, 2)
-    self.PROJ.Style.BT.keypad(bt_goto_login_register)
-    bt_goto_login_register:setText("<")
-    self.bt_goto_login_register = bt_goto_login_register
+    local bt_left_arrow = TBL.Button:new(self.rootScreenCanvas, self.attachingScreen, "bt_goto_login_register")
+    grid4_GotoLeft:setPosLen(bt_left_arrow, 2, 2)
+    self.PROJ.Style.BT.keypad(bt_left_arrow)
+    bt_left_arrow:setText("<")
+    self.bt_left_arrow = bt_left_arrow
 
 
     -- grid for display listbox & scroll
@@ -75,7 +75,7 @@ function SCENE_L:initialize(attachedScreen, projNamespace)
     grid2:setHorizontalSetting({ "*", "30", "*" })
     grid2:setVerticalSetting({ "2", "3", "2", "*", "2" })
     grid2:updatePosLen()
-    self.grid2 = grid2
+    -- self.grid2 = grid2
 
     -- tb for name of player display
     local tb_name = TBL.TextBlock:new(self.rootScreenCanvas, self.attachingScreen, "tb_name")
