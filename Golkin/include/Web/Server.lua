@@ -20,6 +20,16 @@ local Server = class("Golkin.Web.Server")
 function Server:initialize()
     self.__handle = handle:new()
 
+    self.__handle:attachMsgHandle(protocol.Header.OWNER_LOGIN, function(msg, msgstruct)
+        ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.OWNER_LOGIN
+        self:__handle_OWNER_LOGIN(msg, msgstruct)
+    end)
+
+    self.__handle:attachMsgHandle(protocol.Header.GET_OWNERS, function(msg, msgstruct)
+        ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.GET_OWNERS
+        self:__handle_GET_OWNERS(msg, msgstruct)
+    end)
+
     self.__handle:attachMsgHandle(protocol.Header.GET_ACCOUNT, function(msg, msgstruct)
         ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.GET_ACCOUNT
         self:__handle_GET_ACCOUNT(msg, msgstruct)
@@ -75,7 +85,7 @@ function Server:initialize()
         ---@type Golkin.Web.Protocol.Struct.Owner_t
         local owner = textutils.unserialize(f.readAll())
         f.close()
-        self.__cacheOwners[owner.new] = owner
+        self.__cacheOwners[owner.Name] = owner
     end
 
 end
