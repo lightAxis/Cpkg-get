@@ -1,5 +1,4 @@
-local THIS = require("Golkin.pkg_init")
-
-local app = THIS.App
+require("Golkin.pkg_init")
+local app = require("Golkin.App.main")
 
 app:start()

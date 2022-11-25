@@ -30,6 +30,4 @@ Golkin.Web.Handle = require("Golkin.include.Web.Handle")
 Golkin.Web.Client = require("Golkin.include.Web.Client")
 Golkin.Web.Server = require("Golkin.include.Web.Server")
 
-Golkin.App = require("Golkin.App.main")
-
 return Golkin
