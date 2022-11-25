@@ -2,13 +2,13 @@ local class = require("Class.middleclass")
 
 local TBL = DEPS.Golkin.Tabullet
 local THIS = PKGS.Golkin
-local protocol = THIS.Web.Protocol
+local procotol = THIS.Web.Protocol
 
----@class Golkin.App.Scene.PIN : Tabullet.UIScene
+---@class Golkin.App.Scene.PINCheck : Tabullet.UIScene
 ---@field Layout Golkin.App.Layout.PIN
 ---@field PROJ Golkin.App
----@field new fun(self:Tabullet.UIScene, ProjNamespace:Golkin.App, UILayout:Tabullet.UILayout):Golkin.App.Scene.PIN
-local SCENE = class("Golkin.App.Scene.PIN", TBL.UIScene)
+---@field new fun(self:Tabullet.UIScene, ProjNamespace:Golkin.App, UILayout:Tabullet.UILayout):Golkin.App.Scene.PINCheck
+local SCENE = class("Golkin.App.Scene.PINCheck", TBL.UIScene)
 
 ---constructor
 ---@param ProjNamespace Golkin.App
@@ -44,19 +44,17 @@ function SCENE:initialize(ProjNamespace, UILayout)
 
     self.Layout.bt_enter_pin.ClickEvent = function(obj, e)
         if e.Button == TBL.Enums.MouseButton.left then
-            self:cb_bt_enterPIN()
+            self:cb_bt_done()
         end
     end
 
-    self.OwnerName = nil
+    self.original_password = ""
     self.password = ""
     self.maximumCount = 8
 
-    ---@enum Golkin.App.Scene.Pin.ePrevScene
+    ---@enum Golkin.App.Scene.PinCheck.ePrevScene
     self.ePrevScene = {
-        ["Bio"] = "Bio",
         ["BioRegister"] = "BioRegister",
-        ["List"] = "List",
         ["ListRegister"] = "ListRegister",
     }
     ---@type Golkin.App.Scene.Pin.ePrevScene|nil
@@ -64,14 +62,44 @@ function SCENE:initialize(ProjNamespace, UILayout)
 end
 
 function SCENE:cb_bt_back()
-    if (self.CurrentPrevScene == self.ePrevScene.Bio) or
-        self.CurrentPrevScene == self.ePrevScene.BioRegister then
+    if self.CurrentPrevScene == self.ePrevScene.BioRegister then
         self:goto_Login_BioScan()
-    elseif self.CurrentPrevScene == self.ePrevScene.List or
-        self.CurrentPrevScene == self.ePrevScene.ListRegister then
+    elseif self.CurrentPrevScene == self.ePrevScene.ListRegister then
         self:goto_Login_List()
     else
         error("?? ePrevScene is broken")
+    end
+end
+
+function SCENE:cb_bt_done()
+
+    if self.original_password ~= self.password then
+        self.Layout.tb_info:setText("Password is not same! try again")
+        self.PROJ.Style.TB.InfoFail(self.Layout.tb_info)
+        return nil
+    end
+
+    self.PROJ.Handle:attachMsgHandle(procotol.Header.ACK_REGISTER_OWNER, function(msg, msgstruct)
+        ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.ACK_REGISTER_OWNER
+        self:cb_ack_register_owner(msg, msgstruct)
+    end)
+
+    -- self.PROJ.Client:send_OWNER_LOGIN()
+
+end
+
+---comment
+---@param msg Golkin.Web.Protocol.Msg
+---@param msgstruct Golkin.Web.Protocol.MsgStruct.ACK_REGISTER_OWNER
+function SCENE:cb_ack_register_owner(msg, msgstruct)
+    local replyEnum = procotol.Enum.ACK_REGISTER_OWNER_R
+    if msgstruct.Success == false then
+        if msgstruct.State == replyEnum.OWNER_ALREADY_EXISTS then
+            self.Layout.tb_info:setText("OWNER_ALREADY_EXISTS")
+            self.PROJ.Style.TB.InfoFail(self.Layout.tb_info)
+        end
+    else
+        self:cb_bt_back()
     end
 end
 
@@ -105,51 +133,6 @@ function SCENE:cb_bt_backspace()
     end
 end
 
-function SCENE:goto_PINCheck()
-    self:detachHandlers()
-    self.PROJ.Scene.PINCheck:reset()
-    self.PROJ.Scene.PINCheck.CurrentPrevScene = self.CurrentPrevScene
-    self.PROJ.Scene.PINCheck.original_password = self.password
-    self.PROJ.UIRunner:attachScene(self.PROJ.Scene.PINCheck)
-end
-
-function SCENE:goto_OwnerMenu()
-    self:detachHandlers()
-    self.PROJ.Scene.OwnerMenu:reset()
-end
-
-function SCENE:cb_bt_enterPIN()
-    if self.CurrentPrevScene == self.ePrevScene.Bio or
-        self.CurrentPrevScene == self.ePrevScene.List then
-
-        self.PROJ.Handle:attachMsgHandle(protocol.Header.ACK_OWNER_LOGIN, function(msg, msgstruct)
-            ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.ACK_OWNER_LOGIN
-            self:cb_ack_owner_login(msg, msgstruct)
-        end)
-    else
-        self:goto_PINCheck()
-    end
-end
-
----@param msg Golkin.Web.Protocol.Msg
----@param msgstruct Golkin.Web.Protocol.MsgStruct.ACK_OWNER_LOGIN
-function SCENE:cb_ack_owner_login(msg, msgstruct)
-    local replyEnum = protocol.Enum.ACK_OWNER_LOGIN_R
-    if (msgstruct.Success == false) then
-        if msgstruct.State == replyEnum.NO_OWNER_EXIST then
-            self.Layout.tb_info:setText("NO_OWNER_EXIST")
-        elseif msgstruct.State == replyEnum.PASSWORD_UNMET then
-            self.Layout.tb_info:setText("PASSWORD_UNMET")
-        else
-            error("no error code met ")
-        end
-        self.PROJ.Style.TB.InfoFail(self.Layout.tb_info)
-    else
-        self.PROJ.Scene.OwnerMenu.OwnerName = self.OwnerName
-        self:goto_OwnerMenu()
-    end
-end
-
 function SCENE:refresh_PINDisplay()
     local t = ""
     for i = 1, #self.password, 1 do
@@ -170,17 +153,10 @@ end
 function SCENE:reset()
     self.password = ""
     self:refresh_PINDisplay()
-
-    if self.CurrentPrevScene == self.ePrevScene.Bio or
-        self.CurrentPrevScene == self.ePrevScene.List then
-        self.Layout.tb_info:setText("Enter your PIN")
-    else
-        self.Layout.tb_info:setText("Enter new PIN")
-    end
 end
 
 function SCENE:detachHandlers()
-    self.PROJ.Handle:clearAllMsgHandle()
+
 end
 
 return SCENE

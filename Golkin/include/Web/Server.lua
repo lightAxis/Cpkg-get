@@ -50,6 +50,11 @@ function Server:initialize()
         self:__handle_REGISTER(msg, msgstruct)
     end)
 
+    self.__handle:attachMsgHandle(protocol.Header.REGISTER_OWNER, function(msg, msgstruct)
+        ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.REGISTER_OWNER
+        self:__handle_REGISTER_OWNER(msg, msgstruct)
+    end)
+
     self.__handle:attachMsgHandle(protocol.Header.SEND, function(msg, msgstruct)
         ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.SEND
         self:__handle_SEND(msg, msgstruct)
@@ -206,12 +211,30 @@ function Server:__saveAccount(account)
     f.close()
 end
 
+---save owner to server
+---@param owner Golkin.Web.Protocol.Struct.Owner_t
+function Server:__saveOwner(owner)
+    self:__saveToOwnerCache(owner)
+    local ownerPath = self.__ownerPath .. "/" .. owner.Name .. ".sz"
+    local f = fs.open(ownerPath, "w")
+    f.write(textutils.serialize(owner))
+    f.close()
+end
+
 ---remove account by name
 ---@param accountName string
 function Server:__removeAccount(accountName)
     self:__removeAccountCache_byName(accountName)
     local accountPath = self.__accountPath .. "/" .. accountName .. ".sz"
     fs.delete(accountPath)
+end
+
+---remove owner by name
+---@param ownerName string
+function Server:__removeOwner(ownerName)
+    self:__removeOwnerCache_byName(ownerName)
+    local ownerPath = self.__ownerPath .. "/" .. ownerName .. ".sz"
+    fs.delete(ownerPath)
 end
 
 ---handle owner login msg
@@ -437,6 +460,42 @@ function Server:__handle_REGISTER(msg, msgstruct)
     print("good:" .. tostring(replyMsgStruct.State))
     print("SUCCESS")
     return nil
+end
+
+---handleed register owner
+---@param msg Golkin.Web.Protocol.Msg
+---@param msgstruct Golkin.Web.Protocol.MsgStruct.REGISTER_OWNER
+function Server:__handle_REGISTER_OWNER(msg, msgstruct)
+    print("handle REGISTER msg")
+    local replyMsgStruct = protocol.MsgStruct.ACK_REGISTER_OWNER:new()
+    local replyHeader = protocol.Header.ACK_REGISTER_OWNER
+    local replyEnum = protocol.Enum.ACK_REGISTER_OWNER_R
+
+    --- read owner
+    local owner = self:__getOwner(msgstruct.OwnerName)
+
+    -- if owner already exists
+    if owner ~= nil then
+        replyMsgStruct.State = replyEnum.OWNER_ALREADY_EXISTS
+        replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("OWNER_ALREADY_EXISTS")
+        return nil
+    end
+
+    -- make new owner and save to server
+    local newOwner = protocol.Struct.Owner_t:new()
+    newOwner.Name = msgstruct.OwnerName
+    newOwner.Password = msgstruct.Password
+    self:__saveOwner(newOwner)
+
+    -- send success
+    replyMsgStruct.State = replyEnum.SUCCESS
+    replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
+    self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+    print("good:" .. tostring(replyMsgStruct.State))
+    print("SUCCESS")
 end
 
 ---handle send msg

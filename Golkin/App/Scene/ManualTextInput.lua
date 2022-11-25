@@ -16,4 +16,12 @@ function SCENE:initialize(ProjNamespace, UILayout)
 
 end
 
+function SCENE:reset()
+    self.Layout.tb_input:setText("")
+end
+
+function SCENE:detachHandlers()
+
+end
+
 return SCENE

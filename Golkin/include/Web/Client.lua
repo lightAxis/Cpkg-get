@@ -63,11 +63,9 @@ end
 ---send msg OWNER_LOGIN to server
 ---@param name string
 ---@param password string
----@param bioscaned boolean
-function client:send_OWNER_LOGIN(name, password, bioscaned)
+function client:send_OWNER_LOGIN(name, password)
     local msgStruct = protocol.MsgStruct.OWNER_LOGIN:new()
     msgStruct.Name = name
-    msgStruct.BioScaned = bioscaned
     msgStruct.Password = password
     self:__sendMsg(protocol.Header.OWNER_LOGIN, msgStruct)
 end
@@ -105,6 +103,16 @@ function client:send_REGISTER(accountName, ownerName, password)
     msgStruct.OwnerName = ownerName
     msgStruct.Password = password
     client:__sendMsg(protocol.Header.REGISTER, msgStruct)
+end
+
+---send request to server to register new owner
+---@param ownerName string
+---@param password string
+function client:send_REGISTER_OWNER(ownerName, password)
+    local msgStruct = protocol.MsgStruct.REGISTER_OWNER:new()
+    msgStruct.OwnerName = ownerName
+    msgStruct.Password = password
+    self:__sendMsg(protocol.Header.REGISTER_OWNER, msgStruct)
 end
 
 ---comment

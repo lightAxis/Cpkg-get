@@ -58,7 +58,7 @@ function SCENE_L:initialize(attachedScreen, projNamespace)
 
     -- grid for password
     local grid_passwd_display = grid_passwd:genSubGrid(nil, 1, 1)
-    grid_passwd_display:setHorizontalSetting({ "*", "16", "*" })
+    grid_passwd_display:setHorizontalSetting({ "*", "4*", "*" })
     grid_passwd_display:setVerticalSetting({ "*", "3" })
     grid_passwd_display:updatePosLen()
     self.grid_passwd_display = grid_passwd_display

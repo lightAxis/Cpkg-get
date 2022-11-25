@@ -26,6 +26,8 @@ protocol.MsgStruct.OWNER_LOGIN = require("Golkin.include.Web.Protocol.MsgStruct.
 protocol.MsgStruct.ACK_GET_OWNER_ACCOUNTS = require("Golkin.include.Web.Protocol.MsgStruct.ACK_GET_OWNER_ACCOUNTS")
 protocol.MsgStruct.ACK_GET_ACCOUNT = require("Golkin.include.Web.Protocol.MsgStruct.ACK_GET_ACCOUNT")
 protocol.MsgStruct.ACK_SEND = require("Golkin.include.Web.Protocol.MsgStruct.ACK_SEND")
+protocol.MsgStruct.ACK_OWNER_LOGIN = require("Golkin.include.Web.Protocol.MsgStruct.ACK_OWNER_LOGIN")
+protocol.MsgStruct.ACK_REGISTER_OWNER = require("Golkin.include.Web.Protocol.MsgStruct.ACK_REGISTER_OWNER")
 protocol.MsgStruct.ACK_GET_OWNERS = require("Golkin.include.Web.Protocol.MsgStruct.ACK_GET_OWNERS")
 protocol.MsgStruct.SEND = require("Golkin.include.Web.Protocol.MsgStruct.SEND")
 protocol.MsgStruct.ACK_GET_ACCOUNTS = require("Golkin.include.Web.Protocol.MsgStruct.ACK_GET_ACCOUNTS")
@@ -33,7 +35,7 @@ protocol.MsgStruct.GET_ACCOUNTS = require("Golkin.include.Web.Protocol.MsgStruct
 protocol.MsgStruct.ACK_REGISTER = require("Golkin.include.Web.Protocol.MsgStruct.ACK_REGISTER")
 protocol.MsgStruct.REGISTER = require("Golkin.include.Web.Protocol.MsgStruct.REGISTER")
 protocol.MsgStruct.GET_OWNERS = require("Golkin.include.Web.Protocol.MsgStruct.GET_OWNERS")
-protocol.MsgStruct.ACK_OWNER_LOGIN = require("Golkin.include.Web.Protocol.MsgStruct.ACK_OWNER_LOGIN")
+protocol.MsgStruct.REGISTER_OWNER = require("Golkin.include.Web.Protocol.MsgStruct.REGISTER_OWNER")
 protocol.MsgStruct.GET_ACCOUNT = require("Golkin.include.Web.Protocol.MsgStruct.GET_ACCOUNT")
 
 return protocol
