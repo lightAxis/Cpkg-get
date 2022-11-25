@@ -107,6 +107,16 @@ function client:send_REGISTER(accountName, ownerName, password)
     client:__sendMsg(protocol.Header.REGISTER, msgStruct)
 end
 
+---send request to server to register new owner
+---@param ownerName string
+---@param password string
+function client:send_REGISTER_OWNER(ownerName, password)
+    local msgStruct = protocol.MsgStruct.REGISTER_OWNER:new()
+    msgStruct.OwnerName = ownerName
+    msgStruct.Password = password
+    self:__sendMsg(protocol.Header.REGISTER_OWNER, msgStruct)
+end
+
 ---comment
 ---@return Golkin.Web.Client.SEND_t
 function client:getSend_t()

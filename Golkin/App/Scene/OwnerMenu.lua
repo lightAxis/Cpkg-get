@@ -14,6 +14,15 @@ local SCENE = class("Golkin.App.Scene.OwnerMenu", TBL.UIScene)
 function SCENE:initialize(ProjNamespace, UILayout)
     TBL.UIScene.initialize(self, ProjNamespace, UILayout)
 
+    self.OwnerName = nil
+end
+
+function SCENE:reset()
+
+end
+
+function SCENE:detachHandlers()
+
 end
 
 return SCENE

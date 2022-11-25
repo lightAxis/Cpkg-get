@@ -39,27 +39,36 @@ a.ACK_GET_OWNERS_R = {
     ["SUCCESS"] = 201, -- success to get owner list from server
 }
 
+---result enum fro ACK_REGISTER_OWNER msg
+---@enum Golkin.Web.Protocol.Enum.ACK_REGISTER_OWNER_R 
+a.ACK_REGISTER_OWNER_R = {
+    ["NONE"] = -1, -- none result. this is error!
+    ["OWNER_ALREADY_EXISTS"] = -601, -- owner name already exist in server
+    ["NORMAL"] = 0, -- standard for normal msg
+    ["SUCCESS"] = 601, -- success to register new owner to server
+}
+
 ---result enum for ACK_GET_OWNER_ACCOUNTS
 ---@enum Golkin.Web.Protocol.Enum.ACK_GET_OWNER_ACCOUNTS_R 
 a.ACK_GET_OWNER_ACCOUNTS_R = {
     ["NONE"] = -1, -- none result. this is error
-    ["NO_ACCOUNTS"] = -701, -- no accounts for owner
+    ["NO_ACCOUNTS"] = -801, -- no accounts for owner
     ["NORMAL"] = 0, -- standard for normal msg
-    ["SUCCESS"] = 701, -- success to get accounts list
+    ["SUCCESS"] = 801, -- success to get accounts list
 }
 
 ---result enum for ACK_SEND msg
 ---@enum Golkin.Web.Protocol.Enum.ACK_SEND_R 
 a.ACK_SEND_R = {
     ["NONE"] = -1, -- none result. this is error!
-    ["NO_ACCOUNT_TO_SEND"] = -601, -- no account to send money from
-    ["NO_ACCOUNT_TO_RECIEVE"] = -602, -- no account to recieve money
-    ["NOT_ENOUGHT_BALLANCE_TO_SEND"] = -603, -- not enough money left in account to send
-    ["PASSWORD_UNMET"] = -604, -- password is not corrent
-    ["OWNER_UNMET"] = -605, -- Owner is not matching
-    ["BALANCE_CANNOT_BE_NEGATIVE"] = -606, -- balance value is less than 0
+    ["NO_ACCOUNT_TO_SEND"] = -701, -- no account to send money from
+    ["NO_ACCOUNT_TO_RECIEVE"] = -702, -- no account to recieve money
+    ["NOT_ENOUGHT_BALLANCE_TO_SEND"] = -703, -- not enough money left in account to send
+    ["PASSWORD_UNMET"] = -704, -- password is not corrent
+    ["OWNER_UNMET"] = -705, -- Owner is not matching
+    ["BALANCE_CANNOT_BE_NEGATIVE"] = -706, -- balance value is less than 0
     ["NORMAL"] = 0, -- standard for normal msg
-    ["SUCCESS"] = 601, -- success to send money
+    ["SUCCESS"] = 701, -- success to send money
 }
 
 ---result enum for ACK_REGISTER msg
