@@ -9,7 +9,8 @@ local const = THIS.ENV.CONST
 --- class definition
 ---@class Golkin.Web.Server
 ---@field __handle Golkin.Web.Protocol.Handle
----@field __bankPath string
+---@field __accountPath string
+---@field __ownerPath string
 ---@field __cacheAccounts table<string, Golkin.Web.Protocol.Struct.Account_t>
 ---@field new fun(self:Golkin.Web.Server):Golkin.Web.Server
 
@@ -44,23 +45,39 @@ function Server:initialize()
         self:__handle_SEND(msg, msgstruct)
     end)
 
-    self.__bankPath = THIS.ENV.PATH .. const.fileDir
-    if fs.exists(self.__bankPath) == false then
-        fs.makeDir(self.__bankPath)
+    self.__accountPath = THIS.ENV.PATH .. const.accountDir
+    if fs.exists(self.__accountPath) == false then
+        fs.makeDir(self.__accountPath)
+    end
+    self.__ownerPath = THIS.ENV.PATH .. const.ownerDir
+    if fs.exists(self.__ownerPath) == false then
+        fs.makeDir(self.__ownerPath)
     end
 
     rednet.host(const.protocol, const.serverName)
 
     ---@type table<string, Golkin.Web.Protocol.Struct.Account_t>
     self.__cacheAccounts = {}
-    local files = fs.list(self.__bankPath)
+    local files = fs.list(self.__accountPath)
     for k, v in pairs(files) do
-        local f = fs.open(self.__bankPath .. "/" .. v, "r")
+        local f = fs.open(self.__accountPath .. "/" .. v, "r")
         ---@type Golkin.Web.Protocol.Struct.Account_t
         local account = textutils.unserialize(f.readAll())
         f.close()
         self.__cacheAccounts[account.Name] = account
     end
+
+    ---@type table<number, Golkin.Web.Protocol.Struct.Owner_t>
+    self.__cacheOwners = {}
+    files = fs.list(self.__ownerPath)
+    for k, v in pairs(files) do
+        local f = fs.open(self.__ownerPath .. "/" .. v, "r")
+        ---@type Golkin.Web.Protocol.Struct.Owner_t
+        local owner = textutils.unserialize(f.readAll())
+        f.close()
+        self.__cacheOwners[owner.new] = owner
+    end
+
 end
 
 ---main function for running server
@@ -94,20 +111,40 @@ end
 
 ---get account info from cache
 ---@param accountName string
-function Server:__getCache_byName(accountName)
+---@return Golkin.Web.Protocol.Struct.Account_t
+function Server:__getAccountCache_byName(accountName)
     return self.__cacheAccounts[accountName]
+end
+
+---get account info from cache
+---@param ownerName string
+---@return Golkin.Web.Protocol.Struct.Owner_t
+function Server:__getOwnerCache_byName(ownerName)
+    return self.__cacheOwners[ownerName]
 end
 
 ---remove account info from cache
 ---@param accountName string
-function Server:__removeCache_byName(accountName)
+function Server:__removeAccountCache_byName(accountName)
     self.__cacheAccounts[accountName] = nil
+end
+
+---remove owner info from cache
+---@param ownerName string
+function Server:__removeOwnerCache_byName(ownerName)
+    self.__cacheOwners[ownerName] = nil
 end
 
 ---save account to cache
 ---@param account Golkin.Web.Protocol.Struct.Account_t
-function Server:__saveToCache(account)
+function Server:__saveToAccountCache(account)
     self.__cacheAccounts[account.Name] = account
+end
+
+---save owner to cache
+---@param owner Golkin.Web.Protocol.Struct.Owner_t
+function Server:__saveToOwnerCache(owner)
+    self.__cacheOwners[owner.Name] = owner
 end
 
 ---get account info
@@ -115,9 +152,9 @@ end
 ---@return Golkin.Web.Protocol.Struct.Account_t|nil
 function Server:__getAccount(accountName)
     ---@type Golkin.Web.Protocol.Struct.Account_t
-    local account = self:__getCache_byName(accountName)
+    local account = self:__getAccountCache_byName(accountName)
     if account == nil then
-        local accountPath = self.__bankPath .. "/" .. accountName .. ".sz"
+        local accountPath = self.__accountPath .. "/" .. accountName .. ".sz"
         if (fs.exists(accountPath) == false) then
             return nil
         else
@@ -127,15 +164,33 @@ function Server:__getAccount(accountName)
             return account
         end
     end
-
     return account
+end
+
+---get owner info
+---@param ownerName string
+---@return Golkin.Web.Protocol.Struct.Owner_t|nil
+function Server:__getOwner(ownerName)
+    ---@type Golkin.Web.Protocol.Struct.Owner_t
+    local owner = self:__getOwnerCache_byName(ownerName)
+    if owner == nil then
+        local ownerPath = self.__ownerPath .. "/" .. ownerName .. ".sz"
+        if (fs.exists(ownerPath) == false) then
+            return nil
+        else
+            local f = fs.open(ownerPath, "r")
+            owner = textutils.unserialize(f.readAll())
+            f.close()
+            return owner
+        end
+    end
 end
 
 ---save account to server
 ---@param account Golkin.Web.Protocol.Struct.Account_t
 function Server:__saveAccount(account)
-    self:__saveToCache(account)
-    local accountPath = self.__bankPath .. "/" .. account.Name .. ".sz"
+    self:__saveToAccountCache(account)
+    local accountPath = self.__accountPath .. "/" .. account.Name .. ".sz"
     local f = fs.open(accountPath, "w")
     f.write(textutils.serialize(account))
     f.close()
@@ -144,9 +199,77 @@ end
 ---remove account by name
 ---@param accountName string
 function Server:__removeAccount(accountName)
-    self:__removeCache_byName(accountName)
-    local accountPath = self.__bankPath .. "/" .. accountName .. ".sz"
+    self:__removeAccountCache_byName(accountName)
+    local accountPath = self.__accountPath .. "/" .. accountName .. ".sz"
     fs.delete(accountPath)
+end
+
+---handle owner login msg
+---@param msg Golkin.Web.Protocol.Msg
+---@param msgstruct Golkin.Web.Protocol.MsgStruct.OWNER_LOGIN
+function Server:__handle_OWNER_LOGIN(msg, msgstruct)
+    print("handle OWNER_LOGIN")
+    local replyMsgStruct = protocol.MsgStruct.ACK_OWNER_LOGIN:new()
+    local replyHeader = protocol.Header.ACK_OWNER_LOGIN
+    local replyEnum = protocol.Enum.ACK_OWNER_LOGIN_R
+
+    --- get owner
+    local owner = self:__getOwner(msgstruct.Name)
+
+    -- if owner not exists
+    if (owner == nil) then
+        replyMsgStruct.State = replyEnum.NO_OWNER_EXIST
+        replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        return nil
+    end
+
+    --- if password unmet
+    if (owner.Password ~= msgstruct.Password) then
+        replyMsgStruct.State = replyEnum.PASSWORD_UNMET
+        replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        return nil
+    end
+
+    -- send owner info back
+    replyMsgStruct.State = replyEnum.SUCCESS
+    replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
+    self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+    print("error:" .. tostring(replyMsgStruct.State))
+    print("PASSWD_UNMET")
+    return nil
+end
+
+---handle get owners msg
+---@param msg Golkin.Web.Protocol.Msg
+---@param msgstruct Golkin.Web.Protocol.MsgStruct.GET_OWNERS
+function Server:__handle_GET_OWNERS(msg, msgstruct)
+    print("handle GET_OWNERS msg")
+    local replyMsgStruct = protocol.MsgStruct.ACK_GET_OWNERS:new()
+    local replyHeader = protocol.Header.ACK_GET_OWNERS
+    local replyEnum = protocol.Enum.ACK_GET_OWNERS_R
+
+    -- collect all owner names
+    local owners = {}
+    for k, v in pairs(self.__cacheOwners) do
+        table.insert(owners, k)
+    end
+
+    replyMsgStruct.OwnerNames = owners
+    if #owners >= 1 then
+        replyMsgStruct.State = replyEnum.SUCCESS
+        print("good:" .. tostring(replyMsgStruct.State))
+        print("SUCCESS")
+    else
+        replyMsgStruct.State = replyEnum.NO_OWNERS
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("NO_OWNERS")
+    end
+    replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
+    self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+
+    return nil
 end
 
 ---handle get account msg

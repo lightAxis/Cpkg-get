@@ -54,6 +54,24 @@ function client:__sendMsg(header, msgstruct)
     rednet.send(msg.TargetID, textutils.serialize(msg), const.protocol)
 end
 
+--- send msg GET_OWNERS to server
+function client:send_GET_OWNERS()
+    local msgStruct = protocol.MsgStruct.GET_OWNERS:new()
+    client:__sendMsg(protocol.Header.GET_OWNERS, msgStruct)
+end
+
+---send msg OWNER_LOGIN to server
+---@param name string
+---@param password string
+---@param bioscaned boolean
+function client:send_OWNER_LOGIN(name, password, bioscaned)
+    local msgStruct = protocol.MsgStruct.OWNER_LOGIN:new()
+    msgStruct.Name = name
+    msgStruct.BioScaned = bioscaned
+    msgStruct.Password = password
+    self:__sendMsg(protocol.Header.OWNER_LOGIN, msgStruct)
+end
+
 ---send msg GET_ACCOUNT to server
 ---@param accountName string name of account
 ---@param password string md5 hashed hex string

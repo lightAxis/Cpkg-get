@@ -35,6 +35,7 @@
   {
     RootPath = "Cpkg-get/Golkin",
     Execs = {
+      "app",
       "protocol_gen",
       "see_scene",
       "start_server",

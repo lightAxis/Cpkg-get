@@ -102,9 +102,13 @@ GolkinApp.UIRunner:setIntialScene(TBL.Enums.Side.left)
 
 -----------------------------------
 
---- clear and render initial scenes
-GolkinApp.UIRunner:ClearScreens()
-GolkinApp.UIRunner:RenderScreen()
+function GolkinApp:start()
+    --- clear and render initial scenes
+    self.UIRunner:ClearScreens()
+    self.UIRunner:RenderScreen()
 
---- run main EventLoop to start Proj
-GolkinApp.EventRouter:main()
+    --- run main EventLoop to start Proj
+    self.EventRouter:main()
+end
+
+return GolkinApp
