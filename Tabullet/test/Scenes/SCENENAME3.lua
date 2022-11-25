@@ -18,13 +18,29 @@ function SCENE:initialize(ProjTemplatespace, UILayout)
     ---@cast layout Tabullet.ProjTemplate.SCENENAME3_L
     self.UILayout = layout
 
-    self.UILayout.button2.ClickEvent = function() self:buttonClickEvent_prev() end
+    self.UILayout.button2.ClickEvent = function(obj, e)
+        if e.Button == THIS.Enums.MouseButton.left then
+            self:buttonClickEvent_prev()
+        end
+    end
 
-    self.UILayout.button3.ClickEvent = function() self:buttonClickEvent_next() end
+    self.UILayout.button3.ClickEvent = function(obj, e)
+        if e.Button == THIS.Enums.MouseButton.left then
+            self:buttonClickEvent_next()
+        end
+    end
 
-    self.UILayout.button_up.ClickEvent = function() self:buttonClickEvent_up() end
+    self.UILayout.button_up.ClickEvent = function(obj, e)
+        if e.Button == THIS.Enums.MouseButton.left then self:
+                buttonClickEvent_up()
+        end
+    end
 
-    self.UILayout.button_down.ClickEvent = function() self:buttonClickEvent_down() end
+    self.UILayout.button_down.ClickEvent = function(obj, e)
+        if e.Button == THIS.Enums.MouseButton.left then self:
+                buttonClickEvent_down()
+        end
+    end
 
 
 

@@ -1,5 +1,7 @@
 local THIS = require("Golkin.pkg_init")
 
+-- you must disable all web include in Golkin/pkg_init.lua to build
+
 local Crotocol = DEPS.Golkin.Crotocol
 
 local builder = Crotocol.Builder:new("Golkin.Web.Protocol", "Golkin.include.Web.Protocol")
@@ -12,46 +14,61 @@ local fieldType = Crotocol.GenTool.makeTypeStr
 local fieldInit = Crotocol.GenTool.makeInitStr
 
 --- add enums
+builder:addEnum(enum("ACK_OWNER_LOGIN_R", "result enum for ACK_OWNER_LOGIN msg", {
+    enumElm("NONE", -1, "none result. this is error!"),
+    enumElm("NO_OWNER_EXIST", -101, "error code when no owner exist"),
+    enumElm("PASSWORD_UNMET", -102, "error code when login password unmet"),
+    enumElm("NORMAL", 0, "standard for normal msg"),
+    enumElm("SUCCESS", 101, "success to login")
+}))
+
+builder:addEnum(enum("ACK_GET_OWNERS_R", "result enum for ACK_GET_OWNERS msg", {
+    enumElm("NONE", -1, "none result. this is error!"),
+    enumElm("NO_OWNERS", -201, "error code when no owner exist in server"),
+    enumElm("NORMAL", 0, "standard for normal msg"),
+    enumElm("SUCCESS", 201, "success to get owner list from server"),
+}))
+
 builder:addEnum(enum("ACK_GET_ACCOUNT_R", "result enum for ACK_GETACCOUNT msg", {
     enumElm("NONE", -1, "none result. this is error!"),
-    enumElm("NO_ACCOUNT_FOR_NAME", -101, "error code when no account for name exist in server"),
-    enumElm("PASSWD_UNMET", -102, "error code when password not match with"),
+    enumElm("NO_ACCOUNT_FOR_NAME", -301, "error code when no account for name exist in server"),
+    enumElm("PASSWD_UNMET", -302, "error code when password not match with"),
     enumElm("NORMAL", 0, "standard for normal msg"),
-    enumElm("SUCCESS", 101, "success to get account")
+    enumElm("SUCCESS", 301, "success to get account")
 }))
 
 builder:addEnum(enum("ACK_GET_ACCOUNTS_R", "result enum for ACK_GETACCOUNTS msg", {
     enumElm("NONE", -1, "none result. this is error!"),
-    enumElm("NO_BANK_FILE", -201, "error code when no banking accounts exist at bank server"),
+    enumElm("NO_BANK_FILE", -401, "error code when no banking accounts exist at bank server"),
     enumElm("NORMAL", 0, "standard for normal msg"),
-    enumElm("SUCCESS", 201, "success to get accounts")
+    enumElm("SUCCESS", 401, "success to get accounts")
 }))
 
 builder:addEnum(enum("ACK_REGISTER_R", "result enum for ACK_REGISTER msg", {
     enumElm("NONE", -1, "none result. this is error!"),
-    enumElm("ACCOUNT_ALREADY_EXISTS", -301, "account name already exist in server error"),
-    enumElm("ACCOUNT_OWNER_UNMET", -302, "account already exist, and owner is different"),
+    enumElm("ACCOUNT_ALREADY_EXISTS", -501, "account name already exist in server error"),
+    enumElm("ACCOUNT_OWNER_UNMET", -502, "account already exist, and owner is different"),
     enumElm("NORMAL", 0, "standard for normal msg"),
-    enumElm("SUCCESS", 301, "success to register new account to server")
+    enumElm("SUCCESS", 501, "success to register new account to server")
 }))
 
 builder:addEnum(enum("ACK_SEND_R", "result enum for ACK_SEND msg", {
     enumElm("NONE", -1, "none result. this is error!"),
-    enumElm("NO_ACCOUNT_TO_SEND", -401, "no account to send money from"),
-    enumElm("NO_ACCOUNT_TO_RECIEVE", -402, "no account to recieve money"),
-    enumElm("NOT_ENOUGHT_BALLANCE_TO_SEND", -403, "not enough money left in account to send"),
-    enumElm("PASSWORD_UNMET", -404, "password is not corrent"),
-    enumElm("OWNER_UNMET", -405, "Owner is not matching"),
-    enumElm("BALANCE_CANNOT_BE_NEGATIVE", -406, "balance value is less than 0"),
+    enumElm("NO_ACCOUNT_TO_SEND", -601, "no account to send money from"),
+    enumElm("NO_ACCOUNT_TO_RECIEVE", -602, "no account to recieve money"),
+    enumElm("NOT_ENOUGHT_BALLANCE_TO_SEND", -603, "not enough money left in account to send"),
+    enumElm("PASSWORD_UNMET", -604, "password is not corrent"),
+    enumElm("OWNER_UNMET", -605, "Owner is not matching"),
+    enumElm("BALANCE_CANNOT_BE_NEGATIVE", -606, "balance value is less than 0"),
     enumElm("NORMAL", 0, "standard for normal msg"),
-    enumElm("SUCCESS", 401, "success to send money")
+    enumElm("SUCCESS", 601, "success to send money")
 }))
 
 builder:addEnum(enum("ACK_GET_OWNER_ACCOUNTS_R", "result enum for ACK_GET_OWNER_ACCOUNTS", {
     enumElm("NONE", -1, "none result. this is error"),
-    enumElm("NO_ACCOUNTS", -501, "no accounts for owner"),
+    enumElm("NO_ACCOUNTS", -701, "no accounts for owner"),
     enumElm("NORMAL", 0, "standard for normal msg"),
-    enumElm("SUCCESS", 501, "success to get accounts list"),
+    enumElm("SUCCESS", 701, "success to get accounts list"),
 }))
 
 --- make structs
@@ -79,7 +96,35 @@ builder:addStruct(struct("Account_t", "strcut for bank account info", {
         "account histories"),
 }))
 
+builder:addStruct(struct("Owner_t", "struct for bank account owners", {
+    field("Name", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of this owner"),
+    field("Password", fieldType(efieldType.str), fieldInit(efieldType.nil_), "password of owner for login, MD5 hashed")
+}))
+
 --- headers definitions
+
+builder:addHeader(struct("OWNER_LOGIN", "login owner", {
+    field("Name", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of the owner"),
+    field("Password", fieldType(efieldType.str), fieldInit(efieldType.nil_), "password for login. MD5 hashed"),
+    field("BioScaned", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "is bioscaned, no need to check passwd"),
+}))
+
+builder:addHeader(struct("GET_OWNERS", "get all owner list from server", {
+}))
+
+builder:addHeader(struct("ACK_GET_OWNERS", "reply to get_owners msg", {
+    field("OwnerNames", fieldType(efieldType.table, "number", "string"), fieldInit(efieldType.nil_),
+        "names of owners in server"),
+    field("Success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success the request or not"),
+    field("State", fieldType(efieldType.custom, builder:getEnumClassName("ACK_GET_OWNERS_R")),
+        fieldInit(efieldType.num, -1), "result state"),
+}))
+
+builder:addHeader(struct("ACK_OWNER_LOGIN", "reply to login owner msg", {
+    field("Success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success the request or not"),
+    field("State", fieldType(efieldType.custom, builder:getEnumClassName("ACK_OWNER_LOGIN_R")),
+        fieldInit(efieldType.num, -1), "result enum"),
+}))
 
 builder:addHeader(struct("GET_ACCOUNT", "get account info from server", {
     field("AccountName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of the account to get"),
