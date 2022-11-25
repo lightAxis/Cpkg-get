@@ -4,23 +4,6 @@ local class = require("Class.middleclass")
 local THIS = PKGS.Tabullet
 local Vector2 = DEPS.Tabullet.MathLib.Vector2
 
--- [properties description]
---- TODO change to protected, Pos, Children, Name, Visible
---- TODO consider capsule Parent, Posrel, Len?
----@class Tabullet.UIElement
----@field _screen Tabullet.Screen
----@field Parent Tabullet.UIElement
----@field PosRel MathLib.Vector2
----@field Pos MathLib.Vector2
----@field Len MathLib.Vector2
----@field BG Tabullet.Enums.Color
----@field FG Tabullet.Enums.Color
----@field Children table<number,Tabullet.UIElement>
----@field Name string
----@field Visible boolean
----@field new fun(self:Tabullet.UIElement ,parent: Tabullet.UIElement|nil, screen: Tabullet.Screen, name: string, x?: number, y?: number, xlen?: number, ylen?:number, bg?: Tabullet.Enums.Color, fg?:Tabullet.Enums.Color)
-
-
 -- public class UIElement
 ---
 ---**require** :
@@ -30,6 +13,23 @@ local Vector2 = DEPS.Tabullet.MathLib.Vector2
 --- - UI.UITools
 --- - UI.UIEvent
 ---@class Tabullet.UIElement
+--- TODO change to protected, Pos, Children, Name, Visible
+--- TODO consider capsule Parent, Posrel, Len?
+---@field _screen Tabullet.Screen
+---@field Parent Tabullet.UIElement|nil
+---@field PosRel MathLib.Vector2
+---@field Pos MathLib.Vector2
+---@field Len MathLib.Vector2
+---@field BG Tabullet.Enums.Color
+---@field FG Tabullet.Enums.Color
+---@field Children table<number,Tabullet.UIElement>
+---@field Name string
+---@field Visible boolean
+---@field ClickEvent nil|fun(self:Tabullet.UIElement, e:Tabullet.ClickEventArgs)
+---@field KeyInputEvent nil|fun(self:Tabullet.UIElement, e:Tabullet.KeyInputEventArgs)
+---@field CharEvent nil|fun(self:Tabullet.UIElement, e:Tabullet.CharEventArgs)
+---@field ScrollEvent nil|fun(self:Tabullet.UIElement, e:Tabullet.ScrollEventArgs)
+---@field new fun(self:Tabullet.UIElement ,parent: Tabullet.UIElement|nil, screen: Tabullet.Screen, name: string, x?: number, y?: number, xlen?: number, ylen?:number, bg?: Tabullet.Enums.Color, fg?:Tabullet.Enums.Color)
 local UIElement = class("Tabullet.UIElement")
 
 -- [constructor]
@@ -70,6 +70,11 @@ function UIElement:initialize(parent, screen, name, x, y, xlen, ylen, bg, fg)
     self.Name = name or ""
 
     self.Visible = true
+
+    self.ClickEvent = nil
+    self.KeyInputEvent = nil
+    self.CharEvent = nil
+    self.ScrollEvent = nil
 
 end
 
@@ -142,12 +147,16 @@ end
 -- click event bubble down function for UIElement
 ---@param e Tabullet.ClickEventArgs
 function UIElement:_ClickEventBubbleDown(e)
-    self:_ClickEvent(e)
-    if (e.Handled == true) then
-        return nil
-    else
+    if (self.ClickEvent ~= nil) then
+        self.ClickEvent(self, e)
+    end
+    if e.Handled == false then
+        self:_ClickEvent(e)
+    end
+    if (e.Handled == false) then
         if (self.Parent ~= nil) then self.Parent:_ClickEventBubbleDown(e) end
     end
+    return nil
 end
 
 -- scroll event function for UIElement
@@ -161,14 +170,18 @@ end
 -- scroll event bubble down function for UIelemnt
 ---@param e Tabullet.ScrollEventArgs
 function UIElement:_ScrollEventBubbleDown(e)
-    self:_ScrollEvent(e)
-    if (e.Handled == true) then
-        return nil
-    else
+    if (self.ScrollEvent ~= nil) then
+        self.ScrollEvent(self, e)
+    end
+    if e.Handled == false then
+        self:_ScrollEvent(e)
+    end
+    if (e.Handled == false) then
         if (self.Parent ~= nil) then
             self.Parent:_ScrollEventBubbleDown(e)
         end
     end
+    return nil
 end
 
 -- keyinput event function for UIElement
@@ -181,12 +194,16 @@ end
 -- keyinput bubble down event function for UIElement
 ---@param e Tabullet.KeyInputEventArgs
 function UIElement:_KeyInputBubbleDown(e)
-    self:_KeyInputEvent(e)
-    if (e.Handled == true) then
-        return nil
-    else
+    if (self.KeyInputEvent ~= nil) then
+        self.KeyInputEvent(self, e)
+    end
+    if (e.Handled == false) then
+        self:_KeyInputEvent(e)
+    end
+    if (e.Handled == false) then
         if (self.Parent ~= nil) then self.Parent:_KeyInputBubbleDown(e) end
     end
+    return nil
 end
 
 ---char event function for UIElement
@@ -199,12 +216,16 @@ end
 ---char event bubble down function for UIElement
 ---@param e Tabullet.CharEventArgs
 function UIElement:_CharBubbleDown(e)
-    self:_CharEvent(e)
-    if (e.Handled == true) then
-        return nil
-    else
+    if (self.CharEvent ~= nil) then
+        self.CharEvent(self, e)
+    end
+    if (e.Handled == false) then
+        self:_CharEvent(e)
+    end
+    if (e.Handled == false) then
         if (self.Parent ~= nil) then self.Parent:_CharBubbleDown(e) end
     end
+    return nil
 end
 
 -- [abstract functions]

@@ -61,6 +61,12 @@ end
 
 -- functions
 
+---get textarea object inside
+---@return Tabullet.TextArea
+function TextBlock:getTextArea()
+    return self._TextArea
+end
+
 ---@param thickness number
 function TextBlock:setBorderThickness(thickness)
     self._Border.BorderThickness = thickness

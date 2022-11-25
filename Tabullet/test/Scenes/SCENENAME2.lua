@@ -18,11 +18,23 @@ function SCENE:initialize(ProjTemplatespace, UILayout)
     self.UILayout = layout
 
 
-    self.UILayout.button2.ClickEvent = function() self:buttonClickEvent_prev() end
+    self.UILayout.button2.ClickEvent = function(btn, e)
+        if e.Button == THIS.Enums.MouseButton.left then
+            self:buttonClickEvent_prev()
+        end
+    end
 
-    self.UILayout.button3.ClickEvent = function() self:buttonClickEvent_next() end
+    self.UILayout.button3.ClickEvent = function(btn, e)
+        if e.Button == THIS.Enums.MouseButton.left then
+            self:buttonClickEvent_next()
+        end
+    end
 
-    self.UILayout.toggleButton.ClickEvent = function() self:togglebuttonClickEvent() end
+    self.UILayout.toggleButton.ClickEvent = function(btn, e)
+        if e.Button == THIS.Enums.MouseButton.left then
+            self:togglebuttonClickEvent()
+        end
+    end
 
 end
 

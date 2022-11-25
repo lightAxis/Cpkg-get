@@ -19,9 +19,11 @@ function SCENE:initialize(ProjTemplatespace, UILayout)
     self.UILayout = layout
 
     -- attach button event
-    self.UILayout.ButtonNext.ClickEvent = function()
-        -- error(self.attachingScreen:getScreenSide())
-        self:button_click()
+    self.UILayout.ButtonNext.ClickEvent = function(btn, e)
+        if e.Button == THIS.Enums.MouseButton.left then
+            -- error(self.attachingScreen:getScreenSide())
+            self:button_click()
+        end
     end
 
     -- attach itemTemplate

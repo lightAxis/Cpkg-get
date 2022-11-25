@@ -5,7 +5,15 @@ local class = require("Class.middleclass")
 local THIS = PKGS.Tabullet
 local Vector2 = DEPS.Tabullet.MathLib.Vector2
 
--- properties description
+-- public class TextBlock : UIElement
+---
+---**require** :
+--- - Class.middleclass
+--- - UI.UIElement
+--- - UI.Enums
+--- - UI.UITools
+--- - MathLib.Vector2
+--- - LibGlobal.StaticMethods
 ---@class Tabullet.TextArea : Tabullet.UIElement
 ---@field _HorizontalAlignmentMode Tabullet.Enums.HorizontalAlignmentMode
 ---@field _VerticalAlignmentMode Tabullet.Enums.VerticalAlignmentMode
@@ -20,18 +28,7 @@ local Vector2 = DEPS.Tabullet.MathLib.Vector2
 ---@field _TextEditCursorPos MathLib.Vector2
 ---@field IsTextEditable boolean
 ---@field _isTextEditting boolean
----@field new fun(self:Tabullet.TextArea, parent: Tabullet.UIElement, screen: Tabullet.Screen, name: string, text: string): Tabullet.TextArea
-
--- public class TextBlock : UIElement
----
----**require** :
---- - Class.middleclass
---- - UI.UIElement
---- - UI.Enums
---- - UI.UITools
---- - MathLib.Vector2
---- - LibGlobal.StaticMethods
----@class Tabullet.TextArea : Tabullet.UIElement
+---@field new fun(self:Tabullet.TextArea, parent: Tabullet.UIElement, screen: Tabullet.Screen, name: string, text?: string): Tabullet.TextArea
 local TextArea = class("TextArea", THIS.UIElement)
 
 
