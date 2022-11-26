@@ -1,7 +1,7 @@
 ---@class Golkin.Web.Protocol.MsgStruct.REMOVE_ACCOUNT : Golkin.Web.Protocol.MsgStruct.IMsgStruct
 ---@field AccountName string name of account to remove
 ---@field OwnerName string name of owner of account to remove
----@field AccountPassword string account of password to remove
+---@field OwnerPassword string account of password to remove
 ---@field new fun():Golkin.Web.Protocol.MsgStruct.REMOVE_ACCOUNT
 local struct = {}
 
@@ -18,7 +18,7 @@ function struct.new()
     a.OwnerName = nil -- name of owner of account to remove
     
     ---@type string
-    a.AccountPassword = nil -- account of password to remove
+    a.OwnerPassword = nil -- account of password to remove
     
     return a
 end

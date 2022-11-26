@@ -25,6 +25,11 @@ function Server:initialize()
         self:__handle_OWNER_LOGIN(msg, msgstruct)
     end)
 
+    self.__handle:attachMsgHandle(protocol.Header.GET_OWNERS, function(msg, msgstruct)
+        ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.GET_OWNERS
+        self:__handle_GET_OWNERS(msg, msgstruct)
+    end)
+
     self.__handle:attachMsgHandle(protocol.Header.GET_ACCOUNT, function(msg, msgstruct)
         ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.GET_ACCOUNT
         self:__handle_GET_ACCOUNT(msg, msgstruct)
@@ -85,7 +90,7 @@ function Server:initialize()
         ---@type Golkin.Web.Protocol.Struct.Owner_t
         local owner = textutils.unserialize(f.readAll())
         f.close()
-        self.__cacheOwners[owner.new] = owner
+        self.__cacheOwners[owner.Name] = owner
     end
 
 end
@@ -194,6 +199,7 @@ function Server:__getOwner(ownerName)
             return owner
         end
     end
+    return owner
 end
 
 ---save account to server
@@ -249,6 +255,8 @@ function Server:__handle_OWNER_LOGIN(msg, msgstruct)
         replyMsgStruct.State = replyEnum.NO_OWNER_EXIST
         replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("NO_OWNER_EXIST")
         return nil
     end
 
@@ -257,6 +265,8 @@ function Server:__handle_OWNER_LOGIN(msg, msgstruct)
         replyMsgStruct.State = replyEnum.PASSWORD_UNMET
         replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("PASSWORD_UNMET")
         return nil
     end
 
@@ -264,8 +274,8 @@ function Server:__handle_OWNER_LOGIN(msg, msgstruct)
     replyMsgStruct.State = replyEnum.SUCCESS
     replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
     self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-    print("error:" .. tostring(replyMsgStruct.State))
-    print("PASSWD_UNMET")
+    print("good:" .. tostring(replyMsgStruct.State))
+    print("SUCCESS")
     return nil
 end
 
@@ -387,10 +397,11 @@ function Server:__handle_GET_OWNER_ACCOUNTS(msg, msgstruct)
     local replyEnum = protocol.Enum.ACK_GET_OWNER_ACCOUNTS_R
 
     --collect all account infos of owner
+    ---@type table<number, Golkin.Web.Protocol.Struct.Account_t>
     local accountNames = {}
     for k, v in pairs(self.__cacheAccounts) do
         if v.Owner == msgstruct.Owner then
-            table.insert(accountNames, k)
+            table.insert(accountNames, v)
         end
     end
 
@@ -631,13 +642,14 @@ function Server:__handle_REMOVE_ACCOUNT(msg, msgstruct)
         return nil
     end
 
-    -- check account password matching
-    if account.Password ~= msgstruct.AccountPassword then
-        replyMsgStruct.State = replyEnum.PASSWORD_UNMET
+    -- try to get owner
+    local owner = self:__getOwner(msgstruct.OwnerName)
+    if owner == nil then
+        replyMsgStruct.State = replyEnum.OWNER_NOT_EXIST
         replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
         print("error:" .. tostring(replyMsgStruct.State))
-        print("PASSWORD_UNMET")
+        print("OWNER_NOT_EXIST")
         return nil
     end
 
@@ -648,6 +660,16 @@ function Server:__handle_REMOVE_ACCOUNT(msg, msgstruct)
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
         print("error:" .. tostring(replyMsgStruct.State))
         print("OWNER_UNMET")
+        return nil
+    end
+
+    -- check owner password matching
+    if owner.Password ~= msgstruct.OwnerPassword then
+        replyMsgStruct.State = replyEnum.PASSWORD_UNMET
+        replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("PASSWORD_UNMET")
         return nil
     end
 
