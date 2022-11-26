@@ -60,6 +60,11 @@ function Server:initialize()
         self:__handle_SEND(msg, msgstruct)
     end)
 
+    self.__handle:attachMsgHandle(protocol.Header.REMOVE_ACCOUNT, function(msg, msgstruct)
+        ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.REMOVE_ACCOUNT
+        self:__handle_REMOVE_ACCOUNT(msg, msgstruct)
+    end)
+
     self.__accountPath = THIS.ENV.PATH .. const.accountDir
     if fs.exists(self.__accountPath) == false then
         fs.makeDir(self.__accountPath)
@@ -120,7 +125,6 @@ function Server:__sendMsgStruct(header, msgstruct, idToSend)
     msg.MsgStructStr = textutils.serialize(msgstruct)
     msg.SendID = os.getComputerID()
     msg.TargetID = idToSend
-
     rednet.send(idToSend, textutils.serialize(msg), const.protocol)
 end
 
@@ -583,18 +587,22 @@ function Server:__handle_SEND(msg, msgstruct)
     recieverAccount.Balance = recieverAccount.Balance + msgstruct.Balance
 
     --- make new histories
-    local nowTime = protocol.Struct.Daytime_t:new()
-    nowTime.Realtime = os.date('%y/%m/%d %H:%M %a')
+    local nowTime1 = protocol.Struct.Daytime_t:new()
+    nowTime1.Realtime = os.date('%y/%m/%d %H:%M %a')
+    local senderHistory = protocol.Struct.History_t:new()
+    local recieverHistory = protocol.Struct.History_t:new()
+    local nowTime2 = protocol.Struct.Daytime_t:new()
+    nowTime2.Realtime = os.date('%y/%m/%d %H:%M %a')
     local senderHistory = protocol.Struct.History_t:new()
     local recieverHistory = protocol.Struct.History_t:new()
 
     senderHistory.BalanceLeft = senderAccount.Balance
-    senderHistory.Daytime = nowTime
+    senderHistory.Daytime = nowTime1
     senderHistory.InOut = -msgstruct.Balance
     senderHistory.Name = msgstruct.FromMsg
 
     recieverHistory.BalanceLeft = recieverAccount.Balance
-    recieverHistory.Daytime = nowTime
+    recieverHistory.Daytime = nowTime2
     recieverHistory.InOut = msgstruct.Balance
     recieverHistory.Name = msgstruct.ToMsg
 
@@ -627,6 +635,7 @@ end
 ---@param msg Golkin.Web.Protocol.Msg
 ---@param msgstruct Golkin.Web.Protocol.MsgStruct.REMOVE_ACCOUNT
 function Server:__handle_REMOVE_ACCOUNT(msg, msgstruct)
+    print("handle REMOVE_ACCOUNT msg")
     local replyMsgStruct = protocol.MsgStruct.ACK_REMOVE_ACCOUNT:new()
     local replyHeader = protocol.Header.ACK_REMOVE_ACCOUNT
     local replyEnum = protocol.Enum.ACK_REMOVE_ACCOUNT_R
