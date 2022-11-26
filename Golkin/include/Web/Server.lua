@@ -612,4 +612,55 @@ function Server:__handle_SEND(msg, msgstruct)
     return nil
 end
 
+---handle Remove Account msg from client
+---@param msg Golkin.Web.Protocol.Msg
+---@param msgstruct Golkin.Web.Protocol.MsgStruct.REMOVE_ACCOUNT
+function Server:__handle_REMOVE_ACCOUNT(msg, msgstruct)
+    local replyMsgStruct = protocol.MsgStruct.ACK_REMOVE_ACCOUNT:new()
+    local replyHeader = protocol.Header.ACK_REMOVE_ACCOUNT
+    local replyEnum = protocol.Enum.ACK_REMOVE_ACCOUNT_R
+
+    -- try to get account
+    local account = self:__getAccount(msgstruct.AccountName)
+    if account == nil then
+        replyMsgStruct.State = replyEnum.NO_ACCOUNTS
+        replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("NO_ACCOUNTS")
+        return nil
+    end
+
+    -- check account password matching
+    if account.Password ~= msgstruct.AccountPassword then
+        replyMsgStruct.State = replyEnum.PASSWORD_UNMET
+        replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("PASSWORD_UNMET")
+        return nil
+    end
+
+    -- check owner matching
+    if account.Owner ~= msgstruct.OwnerName then
+        replyMsgStruct.State = replyEnum.OWNER_UNMET
+        replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("OWNER_UNMET")
+        return nil
+    end
+
+    -- remove account
+    self:__removeAccount(account.Name)
+
+    -- make new msg and send
+    replyMsgStruct.State = replyEnum.SUCCESS
+    replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
+    self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+    print("good:" .. tostring(replyMsgStruct.State))
+    print("SUCCESS")
+    return nil
+end
+
 return Server

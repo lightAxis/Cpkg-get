@@ -109,6 +109,14 @@ function UIRunner:attachToEventRouter(router)
 
 end
 
+function UIRunner:ReDrawAll()
+    self:ClearScreens()
+    self:ClearRenderHistories()
+    self:RenderScreen()
+    self:Reflect2Screen()
+    self:PostRendering()
+end
+
 ---Char event callback function for EventRouter
 ---@param event AppLib.EventEnum
 ---@param char string
@@ -117,11 +125,7 @@ end
 function UIRunner:CharEventCallback(event, char, _, __)
     self.FocusedElement:triggerCharEvent(char)
 
-    self:ClearScreens()
-    self:ClearRenderHistories()
-    self:RenderScreen()
-    self:Reflect2Screen()
-    self:PostRendering()
+    self:ReDrawAll()
 end
 
 ---mouse click event function for EventRouter
@@ -145,11 +149,7 @@ function UIRunner:MouseClickEventCallback(event, button, x, y)
         self.FocusedElement = clickedElement
     end
 
-    self:ClearScreens()
-    self:ClearRenderHistories()
-    self:RenderScreen()
-    self:Reflect2Screen()
-    self:PostRendering()
+    self:ReDrawAll()
 end
 
 ---key input event function for EventRouter
@@ -160,11 +160,7 @@ end
 function UIRunner:KeyInputEventCallback(event, key, isShiftPressed, _)
     self.FocusedElement:triggerKeyInputEvent(key)
 
-    self:ClearScreens()
-    self:ClearRenderHistories()
-    self:RenderScreen()
-    self:Reflect2Screen()
-    self:PostRendering()
+    self:ReDrawAll()
 end
 
 ---scroll event function for EventRouter
@@ -179,11 +175,7 @@ function UIRunner:ScrollEventCallback(event, direction, x, y)
     local scrolledElement = focusedScreen:getUIAtPos(pos)
     scrolledElement:triggerScrollEvent(direction, pos)
 
-    self:ClearScreens()
-    self:ClearRenderHistories()
-    self:RenderScreen()
-    self:Reflect2Screen()
-    self:PostRendering()
+    self:ReDrawAll()
 end
 
 ---monitor touch event function for EventRouter
@@ -201,11 +193,7 @@ function UIRunner:MonitorTouchEventCallback(event, side, x, y)
     end
     touchedElement:triggerClickEvent(THIS.Enums.MouseButton.left, pos)
 
-    self:ClearScreens()
-    self:ClearRenderHistories()
-    self:RenderScreen()
-    self:Reflect2Screen()
-    self:PostRendering()
+    self:ReDrawAll()
 end
 
 return UIRunner

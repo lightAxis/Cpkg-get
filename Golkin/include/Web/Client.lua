@@ -115,6 +115,18 @@ function client:send_REGISTER_OWNER(ownerName, password)
     self:__sendMsg(protocol.Header.REGISTER_OWNER, msgStruct)
 end
 
+---send request to server to remove account
+---@param accountName string
+---@param accountPasswd string
+---@param ownerName string
+function client:send_REMOVE_ACCOUNT(accountName, accountPasswd, ownerName)
+    local msgStruct = protocol.MsgStruct.REMOVE_ACCOUNT:new()
+    msgStruct.AccountName = accountName
+    msgStruct.AccountPassword = accountPasswd
+    msgStruct.OwnerName = ownerName
+    self:__sendMsg(protocol.Header.REMOVE_ACCOUNT, msgStruct)
+end
+
 ---comment
 ---@return Golkin.Web.Client.SEND_t
 function client:getSend_t()

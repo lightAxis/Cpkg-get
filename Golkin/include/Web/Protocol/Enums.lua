@@ -11,14 +11,18 @@ a.ACK_OWNER_LOGIN_R = {
     ["SUCCESS"] = 101, -- success to login
 }
 
----result enum for ACK_GETACCOUNT msg
----@enum Golkin.Web.Protocol.Enum.ACK_GET_ACCOUNT_R 
-a.ACK_GET_ACCOUNT_R = {
+---result enum for ACK_SEND msg
+---@enum Golkin.Web.Protocol.Enum.ACK_SEND_R 
+a.ACK_SEND_R = {
     ["NONE"] = -1, -- none result. this is error!
-    ["NO_ACCOUNT_FOR_NAME"] = -301, -- error code when no account for name exist in server
-    ["PASSWD_UNMET"] = -302, -- error code when password not match with
+    ["NO_ACCOUNT_TO_SEND"] = -701, -- no account to send money from
+    ["NO_ACCOUNT_TO_RECIEVE"] = -702, -- no account to recieve money
+    ["NOT_ENOUGHT_BALLANCE_TO_SEND"] = -703, -- not enough money left in account to send
+    ["PASSWORD_UNMET"] = -704, -- password is not corrent
+    ["OWNER_UNMET"] = -705, -- Owner is not matching
+    ["BALANCE_CANNOT_BE_NEGATIVE"] = -706, -- balance value is less than 0
     ["NORMAL"] = 0, -- standard for normal msg
-    ["SUCCESS"] = 301, -- success to get account
+    ["SUCCESS"] = 701, -- success to send money
 }
 
 ---result enum for ACK_GETACCOUNTS msg
@@ -39,6 +43,16 @@ a.ACK_GET_OWNERS_R = {
     ["SUCCESS"] = 201, -- success to get owner list from server
 }
 
+---result enum for ACK_REGISTER msg
+---@enum Golkin.Web.Protocol.Enum.ACK_REGISTER_R 
+a.ACK_REGISTER_R = {
+    ["NONE"] = -1, -- none result. this is error!
+    ["ACCOUNT_ALREADY_EXISTS"] = -501, -- account name already exist in server error
+    ["ACCOUNT_OWNER_UNMET"] = -502, -- account already exist, and owner is different
+    ["NORMAL"] = 0, -- standard for normal msg
+    ["SUCCESS"] = 501, -- success to register new account to server
+}
+
 ---result enum fro ACK_REGISTER_OWNER msg
 ---@enum Golkin.Web.Protocol.Enum.ACK_REGISTER_OWNER_R 
 a.ACK_REGISTER_OWNER_R = {
@@ -48,6 +62,27 @@ a.ACK_REGISTER_OWNER_R = {
     ["SUCCESS"] = 601, -- success to register new owner to server
 }
 
+---result enum for ACK_REMOVE_ACCOUNT
+---@enum Golkin.Web.Protocol.Enum.ACK_REMOVE_ACCOUNT_R 
+a.ACK_REMOVE_ACCOUNT_R = {
+    ["NONE"] = -1, -- none result. this is error
+    ["NO_ACCOUNTS"] = -901, -- no accounts to remove
+    ["PASSWORD_UNMET"] = -902, -- passwrod is not correct
+    ["OWNER_UNMET"] = -903, -- Owner is not matching with account
+    ["NORMAL"] = 0, -- standard for normal msg
+    ["SUCCESS"] = 901, -- success to remove account
+}
+
+---result enum for ACK_GETACCOUNT msg
+---@enum Golkin.Web.Protocol.Enum.ACK_GET_ACCOUNT_R 
+a.ACK_GET_ACCOUNT_R = {
+    ["NONE"] = -1, -- none result. this is error!
+    ["NO_ACCOUNT_FOR_NAME"] = -301, -- error code when no account for name exist in server
+    ["PASSWD_UNMET"] = -302, -- error code when password not match with
+    ["NORMAL"] = 0, -- standard for normal msg
+    ["SUCCESS"] = 301, -- success to get account
+}
+
 ---result enum for ACK_GET_OWNER_ACCOUNTS
 ---@enum Golkin.Web.Protocol.Enum.ACK_GET_OWNER_ACCOUNTS_R 
 a.ACK_GET_OWNER_ACCOUNTS_R = {
@@ -55,30 +90,6 @@ a.ACK_GET_OWNER_ACCOUNTS_R = {
     ["NO_ACCOUNTS"] = -801, -- no accounts for owner
     ["NORMAL"] = 0, -- standard for normal msg
     ["SUCCESS"] = 801, -- success to get accounts list
-}
-
----result enum for ACK_SEND msg
----@enum Golkin.Web.Protocol.Enum.ACK_SEND_R 
-a.ACK_SEND_R = {
-    ["NONE"] = -1, -- none result. this is error!
-    ["NO_ACCOUNT_TO_SEND"] = -701, -- no account to send money from
-    ["NO_ACCOUNT_TO_RECIEVE"] = -702, -- no account to recieve money
-    ["NOT_ENOUGHT_BALLANCE_TO_SEND"] = -703, -- not enough money left in account to send
-    ["PASSWORD_UNMET"] = -704, -- password is not corrent
-    ["OWNER_UNMET"] = -705, -- Owner is not matching
-    ["BALANCE_CANNOT_BE_NEGATIVE"] = -706, -- balance value is less than 0
-    ["NORMAL"] = 0, -- standard for normal msg
-    ["SUCCESS"] = 701, -- success to send money
-}
-
----result enum for ACK_REGISTER msg
----@enum Golkin.Web.Protocol.Enum.ACK_REGISTER_R 
-a.ACK_REGISTER_R = {
-    ["NONE"] = -1, -- none result. this is error!
-    ["ACCOUNT_ALREADY_EXISTS"] = -501, -- account name already exist in server error
-    ["ACCOUNT_OWNER_UNMET"] = -502, -- account already exist, and owner is different
-    ["NORMAL"] = 0, -- standard for normal msg
-    ["SUCCESS"] = 501, -- success to register new account to server
 }
 
 

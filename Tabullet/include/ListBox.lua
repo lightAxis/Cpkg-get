@@ -9,7 +9,7 @@ local Vector2 = DEPS.Tabullet.MathLib.Vector2
 ---@class Tabullet.ListBox : Tabullet.UIElement
 ---@field __ItemSource table<number, any>
 ---@field __Items table<number, Tabullet.ListBoxItem>
----@field __ItemTemplate fun(obj:any): string, Tabullet.Enums.Color, Tabullet.Enums.Color
+---@field __ItemTemplate fun(obj:any): string, Tabullet.Enums.Color|nil, Tabullet.Enums.Color|nil
 ---@field __Scroll number
 ---@field ItemRenderYOffset number
 ---@field __SelectedItem Tabullet.ListBoxItem
@@ -37,7 +37,7 @@ function ListBox:initialize(parent, screen, name)
     self.__ItemSource = {}
     self.__Items = {}
 
-    ---@type fun(obj: any): string, Tabullet.Enums.Color, Tabullet.Enums.Color
+    ---@type fun(obj: any): string, Tabullet.Enums.Color|nil, Tabullet.Enums.Color|nil
     self.ItemTemplete = nil
 
     self.__Scroll = 1
@@ -62,7 +62,7 @@ end
 ---@return fun(obj:any): string, Tabullet.Enums.Color, Tabullet.Enums.Color ItemTemplateFunction
 function ListBox:getItempTemplate() return self._ItemTemplate end
 
----@param template fun(obj:any): string, Tabullet.Enums.Color, Tabullet.Enums.Color
+---@param template fun(obj:any): string, Tabullet.Enums.Color|nil, Tabullet.Enums.Color|nil
 function ListBox:setItemTemplate(template) self.ItemTemplete = template end
 
 ---@param objs table<number,any>
