@@ -21,8 +21,8 @@ function SCENE:initialize(ProjNamespace, UILayout)
 end
 
 function SCENE:goto_Login_BioScan()
+    self:detachHandlers()
     self.PROJ.Scene.Login_BioScan:reset()
-    self.PROJ.Scene.Login_BioScan:detachHandlers();
     self.PROJ.UIRunner:attachScene(self.PROJ.Scene.Login_BioScan)
 end
 

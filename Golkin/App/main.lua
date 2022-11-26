@@ -26,9 +26,9 @@ GolkinApp.UIRunner:attachToEventRouter(GolkinApp.EventRouter)
 --- can terminal or monitor
 --- side must exist. NONE is terminal
 
--- local main_screen = TBL.Screen:new(peripheral.wrap("left"),
---     TBL.Enums.Side.left)
-local main_screen = TBL.Screen:new(term, TBL.Enums.Side.NONE)
+local main_screen = TBL.Screen:new(peripheral.wrap("left"), TBL.Enums.Side.left)
+-- local main_screen = TBL.Screen:new(term, TBL.Enums.Side.NONE)
+local computer_screen = TBL.Screen:new(term, TBL.Enums.Side.NONE)
 ------------ Param -------------
 
 GolkinApp.Param = require("Golkin.App.param")
@@ -36,7 +36,7 @@ GolkinApp.Style = require("Golkin.App.Style.Common")
 GolkinApp.Data = require("Golkin.App.Data")
 
 ------------ web handle --------
-GolkinApp.Handle = require("Golkin.include.Web.Handle")
+GolkinApp.Handle = require("Golkin.include.Web.Handle"):new()
 GolkinApp.EventRouter:attachRednetCallback(protocol, function(a, b, c, d)
     -- a: rednet_message, b:sender, c:msg, d:protocol
     if (b == serverID) then
@@ -64,13 +64,14 @@ GolkinApp.Layout.Cover           = layout_Cover:new(main_screen, GolkinApp)
 GolkinApp.Layout.Login_BioScan   = layout_Login_BioScan:new(main_screen, GolkinApp)
 GolkinApp.Layout.Login_List      = layout_Login_List:new(main_screen, GolkinApp)
 GolkinApp.Layout.PIN             = layout_PIN:new(main_screen, GolkinApp)
+GolkinApp.Layout.PINCheck        = layout_PIN:new(main_screen, GolkinApp)
 GolkinApp.Layout.OwnerMenu       = layout_OwnerMenu:new(main_screen, GolkinApp)
 GolkinApp.Layout.SendMoney       = layout_SendMoney:new(main_screen, GolkinApp)
 GolkinApp.Layout.SendMoneyName   = layout_SendMoneyName:new(main_screen, GolkinApp)
 GolkinApp.Layout.Histories       = layout_Histories:new(main_screen, GolkinApp)
 GolkinApp.Layout.RegisterAccount = layout_RegisterAccount:new(main_screen, GolkinApp)
 GolkinApp.Layout.RemoveAccount   = layout_RemoveAccount:new(main_screen, GolkinApp)
-GolkinApp.Layout.ManualTextInput = layout_ManualTextInput:new(term, GolkinApp)
+GolkinApp.Layout.ManualTextInput = layout_ManualTextInput:new(computer_screen, GolkinApp)
 
 ------------ SCENE --------------
 GolkinApp.Scene                 = {}
@@ -78,6 +79,7 @@ GolkinApp.Scene.Cover           = require("Golkin.App.Scene.Cover"):new(GolkinAp
 GolkinApp.Scene.Login_BioScan   = require("Golkin.App.Scene.Login_BioScan"):new(GolkinApp, GolkinApp.Layout.Login_BioScan)
 GolkinApp.Scene.Login_List      = require("Golkin.App.Scene.Login_List"):new(GolkinApp, GolkinApp.Layout.Login_List)
 GolkinApp.Scene.PIN             = require("Golkin.App.Scene.PIN"):new(GolkinApp, GolkinApp.Layout.PIN)
+GolkinApp.Scene.PINCheck        = require("Golkin.App.Scene.PINCheck"):new(GolkinApp, GolkinApp.Layout.PINCheck)
 GolkinApp.Scene.OwnerMenu       = require("Golkin.App.Scene.OwnerMenu"):new(GolkinApp, GolkinApp.Layout.OwnerMenu)
 GolkinApp.Scene.SendMoney       = require("Golkin.App.Scene.SendMoney"):new(GolkinApp, GolkinApp.Layout.SendMoney)
 GolkinApp.Scene.SendMoneyName   = require("Golkin.App.Scene.SendMoneyName"):new(GolkinApp, GolkinApp.Layout.SendMoneyName)
@@ -95,6 +97,7 @@ GolkinApp.Peripheral.PlayerDetector = peripheral.find(GolkinApp.Param.PlayerDete
 
 
 --- register each screen sides initialize Scene
+GolkinApp.UIRunner:attachScene(GolkinApp.Scene.ManualTextInput)
 GolkinApp.UIRunner:attachScene(GolkinApp.Scene.Cover)
 
 --- set initial scene to start interact
@@ -106,6 +109,7 @@ function GolkinApp:start()
     --- clear and render initial scenes
     self.UIRunner:ClearScreens()
     self.UIRunner:RenderScreen()
+    self.UIRunner:Reflect2Screen()
 
     --- run main EventLoop to start Proj
     self.EventRouter:main()

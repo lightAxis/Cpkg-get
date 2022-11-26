@@ -50,7 +50,7 @@ function SCENE_L:initialize(attachedScreen, projNamespace)
 
     --- autenticate button
     local auth_bt = TBL.Button:new(self.rootScreenCanvas, self.attachingScreen, "auth_bt")
-    grid:setPosLen(auth_bt, 3, 6)
+    grid:setPosLen(auth_bt, 5, 6)
     auth_bt:setText("Login!")
     self.PROJ.Style.BT.func(auth_bt)
     self.bt_auth = auth_bt
@@ -58,9 +58,16 @@ function SCENE_L:initialize(attachedScreen, projNamespace)
     --- back button
     local back_bt = TBL.Button:new(self.rootScreenCanvas, self.attachingScreen, "back_bt")
     grid:setPosLen(back_bt, 1, 6)
-    back_bt:setText("back")
+    back_bt:setText("Back")
     self.PROJ.Style.BT.Back(back_bt)
     self.bt_back = back_bt
+
+    --- register button
+    local bt_register = TBL.Button:new(self.rootScreenCanvas, self.attachingScreen, "bt_register")
+    grid:setPosLen(bt_register, 3, 6)
+    bt_register:setText("Register")
+    self.PROJ.Style.BT.func(bt_register)
+    self.bt_remove = bt_register
 
     local grid_sidebar_pos, grid_sidebar_len = grid:getPosLen(5, 3, 1, 3)
     local grid_sidebar = TBL.Grid:new(grid_sidebar_len, grid_sidebar_pos)

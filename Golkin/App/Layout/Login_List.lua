@@ -45,7 +45,7 @@ function SCENE_L:initialize(attachedScreen, projNamespace)
     bt_refresh_list:setText("Refresh Names")
     grid:setPosLen(bt_refresh_list, 3, 4)
     self.PROJ.Style.BT.func(bt_refresh_list)
-    self.bt_refresh_list = bt_refresh_list
+    self.bt_see_histories = bt_refresh_list
 
     --- bt sign in
     local bt_Signin = TBL.Button:new(self.rootScreenCanvas, self.attachingScreen,
@@ -53,7 +53,7 @@ function SCENE_L:initialize(attachedScreen, projNamespace)
     bt_Signin:setText("Sign In")
     grid:setPosLen(bt_Signin, 5, 4)
     self.PROJ.Style.BT.func(bt_Signin)
-    self.bt_Signin = bt_Signin
+    self.bt_sendMoney = bt_Signin
 
     -- grid to display left side arrow
     local grid4_GotoLeft = grid:genSubGrid(nil, 1, 3, 5, 1)

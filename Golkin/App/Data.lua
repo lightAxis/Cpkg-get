@@ -10,7 +10,7 @@ a.CurrentAccount = nil
 ---@type table<number, string>
 a.AccountNames = {}
 
----@type table<string, Golkin.Web.Protocol.Struct.Account_t>
+---@type table<number, Golkin.Web.Protocol.Struct.Account_t>
 a.AccountInfos = {}
 
 return a

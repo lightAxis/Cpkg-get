@@ -20,6 +20,16 @@ local Server = class("Golkin.Web.Server")
 function Server:initialize()
     self.__handle = handle:new()
 
+    self.__handle:attachMsgHandle(protocol.Header.OWNER_LOGIN, function(msg, msgstruct)
+        ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.OWNER_LOGIN
+        self:__handle_OWNER_LOGIN(msg, msgstruct)
+    end)
+
+    self.__handle:attachMsgHandle(protocol.Header.GET_OWNERS, function(msg, msgstruct)
+        ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.GET_OWNERS
+        self:__handle_GET_OWNERS(msg, msgstruct)
+    end)
+
     self.__handle:attachMsgHandle(protocol.Header.GET_ACCOUNT, function(msg, msgstruct)
         ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.GET_ACCOUNT
         self:__handle_GET_ACCOUNT(msg, msgstruct)
@@ -38,6 +48,11 @@ function Server:initialize()
     self.__handle:attachMsgHandle(protocol.Header.REGISTER, function(msg, msgstruct)
         ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.REGISTER
         self:__handle_REGISTER(msg, msgstruct)
+    end)
+
+    self.__handle:attachMsgHandle(protocol.Header.REGISTER_OWNER, function(msg, msgstruct)
+        ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.REGISTER_OWNER
+        self:__handle_REGISTER_OWNER(msg, msgstruct)
     end)
 
     self.__handle:attachMsgHandle(protocol.Header.SEND, function(msg, msgstruct)
@@ -75,7 +90,7 @@ function Server:initialize()
         ---@type Golkin.Web.Protocol.Struct.Owner_t
         local owner = textutils.unserialize(f.readAll())
         f.close()
-        self.__cacheOwners[owner.new] = owner
+        self.__cacheOwners[owner.Name] = owner
     end
 
 end
@@ -184,6 +199,7 @@ function Server:__getOwner(ownerName)
             return owner
         end
     end
+    return owner
 end
 
 ---save account to server
@@ -196,12 +212,30 @@ function Server:__saveAccount(account)
     f.close()
 end
 
+---save owner to server
+---@param owner Golkin.Web.Protocol.Struct.Owner_t
+function Server:__saveOwner(owner)
+    self:__saveToOwnerCache(owner)
+    local ownerPath = self.__ownerPath .. "/" .. owner.Name .. ".sz"
+    local f = fs.open(ownerPath, "w")
+    f.write(textutils.serialize(owner))
+    f.close()
+end
+
 ---remove account by name
 ---@param accountName string
 function Server:__removeAccount(accountName)
     self:__removeAccountCache_byName(accountName)
     local accountPath = self.__accountPath .. "/" .. accountName .. ".sz"
     fs.delete(accountPath)
+end
+
+---remove owner by name
+---@param ownerName string
+function Server:__removeOwner(ownerName)
+    self:__removeOwnerCache_byName(ownerName)
+    local ownerPath = self.__ownerPath .. "/" .. ownerName .. ".sz"
+    fs.delete(ownerPath)
 end
 
 ---handle owner login msg
@@ -221,6 +255,8 @@ function Server:__handle_OWNER_LOGIN(msg, msgstruct)
         replyMsgStruct.State = replyEnum.NO_OWNER_EXIST
         replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("NO_OWNER_EXIST")
         return nil
     end
 
@@ -229,6 +265,8 @@ function Server:__handle_OWNER_LOGIN(msg, msgstruct)
         replyMsgStruct.State = replyEnum.PASSWORD_UNMET
         replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("PASSWORD_UNMET")
         return nil
     end
 
@@ -236,8 +274,8 @@ function Server:__handle_OWNER_LOGIN(msg, msgstruct)
     replyMsgStruct.State = replyEnum.SUCCESS
     replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
     self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-    print("error:" .. tostring(replyMsgStruct.State))
-    print("PASSWD_UNMET")
+    print("good:" .. tostring(replyMsgStruct.State))
+    print("SUCCESS")
     return nil
 end
 
@@ -359,10 +397,11 @@ function Server:__handle_GET_OWNER_ACCOUNTS(msg, msgstruct)
     local replyEnum = protocol.Enum.ACK_GET_OWNER_ACCOUNTS_R
 
     --collect all account infos of owner
+    ---@type table<number, Golkin.Web.Protocol.Struct.Account_t>
     local accountNames = {}
     for k, v in pairs(self.__cacheAccounts) do
         if v.Owner == msgstruct.Owner then
-            table.insert(accountNames, k)
+            table.insert(accountNames, v)
         end
     end
 
@@ -418,6 +457,9 @@ function Server:__handle_REGISTER(msg, msgstruct)
     newAccount.Password = msgstruct.Password
     newAccount.Histories = {}
     newAccount.Balance = 0
+    local nowTime = protocol.Struct.Daytime_t:new()
+    nowTime.Realtime = os.date('%y/%m/%d %H:%M %a')
+    newAccount.Daytime = nowTime
     self:__saveAccount(newAccount)
 
     --- send SUCCESS
@@ -427,6 +469,42 @@ function Server:__handle_REGISTER(msg, msgstruct)
     print("good:" .. tostring(replyMsgStruct.State))
     print("SUCCESS")
     return nil
+end
+
+---handleed register owner
+---@param msg Golkin.Web.Protocol.Msg
+---@param msgstruct Golkin.Web.Protocol.MsgStruct.REGISTER_OWNER
+function Server:__handle_REGISTER_OWNER(msg, msgstruct)
+    print("handle REGISTER_OWNER msg")
+    local replyMsgStruct = protocol.MsgStruct.ACK_REGISTER_OWNER:new()
+    local replyHeader = protocol.Header.ACK_REGISTER_OWNER
+    local replyEnum = protocol.Enum.ACK_REGISTER_OWNER_R
+
+    --- read owner
+    local owner = self:__getOwner(msgstruct.OwnerName)
+
+    -- if owner already exists
+    if owner ~= nil then
+        replyMsgStruct.State = replyEnum.OWNER_ALREADY_EXISTS
+        replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("OWNER_ALREADY_EXISTS")
+        return nil
+    end
+
+    -- make new owner and save to server
+    local newOwner = protocol.Struct.Owner_t:new()
+    newOwner.Name = msgstruct.OwnerName
+    newOwner.Password = msgstruct.Password
+    self:__saveOwner(newOwner)
+
+    -- send success
+    replyMsgStruct.State = replyEnum.SUCCESS
+    replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
+    self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+    print("good:" .. tostring(replyMsgStruct.State))
+    print("SUCCESS")
 end
 
 ---handle send msg
@@ -537,6 +615,68 @@ function Server:__handle_SEND(msg, msgstruct)
     self:__saveAccount(recieverAccount)
 
     -- send back success
+    replyMsgStruct.State = replyEnum.SUCCESS
+    replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
+    self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+    print("good:" .. tostring(replyMsgStruct.State))
+    print("SUCCESS")
+    return nil
+end
+
+---handle Remove Account msg from client
+---@param msg Golkin.Web.Protocol.Msg
+---@param msgstruct Golkin.Web.Protocol.MsgStruct.REMOVE_ACCOUNT
+function Server:__handle_REMOVE_ACCOUNT(msg, msgstruct)
+    local replyMsgStruct = protocol.MsgStruct.ACK_REMOVE_ACCOUNT:new()
+    local replyHeader = protocol.Header.ACK_REMOVE_ACCOUNT
+    local replyEnum = protocol.Enum.ACK_REMOVE_ACCOUNT_R
+
+    -- try to get account
+    local account = self:__getAccount(msgstruct.AccountName)
+    if account == nil then
+        replyMsgStruct.State = replyEnum.NO_ACCOUNTS
+        replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("NO_ACCOUNTS")
+        return nil
+    end
+
+    -- try to get owner
+    local owner = self:__getOwner(msgstruct.OwnerName)
+    if owner == nil then
+        replyMsgStruct.State = replyEnum.OWNER_NOT_EXIST
+        replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("OWNER_NOT_EXIST")
+        return nil
+    end
+
+    -- check owner matching
+    if account.Owner ~= msgstruct.OwnerName then
+        replyMsgStruct.State = replyEnum.OWNER_UNMET
+        replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("OWNER_UNMET")
+        return nil
+    end
+
+    -- check owner password matching
+    if owner.Password ~= msgstruct.OwnerPassword then
+        replyMsgStruct.State = replyEnum.PASSWORD_UNMET
+        replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        print("error:" .. tostring(replyMsgStruct.State))
+        print("PASSWORD_UNMET")
+        return nil
+    end
+
+    -- remove account
+    self:__removeAccount(account.Name)
+
+    -- make new msg and send
     replyMsgStruct.State = replyEnum.SUCCESS
     replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
     self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)

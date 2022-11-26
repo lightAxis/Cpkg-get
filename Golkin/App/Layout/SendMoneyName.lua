@@ -26,7 +26,7 @@ function SCENE_L:main_layout()
     --- title block
     local title_textblock = TBL.TextBlock:new(self.rootScreenCanvas, self.attachingScreen, "title_textblock")
     grid:setPosLen(title_textblock, 1, 1, 5, 1)
-    title_textblock:setText("Send Money From : yourSendingAccount")
+    title_textblock:setText("Send Money Msgs")
     self.PROJ.Style.TB.title(title_textblock)
     self.tb_title = title_textblock
 
@@ -126,7 +126,7 @@ function SCENE_L:make_grid_sender_recieverInfo(grid_p)
     grid_infos_sender:setPosLen(tb_reciever_msgN, 4, 6)
     grid_infos_sender:setPosLen(tb_reciever_msgC, 4, 7)
     tb_reciever_msgN.Len.x = tb_reciever_msgNL
-    self.tb_sender_msgC = tb_sender_msgC
+    self.tb_reciever_msgC = tb_reciever_msgC
 end
 
 return SCENE_L

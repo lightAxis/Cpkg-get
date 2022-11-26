@@ -1,7 +1,6 @@
 ---@class Golkin.Web.Protocol.MsgStruct.OWNER_LOGIN : Golkin.Web.Protocol.MsgStruct.IMsgStruct
 ---@field Name string name of the owner
 ---@field Password string password for login. MD5 hashed
----@field BioScaned boolean is bioscaned, no need to check passwd
 ---@field new fun():Golkin.Web.Protocol.MsgStruct.OWNER_LOGIN
 local struct = {}
 
@@ -16,9 +15,6 @@ function struct.new()
     
     ---@type string
     a.Password = nil -- password for login. MD5 hashed
-    
-    ---@type boolean
-    a.BioScaned = nil -- is bioscaned, no need to check passwd
     
     return a
 end

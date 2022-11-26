@@ -186,4 +186,32 @@ function a.make_infoPanel_pair(infoName, rootCanvasScreen, attachedScreen)
     return tb_infoname, tb_infocontent, #infoName + 2
 end
 
+a.STR = {}
+
+---convert to balance string
+---@param str string
+function a.STR.Balance(str)
+    local isMinus = false
+    if str:sub(1, 1) == "-" then
+        isMinus = true
+        str = str:sub(2, #str)
+    end
+
+    local result = str:sub(-3, -1)
+    local i = 2
+    while true do
+        local str_ = str:sub(-(3 * i), -(3 * i - 2))
+        if str_ == "" then
+            break
+        end
+        result = str_ .. "," .. result
+        i = i + 1
+    end
+
+    if isMinus then
+        result = "-" .. result
+    end
+    return result
+end
+
 return a

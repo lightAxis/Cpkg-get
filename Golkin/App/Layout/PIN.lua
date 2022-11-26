@@ -58,7 +58,7 @@ function SCENE_L:initialize(attachedScreen, projNamespace)
 
     -- grid for password
     local grid_passwd_display = grid_passwd:genSubGrid(nil, 1, 1)
-    grid_passwd_display:setHorizontalSetting({ "*", "16", "*" })
+    grid_passwd_display:setHorizontalSetting({ "*", "4*", "*" })
     grid_passwd_display:setVerticalSetting({ "*", "3" })
     grid_passwd_display:updatePosLen()
     self.grid_passwd_display = grid_passwd_display
@@ -110,6 +110,12 @@ function SCENE_L:initialize(attachedScreen, projNamespace)
     bt_numpad_backspace:setText("<")
     self.PROJ.Style.BT.keypad(bt_numpad_backspace)
     self.bt_numpad_backspace = bt_numpad_backspace
+
+    local bt_numpad_reset = TBL.Button:new(self.rootScreenCanvas, self.attachingScreen, "bt_numpad_reset")
+    grid_passwd_numpads:setPosLen(bt_numpad_reset, 12, 4)
+    bt_numpad_reset:setText("C")
+    self.PROJ.Style.BT.keypad(bt_numpad_reset)
+    self.bt_numpad_reset = bt_numpad_reset
 
 end
 
