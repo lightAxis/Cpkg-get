@@ -78,6 +78,15 @@ builder:addEnum(enum("ACK_GET_OWNER_ACCOUNTS_R", "result enum for ACK_GET_OWNER_
     enumElm("SUCCESS", 801, "success to get accounts list"),
 }))
 
+builder:addEnum(enum("ACK_REMOVE_ACCOUNT_R", "result enum for ACK_REMOVE_ACCOUNT", {
+    enumElm("NONE", -1, "none result. this is error"),
+    enumElm("NO_ACCOUNTS", -901, "no accounts to remove"),
+    enumElm("PASSWORD_UNMET", -902, "passwrod is not correct"),
+    enumElm("OWNER_UNMET", -903, "Owner is not matching with account"),
+    enumElm("NORMAL", 0, "standard for normal msg"),
+    enumElm("SUCCESS", 901, "success to remove account"),
+}))
+
 --- make structs
 builder:addStruct(struct("Daytime_t", "struct for represent daytime", {
     field("Realtime", fieldType(efieldType.str), fieldInit(efieldType.nil_), "time string from server")
@@ -210,6 +219,19 @@ builder:addHeader(struct("ACK_SEND", "reply send money to other account", {
     field("State", fieldType(efieldType.custom, builder:getEnumClassName("ACK_SEND_R")), fieldInit(efieldType.num, -1),
         "result state to reply"),
 }))
+
+builder:addHeader(struct("REMOVE_ACCOUNT", "request remove account", {
+    field("AccountName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of account to remove"),
+    field("OwnerName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of owner of account to remove"),
+    field("AccountPassword", fieldType(efieldType.str), fieldInit(efieldType.nil_), "account of password to remove"),
+}))
+
+builder:addHeader(struct("ACK_REMOVE_ACCOUNT", "reply of REMOVE_ACCOUNT", {
+    field("Success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success the request or not"),
+    field("State", fieldType(efieldType.custom, builder:getEnumClassName("ACK_REMOVE_ACCOUNT_R")),
+        fieldInit(efieldType.num, -1), "result state to reply")
+}))
+
 
 builder:generate(PKGS.Golkin.ENV.PATH .. "/include/Web/Protocol")
 builder:generateHandler(PKGS.Golkin.ENV.PATH .. "/include/Web", "require(\"Class.middleclass\")")
