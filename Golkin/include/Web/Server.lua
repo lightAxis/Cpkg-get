@@ -446,6 +446,9 @@ function Server:__handle_REGISTER(msg, msgstruct)
     newAccount.Password = msgstruct.Password
     newAccount.Histories = {}
     newAccount.Balance = 0
+    local nowTime = protocol.Struct.Daytime_t:new()
+    nowTime.Realtime = os.date('%y/%m/%d %H:%M %a')
+    newAccount.Daytime = nowTime
     self:__saveAccount(newAccount)
 
     --- send SUCCESS
@@ -461,7 +464,7 @@ end
 ---@param msg Golkin.Web.Protocol.Msg
 ---@param msgstruct Golkin.Web.Protocol.MsgStruct.REGISTER_OWNER
 function Server:__handle_REGISTER_OWNER(msg, msgstruct)
-    print("handle REGISTER msg")
+    print("handle REGISTER_OWNER msg")
     local replyMsgStruct = protocol.MsgStruct.ACK_REGISTER_OWNER:new()
     local replyHeader = protocol.Header.ACK_REGISTER_OWNER
     local replyEnum = protocol.Enum.ACK_REGISTER_OWNER_R
