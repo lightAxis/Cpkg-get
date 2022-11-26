@@ -26,7 +26,7 @@ function SCENE:initialize(ProjNamespace, UILayout)
             self:goto_List_Bioscan()
         end
     end
-    self.Layout.bt_refresh_list.ClickEvent = function(obj, e)
+    self.Layout.bt_see_histories.ClickEvent = function(obj, e)
         if e.Button == TBL.Enums.MouseButton.left then
             self:callback_bt_refresh_list()
         end
@@ -39,7 +39,7 @@ function SCENE:initialize(ProjNamespace, UILayout)
     self.Layout.lb_names.SelectedIndexChanged = function(obj)
         local name = obj.obj
         self.Layout.tb_name:setText(name)
-        self.Layout.bt_Signin.Visible = true
+        self.Layout.bt_sendMoney.Visible = true
     end
 
     self.Layout.bt_scroll_down.ClickEvent = function(obj, e)
@@ -54,7 +54,7 @@ function SCENE:initialize(ProjNamespace, UILayout)
         end
     end
 
-    self.Layout.bt_Signin.ClickEvent = function(obj, e)
+    self.Layout.bt_sendMoney.ClickEvent = function(obj, e)
         if e.Button == TBL.Enums.MouseButton.left then
             self:goto_PIN()
         end
@@ -78,8 +78,8 @@ end
 
 function SCENE:goto_PIN()
     self:detacheHandlers()
-    self.PROJ.Scene.PIN:reset()
     self.PROJ.Scene.PIN.CurrentPrevScene = self.PROJ.Scene.PIN.ePrevScene.List
+    self.PROJ.Scene.PIN:reset()
     self.PROJ.Scene.PIN.OwnerName = self.Layout.tb_name:getText()
     self.PROJ.UIRunner:attachScene(self.PROJ.Scene.PIN)
 end
@@ -114,8 +114,7 @@ function SCENE:ack_get_owners_callback(msg, msgstruct)
         self.Layout.lb_names:setItemSource(self.currentOwnerList)
         self.Layout.lb_names:Refresh()
     end
-    self.PROJ.UIRunner:RenderScreen()
-    self.PROJ.UIRunner:Reflect2Screen()
+    self.PROJ.UIRunner:ReDrawAll()
 end
 
 function SCENE:request_accounts_list()
@@ -127,7 +126,7 @@ function SCENE:reset()
     self.Layout.lb_names:Refresh()
     self.Layout.tb_name:setText("")
     self.Layout.tb_info:setText("Select your name")
-    self.Layout.bt_Signin.Visible = false
+    self.Layout.bt_sendMoney.Visible = false
     self:callback_bt_refresh_list()
     self.PROJ.Style.TB.Info(self.Layout.tb_info)
 end

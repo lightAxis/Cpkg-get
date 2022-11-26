@@ -26,9 +26,8 @@ GolkinApp.UIRunner:attachToEventRouter(GolkinApp.EventRouter)
 --- can terminal or monitor
 --- side must exist. NONE is terminal
 
--- local main_screen = TBL.Screen:new(peripheral.wrap("left"),
---     TBL.Enums.Side.left)
-local main_screen = TBL.Screen:new(term, TBL.Enums.Side.NONE)
+local main_screen = TBL.Screen:new(peripheral.wrap("left"), TBL.Enums.Side.left)
+-- local main_screen = TBL.Screen:new(term, TBL.Enums.Side.NONE)
 local computer_screen = TBL.Screen:new(term, TBL.Enums.Side.NONE)
 ------------ Param -------------
 
@@ -98,10 +97,11 @@ GolkinApp.Peripheral.PlayerDetector = peripheral.find(GolkinApp.Param.PlayerDete
 
 
 --- register each screen sides initialize Scene
+GolkinApp.UIRunner:attachScene(GolkinApp.Scene.ManualTextInput)
 GolkinApp.UIRunner:attachScene(GolkinApp.Scene.Cover)
 
 --- set initial scene to start interact
-GolkinApp.UIRunner:setIntialScene(TBL.Enums.Side.NONE)
+GolkinApp.UIRunner:setIntialScene(TBL.Enums.Side.left)
 
 -----------------------------------
 

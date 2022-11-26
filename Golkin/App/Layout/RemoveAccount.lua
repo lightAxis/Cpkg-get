@@ -53,12 +53,12 @@ function SCENE_L:main_layout()
     -- self.bt_refresh_list = bt_refresh_list
 
     --- bt send
-    local bt_register = TBL.Button:new(self.rootScreenCanvas, self.attachingScreen,
-        "bt_register")
-    bt_register:setText("Register")
-    grid:setPosLen(bt_register, 5, 4)
-    self.PROJ.Style.BT.func(bt_register)
-    self.bt_register = bt_register
+    local bt_remove = TBL.Button:new(self.rootScreenCanvas, self.attachingScreen,
+        "bt_remove")
+    bt_remove:setText("Remove!")
+    grid:setPosLen(bt_remove, 5, 4)
+    self.PROJ.Style.BT.Bad(bt_remove)
+    self.bt_remove = bt_remove
 
     self:make_grid_removeAccount(grid)
 end
@@ -73,6 +73,8 @@ function SCENE_L:make_grid_removeAccount(grid_p)
 
     local tb_removeacc_nameN, tb_removeacc_nameC, tb_removeacc_nameNL =
     self.PROJ.Style.make_infoPanel_pair("Removing Account Name", self.rootScreenCanvas, self.attachingScreen)
+    tb_removeacc_nameC:setTextColor(TBL.Enums.Color.black)
+    tb_removeacc_nameC:setTextHorizontalAlignment(TBL.Enums.HorizontalAlignmentMode.center)
     grid_removeacc:setPosLen(tb_removeacc_nameN, 2, 2)
     grid_removeacc:setPosLen(tb_removeacc_nameC, 2, 3)
     tb_removeacc_nameN.Len.x = tb_removeacc_nameNL
@@ -80,6 +82,8 @@ function SCENE_L:make_grid_removeAccount(grid_p)
 
     local tb_balanceN, tb_balanceC, tb_balanceNL =
     self.PROJ.Style.make_infoPanel_pair("Balance Left", self.rootScreenCanvas, self.attachingScreen)
+    tb_balanceC:setTextColor(TBL.Enums.Color.black)
+    tb_balanceC:setTextHorizontalAlignment(TBL.Enums.HorizontalAlignmentMode.center)
     grid_removeacc:setPosLen(tb_balanceN, 2, 5)
     grid_removeacc:setPosLen(tb_balanceC, 2, 6)
     tb_balanceN.Len.x = tb_balanceNL

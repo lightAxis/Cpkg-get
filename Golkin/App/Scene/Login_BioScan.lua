@@ -32,7 +32,7 @@ function SCENE:initialize(ProjNamespace, UILayout)
         end
     end
 
-    self.Layout.bt_register.ClickEvent = function(obj, e)
+    self.Layout.bt_remove.ClickEvent = function(obj, e)
         if e.Button == TBL.Enums.MouseButton.left then
             self:goto_PIN_REGISTER()
         end
@@ -66,16 +66,16 @@ end
 
 function SCENE:goto_PIN()
     self:detachHandlers()
-    self.PROJ.Scene.PIN:reset()
     self.PROJ.Scene.PIN.CurrentPrevScene = self.PROJ.Scene.PIN.ePrevScene.Bio
+    self.PROJ.Scene.PIN:reset()
     self.PROJ.Scene.PIN.OwnerName = self.Layout.tb_playerName:getText()
     self.PROJ.UIRunner:attachScene(self.PROJ.Scene.PIN)
 end
 
 function SCENE:goto_PIN_REGISTER()
     self:detachHandlers()
-    self.PROJ.Scene.PIN:reset()
     self.PROJ.Scene.PIN.CurrentPrevScene = self.PROJ.Scene.PIN.ePrevScene.BioRegister
+    self.PROJ.Scene.PIN:reset()
     self.PROJ.Scene.PIN.OwnerName = self.Layout.tb_playerName:getText()
     self.PROJ.UIRunner:attachScene(self.PROJ.Scene.PIN)
 end
@@ -92,12 +92,12 @@ end
 
 function SCENE:reset()
     self.Layout.bt_auth.Visible = false
-    self.Layout.bt_register.Visible = false
+    self.Layout.bt_remove.Visible = false
     self.Layout.tb_playerName:setText("")
     self:attach_handler()
     self:check_playerDetector()
     -- temp for debug
-    os.queueEvent("playerClick", "testname1")
+    -- os.queueEvent("playerClick", "testname1")
 
 end
 
@@ -106,7 +106,9 @@ function SCENE:attach_handler()
         -- "playerClick", username
         self.Layout.tb_playerName:setText(b)
         self.Layout.bt_auth.Visible = true
-        self.Layout.bt_register.Visible = true
+        self.Layout.bt_remove.Visible = true
+
+        self.PROJ.UIRunner:ReDrawAll()
     end)
 end
 

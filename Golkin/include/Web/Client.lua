@@ -117,12 +117,12 @@ end
 
 ---send request to server to remove account
 ---@param accountName string
----@param accountPasswd string
+---@param ownerPasswd string
 ---@param ownerName string
-function client:send_REMOVE_ACCOUNT(accountName, accountPasswd, ownerName)
+function client:send_REMOVE_ACCOUNT(accountName, ownerPasswd, ownerName)
     local msgStruct = protocol.MsgStruct.REMOVE_ACCOUNT:new()
     msgStruct.AccountName = accountName
-    msgStruct.AccountPassword = accountPasswd
+    msgStruct.OwnerPassword = ownerPasswd
     msgStruct.OwnerName = ownerName
     self:__sendMsg(protocol.Header.REMOVE_ACCOUNT, msgStruct)
 end

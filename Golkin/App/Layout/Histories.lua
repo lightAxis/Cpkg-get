@@ -28,7 +28,7 @@ function SCENE_L:main_layout()
     grid:setPosLen(title_textblock, 1, 1, 5, 1)
     title_textblock:setText("Histories : yourSendingAccount")
     self.PROJ.Style.TB.title(title_textblock)
-    -- self.tb_title = title_textblock
+    self.tb_title = title_textblock
 
     --- info block
     local info_tb = TBL.TextBlock:new(self.rootScreenCanvas, self.attachingScreen, "info_textblock")
@@ -80,7 +80,7 @@ end
 function SCENE_L:make_history_listbox(grid_p)
     local grid_history_listbox = grid_p:genSubGrid(nil, 2, 2)
     grid_history_listbox:setHorizontalSetting({ "*", "1", "1" })
-    grid_history_listbox:setVerticalSetting({ "1", "*" })
+    grid_history_listbox:setVerticalSetting({ "1", "*", "1", "1", "1", "*" })
     grid_history_listbox:updatePosLen()
 
     local tb_info_historyN = TBL.TextBlock:new(self.rootScreenCanvas, self.attachingScreen, "tb_info_historyN")
@@ -92,18 +92,30 @@ function SCENE_L:make_history_listbox(grid_p)
     tb_info_historyN.Len.x = #("Histories") + 2
 
     local lb_info_history = TBL.ListBox:new(self.rootScreenCanvas, self.attachingScreen, "lb_info_history")
-    grid_history_listbox:setPosLen(lb_info_history, 1, 2, 1, 1)
+    grid_history_listbox:setPosLen(lb_info_history, 1, 2, 1, 5)
     self.lb_info_history = lb_info_history
 
-    local tempDate = {}
-    for i = 1, 20, 1 do
-        table.insert(tempDate, { ["i"] = "salary!!", ["b"] = tostring(i * 10000) })
-    end
-    lb_info_history:setItemSource(tempDate)
-    lb_info_history.ItemTemplete = function(obj)
-        return obj.i .. "/" .. obj.b
-    end
-    lb_info_history:Refresh()
+    -- local tempDate = {}
+    -- for i = 1, 20, 1 do
+    --     table.insert(tempDate, { ["i"] = "salary!!", ["b"] = tostring(i * 10000) })
+    -- end
+    -- lb_info_history:setItemSource(tempDate)
+    -- lb_info_history.ItemTemplete = function(obj)
+    --     return obj.i .. "/" .. obj.b
+    -- end
+    -- lb_info_history:Refresh()
+
+    local bt_history_scroll_up = TBL.Button:new(self.rootScreenCanvas, self.attachingScreen, "bt_history_scroll_up")
+    grid_history_listbox:setPosLen(bt_history_scroll_up, 3, 3)
+    bt_history_scroll_up:setText("^")
+    self.PROJ.Style.BT.keypad(bt_history_scroll_up)
+    self.bt_history_scroll_up = bt_history_scroll_up
+
+    local bt_history_scroll_down = TBL.Button:new(self.rootScreenCanvas, self.attachingScreen, "bt_history_scroll_down")
+    grid_history_listbox:setPosLen(bt_history_scroll_down, 3, 5)
+    bt_history_scroll_down:setText("v")
+    self.PROJ.Style.BT.keypad(bt_history_scroll_down)
+    self.bt_history_scroll_down = bt_history_scroll_down
 
 end
 
@@ -116,6 +128,7 @@ function SCENE_L:make_history_viewtable(grid_p)
     grid_history_viewtable:updatePosLen()
 
     local tbs_history_viewtable = {}
+    local tbs_history_viewtableN = {}
 
     local tb_nameN, tb_nameC, tb_nameNL =
     self.PROJ.Style.make_infoPanel_pair("Name", self.rootScreenCanvas, self.attachingScreen)
@@ -123,6 +136,7 @@ function SCENE_L:make_history_viewtable(grid_p)
     grid_history_viewtable:setPosLen(tb_nameC, 1, 2)
     tb_nameN.Len.x = tb_nameNL
     tbs_history_viewtable.Name = tb_nameC
+    tbs_history_viewtableN.Name = tb_nameN
 
     local tb_inoutN, tb_inoutC, tb_intoutNL =
     self.PROJ.Style.make_infoPanel_pair("InOut", self.rootScreenCanvas, self.attachingScreen)
@@ -130,6 +144,7 @@ function SCENE_L:make_history_viewtable(grid_p)
     grid_history_viewtable:setPosLen(tb_inoutC, 1, 5)
     tb_inoutN.Len.x = tb_intoutNL
     tbs_history_viewtable.InOut = tb_inoutC
+    tbs_history_viewtableN.InOut = tb_inoutN
 
     local tb_balanceLeftN, tb_balanceLeftC, tb_balanceLeftNL =
     self.PROJ.Style.make_infoPanel_pair("BalanceLeft", self.rootScreenCanvas, self.attachingScreen)
@@ -137,6 +152,7 @@ function SCENE_L:make_history_viewtable(grid_p)
     grid_history_viewtable:setPosLen(tb_balanceLeftC, 1, 8)
     tb_balanceLeftN.Len.x = tb_balanceLeftNL
     tbs_history_viewtable.BalanceLeft = tb_balanceLeftC
+    tbs_history_viewtableN.BalanceLeft = tb_balanceLeftN
 
     local tb_dateN, tb_dateC, tb_dateNL =
     self.PROJ.Style.make_infoPanel_pair("DateTime", self.rootScreenCanvas, self.attachingScreen)
@@ -144,8 +160,10 @@ function SCENE_L:make_history_viewtable(grid_p)
     grid_history_viewtable:setPosLen(tb_dateC, 1, 11)
     tb_dateN.Len.x = tb_dateNL
     tbs_history_viewtable.DateTime = tb_dateC
+    tbs_history_viewtableN.DateTime = tb_dateN
 
     self.tbs_history_viewtable = tbs_history_viewtable
+    self.tbs_history_viewtableN = tbs_history_viewtableN
 end
 
 return SCENE_L

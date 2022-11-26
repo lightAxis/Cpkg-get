@@ -26,7 +26,7 @@ function SCENE_L:main_layout()
     --- title block
     local title_textblock = TBL.TextBlock:new(self.rootScreenCanvas, self.attachingScreen, "title_textblock")
     grid:setPosLen(title_textblock, 1, 1, 5, 1)
-    title_textblock:setText("Send Money From : yourSendingAccount")
+    title_textblock:setText("Register New Account for testname")
     self.PROJ.Style.TB.title(title_textblock)
     self.tb_title = title_textblock
 
@@ -52,13 +52,13 @@ function SCENE_L:main_layout()
     -- self.PROJ.Style.BT.func(bt_refresh_list)
     -- self.bt_refresh_list = bt_refresh_list
 
-    --- bt send
+    --- bt register
     local bt_register = TBL.Button:new(self.rootScreenCanvas, self.attachingScreen,
         "bt_register")
     bt_register:setText("Register")
     grid:setPosLen(bt_register, 5, 4)
     self.PROJ.Style.BT.func(bt_register)
-    self.bt_register = bt_register
+    self.bt_remove = bt_register
 
     self:make_grid_accountName(grid)
 end

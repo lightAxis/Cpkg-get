@@ -67,7 +67,7 @@ function SCENE_L:initialize(attachedScreen, projNamespace)
     grid:setPosLen(bt_register, 3, 6)
     bt_register:setText("Register")
     self.PROJ.Style.BT.func(bt_register)
-    self.bt_register = bt_register
+    self.bt_remove = bt_register
 
     local grid_sidebar_pos, grid_sidebar_len = grid:getPosLen(5, 3, 1, 3)
     local grid_sidebar = TBL.Grid:new(grid_sidebar_len, grid_sidebar_pos)

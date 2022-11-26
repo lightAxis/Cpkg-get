@@ -84,7 +84,7 @@ function SCENE_L:grid_sending_balance(grid_p)
     grid_sending_balance:updatePosLen()
 
     local tb_info_balanceN, tb_info_balanceC, tb_info_balanceNL =
-    self.PROJ.Style.make_infoPanel_pair("Left", self.rootScreenCanvas, self.attachingScreen)
+    self.PROJ.Style.make_infoPanel_pair("Balance Left", self.rootScreenCanvas, self.attachingScreen)
     grid_sending_balance:setPosLen(tb_info_balanceN, 1, 1)
     grid_sending_balance:setPosLen(tb_info_balanceC, 1, 2)
     tb_info_balanceN.Len.x = tb_info_balanceNL
@@ -96,7 +96,7 @@ function SCENE_L:grid_sending_balance(grid_p)
     grid_sending_balance:setPosLen(tb_info_sendingN, 1, 4)
     grid_sending_balance:setPosLen(tb_info_sendingC, 1, 5)
     tb_info_sendingN.Len.x = tb_info_sendingNL
-    tb_info_sendingC:setTextHorizontalAlignment(TBL.Enums.HorizontalAlignmentMode.left)
+    tb_info_sendingC:setTextHorizontalAlignment(TBL.Enums.HorizontalAlignmentMode.right)
     self.tb_info_sendingC = tb_info_sendingC
 
     self:grid_sending_numpad(grid_sending_balance)
@@ -172,15 +172,15 @@ function SCENE_L:grid_recieve_accountList(grid_p)
     grid_recieve:setPosLen(lb_available_accounts, 1, 4, 1, 5)
     self.lb_available_accounts = lb_available_accounts
 
-    local tempDate = {}
-    for i = 1, 20, 1 do
-        table.insert(tempDate, { ["i"] = "salary!!", ["b"] = tostring(i * 10000) })
-    end
-    lb_available_accounts:setItemSource(tempDate)
-    lb_available_accounts.ItemTemplete = function(obj)
-        return obj.i .. "/" .. obj.b
-    end
-    lb_available_accounts:Refresh()
+    -- local tempDate = {}
+    -- for i = 1, 20, 1 do
+    --     table.insert(tempDate, { ["i"] = "salary!!", ["b"] = tostring(i * 10000) })
+    -- end
+    -- lb_available_accounts:setItemSource(tempDate)
+    -- lb_available_accounts.ItemTemplete = function(obj)
+    --     return obj.i .. "/" .. obj.b
+    -- end
+    -- lb_available_accounts:Refresh()
 
     local bt_avaialbe_account_scrolUp = TBL.Button:new(self.rootScreenCanvas, self.attachingScreen,
         "bt_avaialbe_account_scrolUp")

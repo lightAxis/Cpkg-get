@@ -13,6 +13,9 @@ local SCENE_L = class("Golkin.App.Layout.OwnerMenu", TBL.UILayout)
 function SCENE_L:initialize(attachedScreen, projNamespace)
     TBL.UILayout.initialize(self, attachedScreen, projNamespace)
 
+    ---@type table<number, Tabullet.UIElement>
+    self.__AccountPanelGroup = {}
+
     local grid = TBL.Grid:new(self.rootScreenCanvas.Len)
     grid:setHorizontalSetting({ "*", "1", "*", "1", "*" })
     grid:setVerticalSetting({ "1", "1", "*", "3" })
@@ -42,19 +45,19 @@ function SCENE_L:initialize(attachedScreen, projNamespace)
     self.bt_back = bt_back
 
     --- bt refresh names
-    local bt_refresh_list = TBL.Button:new(self.rootScreenCanvas, self.attachingScreen, "bt_refresh_list")
-    bt_refresh_list:setText("Account Inquirey")
-    grid:setPosLen(bt_refresh_list, 3, 4)
-    self.PROJ.Style.BT.func(bt_refresh_list)
-    self.bt_refresh_list = bt_refresh_list
+    local bt_see_histories = TBL.Button:new(self.rootScreenCanvas, self.attachingScreen, "bt_refresh_list")
+    bt_see_histories:setText("Account Inquirey")
+    grid:setPosLen(bt_see_histories, 3, 4)
+    self.PROJ.Style.BT.func(bt_see_histories)
+    self.bt_see_histories = bt_see_histories
 
     --- bt sign in
-    local bt_Signin = TBL.Button:new(self.rootScreenCanvas, self.attachingScreen,
-        "bt_signin")
-    bt_Signin:setText("Send Money")
-    grid:setPosLen(bt_Signin, 5, 4)
-    self.PROJ.Style.BT.func(bt_Signin)
-    self.bt_Signin = bt_Signin
+    local bt_sendMoney = TBL.Button:new(self.rootScreenCanvas, self.attachingScreen,
+        "bt_sendMoney")
+    bt_sendMoney:setText("Send Money")
+    grid:setPosLen(bt_sendMoney, 5, 4)
+    self.PROJ.Style.BT.func(bt_sendMoney)
+    self.bt_sendMoney = bt_sendMoney
 
     self:add_grid_refresh(grid)
 
@@ -97,6 +100,7 @@ function SCENE_L:add_grid_mainFrame(grid_p)
     self.PROJ.Style.BT.keypad(bt_left_arrow)
     grid_mainFrame:setPosLen(bt_left_arrow, 1, 3)
     self.bt_left_arrow = bt_left_arrow
+    self:addToAccountGroup(bt_left_arrow)
 
     -- make right arrow button
     local bt_right_arrow = TBL.Button:new(self.rootScreenCanvas, self.attachingScreen, "bt_right_arrow")
@@ -104,6 +108,7 @@ function SCENE_L:add_grid_mainFrame(grid_p)
     self.PROJ.Style.BT.keypad(bt_right_arrow)
     grid_mainFrame:setPosLen(bt_right_arrow, 5, 3)
     self.bt_right_arrow = bt_right_arrow
+    self:addToAccountGroup(bt_right_arrow)
 
     self:add_grid_mainFrameName(grid_mainFrame)
     self:add_grid_mainFramePanel(grid_mainFrame)
@@ -126,6 +131,7 @@ function SCENE_L:add_grid_mainFrameName(grid_p)
     self.PROJ.Style.TB.ListTitle(tb_mainframeName)
     grid_mainframe_name:setPosLen(tb_mainframeName, 2, 1)
     self.tb_mainframeName = tb_mainframeName
+    self:addToAccountGroup(tb_mainframeName)
 end
 
 ---add mainframe panel grid
@@ -144,6 +150,8 @@ function SCENE_L:add_grid_mainFramePanel(grid_p)
     tb_mainframe_balanceN.Len.x = tb_mainframe_balanceNL
     tb_mainframe_balanceC:setText("000,000")
     self.tb_mainframe_balanceC = tb_mainframe_balanceC
+    self:addToAccountGroup(tb_mainframe_balanceN)
+    self:addToAccountGroup(tb_mainframe_balanceC)
 
     local tb_mainframe_ownerN, tb_mainframe_ownerC, tb_mainframe_ownerNL =
     self.PROJ.Style.make_infoPanel_pair("Owner", self.rootScreenCanvas, self.attachingScreen)
@@ -152,6 +160,8 @@ function SCENE_L:add_grid_mainFramePanel(grid_p)
     tb_mainframe_ownerN.Len.x = tb_mainframe_ownerNL
     tb_mainframe_ownerC:setText("ownerID")
     self.tb_mainframe_ownerC = tb_mainframe_ownerC
+    self:addToAccountGroup(tb_mainframe_ownerN)
+    self:addToAccountGroup(tb_mainframe_ownerC)
 
     local tb_mainframe_dateN, tb_mainframe_dateC, tb_mainframe_dateNL =
     self.PROJ.Style.make_infoPanel_pair("Date", self.rootScreenCanvas, self.attachingScreen)
@@ -160,6 +170,8 @@ function SCENE_L:add_grid_mainFramePanel(grid_p)
     tb_mainframe_dateN.Len.x = tb_mainframe_dateNL
     tb_mainframe_dateC:setText(os.date('%y/%m/%d %H:%M %a'))
     self.tb_mainframe_dateC = tb_mainframe_dateC
+    self:addToAccountGroup(tb_mainframe_dateN)
+    self:addToAccountGroup(tb_mainframe_dateC)
 
     local tb_mainframe_historyN = TBL.TextBlock:new(self.rootScreenCanvas, self.attachingScreen, "bt_mainframe_historyN")
     tb_mainframe_historyN:setText("History")
@@ -168,22 +180,24 @@ function SCENE_L:add_grid_mainFramePanel(grid_p)
     tb_mainframe_historyN:setMarginRight(1)
     grid_mainframe_content:setPosLen(tb_mainframe_historyN, 3, 2)
     tb_mainframe_historyN.Len.x = #("History") + 2
+    self:addToAccountGroup(tb_mainframe_historyN)
 
 
     local lb_mainframe_historyC = TBL.ListBox:new(self.rootScreenCanvas, self.attachingScreen, "lb_mainframe_historyC")
     grid_mainframe_content:setPosLen(lb_mainframe_historyC, 3, 3, 1, 8)
     -- self.PROJ.Style.LB.Content(lb_mainframe_historyC)
     self.lb_mainframe_historyC = lb_mainframe_historyC
+    self:addToAccountGroup(lb_mainframe_historyC)
 
-    local tempDate = {}
-    for i = 1, 20, 1 do
-        table.insert(tempDate, { ["i"] = "salary!!", ["b"] = tostring(i * 10000) })
-    end
-    lb_mainframe_historyC:setItemSource(tempDate)
-    lb_mainframe_historyC.ItemTemplete = function(obj)
-        return obj.i .. "/" .. obj.b
-    end
-    lb_mainframe_historyC:Refresh()
+    -- local tempDate = {}
+    -- for i = 1, 20, 1 do
+    --     table.insert(tempDate, { ["i"] = "salary!!", ["b"] = tostring(i * 10000) })
+    -- end
+    -- lb_mainframe_historyC:setItemSource(tempDate)
+    -- lb_mainframe_historyC.ItemTemplete = function(obj)
+    --     return obj.i .. "/" .. obj.b
+    -- end
+    -- lb_mainframe_historyC:Refresh()
 
 end
 
@@ -225,6 +239,18 @@ function SCENE_L:make_menu_bt(bt_name)
     bt_menu:setText(bt_name)
     self.PROJ.Style.BT.ImportantFunc(bt_menu)
     return bt_menu
+end
+
+---comment
+---@param ui Tabullet.UIElement
+function SCENE_L:addToAccountGroup(ui)
+    table.insert(self.__AccountPanelGroup, ui)
+end
+
+---comment
+---@return table<number, Tabullet.UIElement>
+function SCENE_L:getAccountContentGroups()
+    return self.__AccountPanelGroup
 end
 
 return SCENE_L

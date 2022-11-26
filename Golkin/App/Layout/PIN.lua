@@ -111,6 +111,12 @@ function SCENE_L:initialize(attachedScreen, projNamespace)
     self.PROJ.Style.BT.keypad(bt_numpad_backspace)
     self.bt_numpad_backspace = bt_numpad_backspace
 
+    local bt_numpad_reset = TBL.Button:new(self.rootScreenCanvas, self.attachingScreen, "bt_numpad_reset")
+    grid_passwd_numpads:setPosLen(bt_numpad_reset, 12, 4)
+    bt_numpad_reset:setText("C")
+    self.PROJ.Style.BT.keypad(bt_numpad_reset)
+    self.bt_numpad_reset = bt_numpad_reset
+
 end
 
 return SCENE_L
