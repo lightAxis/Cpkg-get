@@ -69,6 +69,7 @@ a.ACK_REMOVE_ACCOUNT_R = {
     ["NO_ACCOUNTS"] = -901, -- no accounts to remove
     ["PASSWORD_UNMET"] = -902, -- passwrod is not correct
     ["OWNER_UNMET"] = -903, -- Owner is not matching with account
+    ["OWNER_NOT_EXIST"] = -903, -- owner of this account is not exist
     ["NORMAL"] = 0, -- standard for normal msg
     ["SUCCESS"] = 901, -- success to remove account
 }

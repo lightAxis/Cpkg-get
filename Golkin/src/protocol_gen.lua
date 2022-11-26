@@ -83,6 +83,7 @@ builder:addEnum(enum("ACK_REMOVE_ACCOUNT_R", "result enum for ACK_REMOVE_ACCOUNT
     enumElm("NO_ACCOUNTS", -901, "no accounts to remove"),
     enumElm("PASSWORD_UNMET", -902, "passwrod is not correct"),
     enumElm("OWNER_UNMET", -903, "Owner is not matching with account"),
+    enumElm("OWNER_NOT_EXIST", -903, "owner of this account is not exist"),
     enumElm("NORMAL", 0, "standard for normal msg"),
     enumElm("SUCCESS", 901, "success to remove account"),
 }))
@@ -223,7 +224,7 @@ builder:addHeader(struct("ACK_SEND", "reply send money to other account", {
 builder:addHeader(struct("REMOVE_ACCOUNT", "request remove account", {
     field("AccountName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of account to remove"),
     field("OwnerName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of owner of account to remove"),
-    field("AccountPassword", fieldType(efieldType.str), fieldInit(efieldType.nil_), "account of password to remove"),
+    field("OwnerPassword", fieldType(efieldType.str), fieldInit(efieldType.nil_), "account of password to remove"),
 }))
 
 builder:addHeader(struct("ACK_REMOVE_ACCOUNT", "reply of REMOVE_ACCOUNT", {
