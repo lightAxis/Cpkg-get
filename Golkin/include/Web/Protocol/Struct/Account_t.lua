@@ -2,6 +2,7 @@
 ---@field Name string name of this account
 ---@field Owner string owner of this account. must be ingame data
 ---@field Password string password of account for login, sending money. MD5 hashed
+---@field Daytime Golkin.Web.Protocol.Struct.Daytime_t daytime when this account registered
 ---@field Balance number balance left in this account
 ---@field Histories table<number, Golkin.Web.Protocol.Struct.History_t> account histories
 ---@field new fun():Golkin.Web.Protocol.Struct.Account_t
@@ -21,6 +22,9 @@ function struct.new()
     
     ---@type string
     a.Password = nil -- password of account for login, sending money. MD5 hashed
+    
+    ---@type Golkin.Web.Protocol.Struct.Daytime_t
+    a.Daytime = nil -- daytime when this account registered
     
     ---@type number
     a.Balance = 0 -- balance left in this account

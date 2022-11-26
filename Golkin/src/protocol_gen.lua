@@ -97,6 +97,8 @@ builder:addStruct(struct("Account_t", "strcut for bank account info", {
     field("Owner", fieldType(efieldType.str), fieldInit(efieldType.nil_), "owner of this account. must be ingame data"),
     field("Password", fieldType(efieldType.str), fieldInit(efieldType.nil_),
         "password of account for login, sending money. MD5 hashed"),
+    field("Daytime", fieldType(efieldType.custom, builder:getStructClassName("Daytime_t")),
+        fieldInit(efieldType.nil_), "daytime when this account registered"),
     field("Balance", fieldType(efieldType.num), fieldInit(efieldType.num, 0), "balance left in this account"),
     field("Histories", fieldType(efieldType.table, "number", builder:getStructClassName("History_t")),
         fieldInit(efieldType.table, nil, nil),
