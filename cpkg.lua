@@ -5,7 +5,8 @@ CPKG.Param = {}
 CPKG.ServerID = nil
 
 --- param
-CPKG.rednetSide = "top"
+CPKG.rednetSide = "bottom"
+rednet.open(CPKG.rednetSide)
 
 
 package.path = package.path .. ";/" .. CPKG.RootPath .. "/?.lua"
