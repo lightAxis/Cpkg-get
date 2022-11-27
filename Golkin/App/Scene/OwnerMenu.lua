@@ -121,10 +121,12 @@ function SCENE:goto_SendMoney()
 end
 
 function SCENE:goto_Histories()
-    self:detachHandlers()
-    self.PROJ.Scene.Histories.currentAccount = self.__selectedAccount
-    self.PROJ.Scene.Histories:reset()
-    self.PROJ.UIRunner:attachScene(self.PROJ.Scene.Histories)
+    if self.__selectedAccount ~= nil then
+        self:detachHandlers()
+        self.PROJ.Scene.Histories.currentAccount = self.__selectedAccount
+        self.PROJ.Scene.Histories:reset()
+        self.PROJ.UIRunner:attachScene(self.PROJ.Scene.Histories)
+    end
 end
 
 function SCENE:cb_bt_left_arrow()
