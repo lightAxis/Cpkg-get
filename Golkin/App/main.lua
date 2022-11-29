@@ -31,7 +31,7 @@ local main_screen = TBL.Screen:new(peripheral.wrap("left"), TBL.Enums.Side.left)
 local computer_screen = TBL.Screen:new(term, TBL.Enums.Side.NONE)
 ------------ Param -------------
 
-GolkinApp.Param = require("Golkin.App.param")
+GolkinApp.Param = require("Golkin.userdata.param")
 GolkinApp.Style = require("Golkin.App.Style.Common")
 GolkinApp.Data = require("Golkin.App.Data")
 
@@ -95,6 +95,16 @@ GolkinApp.Peripheral = {}
 ---@type Vef.AP.PlayerDetector
 GolkinApp.Peripheral.PlayerDetector = peripheral.find(GolkinApp.Param.PlayerDetectorName)
 
+------------ 3rd party apps
+---@class Golkin.Addon
+local Addon = {}
+Addon.Layout = {}
+
+local layout_SalloMain = require("Golkin.3rdParty.SalloApp.Layout.SalloMain")
+
+Addon.Layout.SalloMain = layout_SalloMain:new(main_screen, GolkinApp)
+
+GolkinApp.Addon = Addon
 
 --- register each screen sides initialize Scene
 GolkinApp.UIRunner:attachScene(GolkinApp.Scene.ManualTextInput)
