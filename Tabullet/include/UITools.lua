@@ -248,4 +248,16 @@ end
 
 -- from: https://november11tech.tistory.com/84 [Mr.november11]
 
+---test this UILayout obj to term screen
+---@param screen Tabullet.Screen
+---@param PROJ any
+---@param layout Tabullet.UILayout
+function UITools.test_UISCENE(screen, PROJ, layout)
+    local l = layout:new(screen, PROJ)
+    l.attachingScreen:clear()
+    l.rootScreenCanvas:render()
+    l.attachingScreen:reflect2Screen()
+    os.sleep(10000)
+end
+
 return UITools
