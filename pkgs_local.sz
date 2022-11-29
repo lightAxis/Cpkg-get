@@ -68,6 +68,18 @@
     IncludePath = "Cpkg-get/PkgLink/include",
   },
   {
+    RootPath = "Cpkg-get/Sallo",
+    Execs = {
+      "gen_Sallo_protocol",
+      "gen_rank_table",
+    },
+    Upgradable = false,
+    DescPath = "Cpkg-get/Sallo/pkg_info.sz",
+    PkgName = "Sallo",
+    SrcPath = "Cpkg-get/Sallo/src",
+    IncludePath = "Cpkg-get/Sallo/include",
+  },
+  {
     RootPath = "Cpkg-get/Tabullet",
     Execs = {
       "demoProj",

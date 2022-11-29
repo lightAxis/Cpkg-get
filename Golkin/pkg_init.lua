@@ -9,6 +9,7 @@ DEPS["Golkin"].Crotocol = require("Crotocol.pkg_init")
 DEPS["Golkin"].Tabullet = require("Tabullet.pkg_init")
 DEPS["Golkin"].MathLib = require("MathLib.pkg_init")
 DEPS["Golkin"].AppLib = require("AppLib.pkg_init")
+DEPS["Golkin"].Sallo = require("Sallo.pkg_init")
 
 ---pkg module include
 

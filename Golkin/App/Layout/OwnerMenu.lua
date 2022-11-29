@@ -205,7 +205,7 @@ end
 function SCENE_L:make_menu()
     local grid_menu = TBL.Grid:new(self.rootScreenCanvas.Len)
     grid_menu:setHorizontalSetting({ "6", "4", "*" })
-    grid_menu:setVerticalSetting({ "1", "3", "3", "3", "3", "*" })
+    grid_menu:setVerticalSetting({ "1", "3", "3", "3", "3", "3", "*" })
     grid_menu:updatePosLen()
 
     local bt_menu = TBL.Button:new(self.rootScreenCanvas, self.attachingScreen, "bt_menu")
@@ -222,14 +222,17 @@ function SCENE_L:make_menu()
     bts_menu.Inquire = self:make_menu_bt("Inquire")
     bts_menu.Register = self:make_menu_bt("Register")
     bts_menu.Remove = self:make_menu_bt("Remove")
+    bts_menu.Addon = self:make_menu_bt("Addon")
     grid_menu:setPosLen(bts_menu.Send, 1, 2, 2, 1)
     grid_menu:setPosLen(bts_menu.Inquire, 1, 3, 2, 1)
     grid_menu:setPosLen(bts_menu.Register, 1, 4, 2, 1)
     grid_menu:setPosLen(bts_menu.Remove, 1, 5, 2, 1)
+    grid_menu:setPosLen(bts_menu.Addon, 1, 6, 2, 1)
     bts_menu.Send.Visible = true
     bts_menu.Inquire.Visible = true
     bts_menu.Register.Visible = true
     bts_menu.Remove.Visible = true
+    bts_menu.Addon.Visible = true
     self.bts_menu = bts_menu
 
 end
