@@ -10,7 +10,7 @@ local protocol = PKGS.Golkin.ENV.CONST.protocol
 
 --- make project global namespace
 ---@class Golkin.App
-GolkinApp = {}
+local GolkinApp = {}
 
 --- initialize EventRouter
 --- this routes to UI Event and rednet event to other functions
@@ -25,10 +25,13 @@ GolkinApp.UIRunner:attachToEventRouter(GolkinApp.EventRouter)
 --- initialize Screen objects to use,
 --- can terminal or monitor
 --- side must exist. NONE is terminal
+GolkinApp.Screens = {}
 
 local main_screen = TBL.Screen:new(peripheral.wrap("left"), TBL.Enums.Side.left)
+GolkinApp.Screens.MainScreen = main_screen
 -- local main_screen = TBL.Screen:new(term, TBL.Enums.Side.NONE)
 local computer_screen = TBL.Screen:new(term, TBL.Enums.Side.NONE)
+GolkinApp.Screens.ComputerScreen = computer_screen
 ------------ Param -------------
 
 GolkinApp.Param = require("Golkin.userdata.param")
@@ -57,6 +60,7 @@ local layout_Histories       = require("Golkin.App.Layout.Histories")
 local layout_RegisterAccount = require("Golkin.App.Layout.RegisterAccount")
 local layout_ManualTextInput = require("Golkin.App.Layout.ManualTextInput")
 local layout_RemoveAccount   = require("Golkin.App.Layout.RemoveAccount")
+local layout_Addons          = require("Golkin.App.Layout.Addons")
 
 
 GolkinApp.Layout                 = {}
@@ -72,6 +76,7 @@ GolkinApp.Layout.Histories       = layout_Histories:new(main_screen, GolkinApp)
 GolkinApp.Layout.RegisterAccount = layout_RegisterAccount:new(main_screen, GolkinApp)
 GolkinApp.Layout.RemoveAccount   = layout_RemoveAccount:new(main_screen, GolkinApp)
 GolkinApp.Layout.ManualTextInput = layout_ManualTextInput:new(computer_screen, GolkinApp)
+GolkinApp.Layout.Addons          = layout_Addons:new(main_screen, GolkinApp)
 
 ------------ SCENE --------------
 GolkinApp.Scene                 = {}
@@ -89,22 +94,12 @@ GolkinApp.Scene.RegisterAccount = require("Golkin.App.Scene.RegisterAccount"):ne
 GolkinApp.Scene.RemoveAccount   = require("Golkin.App.Scene.RemoveAccount"):new(GolkinApp, GolkinApp.Layout.RemoveAccount)
 GolkinApp.Scene.ManualTextInput = require("Golkin.App.Scene.ManualTextInput"):new(GolkinApp,
     GolkinApp.Layout.ManualTextInput)
+GolkinApp.Scene.Addons          = require("Golkin.App.Scene.Addons"):new(GolkinApp, GolkinApp.Layout.Addons)
 
 ------------ peripherals --------
 GolkinApp.Peripheral = {}
 ---@type Vef.AP.PlayerDetector
 GolkinApp.Peripheral.PlayerDetector = peripheral.find(GolkinApp.Param.PlayerDetectorName)
-
------------- 3rd party apps
----@class Golkin.Addon
-local Addon = {}
-Addon.Layout = {}
-
-local layout_SalloMain = require("Golkin.3rdParty.SalloApp.Layout.SalloMain")
-
-Addon.Layout.SalloMain = layout_SalloMain:new(main_screen, GolkinApp)
-
-GolkinApp.Addon = Addon
 
 --- register each screen sides initialize Scene
 GolkinApp.UIRunner:attachScene(GolkinApp.Scene.ManualTextInput)
@@ -115,6 +110,7 @@ GolkinApp.UIRunner:setIntialScene(TBL.Enums.Side.left)
 
 -----------------------------------
 
+---start app
 function GolkinApp:start()
     --- clear and render initial scenes
     self.UIRunner:ClearScreens()
@@ -123,6 +119,13 @@ function GolkinApp:start()
 
     --- run main EventLoop to start Proj
     self.EventRouter:main()
+end
+
+---add addon button to application
+---@param button Tabullet.Button
+---@param func fun(self:Golkin.App.Layout.Addons)
+function GolkinApp:add_addon(button, func)
+    self.Layout.Addons:add_addon_bt(button, func)
 end
 
 return GolkinApp

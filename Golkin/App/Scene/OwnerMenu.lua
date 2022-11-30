@@ -29,6 +29,12 @@ function SCENE:initialize(ProjNamespace, UILayout)
         end
     end
 
+    self.Layout.bts_menu.Addon.ClickEvent = function(obj, e)
+        if e.Button == TBL.Enums.MouseButton.left then
+            self:goto_Addons()
+        end
+    end
+
     self.Layout.bts_menu.Register.ClickEvent = function(obj, e)
         if e.Button == TBL.Enums.MouseButton.left then
             self:goto_RegisterAccount()
@@ -127,6 +133,12 @@ function SCENE:goto_Histories()
         self.PROJ.Scene.Histories:reset()
         self.PROJ.UIRunner:attachScene(self.PROJ.Scene.Histories)
     end
+end
+
+function SCENE:goto_Addons()
+    self:detachHandlers()
+    self.PROJ.Scene.Addons:reset()
+    self.PROJ.UIRunner:attachScene(self.PROJ.Scene.Addons)
 end
 
 function SCENE:cb_bt_left_arrow()

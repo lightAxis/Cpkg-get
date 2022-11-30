@@ -70,6 +70,7 @@
   {
     RootPath = "Cpkg-get/Sallo",
     Execs = {
+      "app",
       "gen_Sallo_protocol",
       "gen_rank_table",
     },

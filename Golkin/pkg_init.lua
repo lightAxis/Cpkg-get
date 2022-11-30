@@ -9,7 +9,6 @@ DEPS["Golkin"].Crotocol = require("Crotocol.pkg_init")
 DEPS["Golkin"].Tabullet = require("Tabullet.pkg_init")
 DEPS["Golkin"].MathLib = require("MathLib.pkg_init")
 DEPS["Golkin"].AppLib = require("AppLib.pkg_init")
-DEPS["Golkin"].Sallo = require("Sallo.pkg_init")
 
 ---pkg module include
 
@@ -30,5 +29,7 @@ Golkin.Web.Protocol = require("Golkin.include.Web.Protocol.Include")
 Golkin.Web.Handle = require("Golkin.include.Web.Handle")
 Golkin.Web.Client = require("Golkin.include.Web.Client")
 Golkin.Web.Server = require("Golkin.include.Web.Server")
+
+Golkin.App = require("Golkin.App.main")
 
 return Golkin

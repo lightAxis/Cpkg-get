@@ -15,5 +15,13 @@
             pkg = "EmLua",
             version = 1.1
         },
+        {
+            pkg = "Golkin",
+            version = 1.1
+        },
+        {
+            pkg = "Tabullet",
+            version = 1.1
+        },
     },
 }

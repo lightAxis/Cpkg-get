@@ -7,6 +7,8 @@ DEPS = DEPS or {}
 DEPS["Sallo"] = {}
 DEPS["Sallo"].Crotocol = require("Crotocol.pkg_init")
 DEPS["Sallo"].EmLua = require("EmLua.pkg_init")
+DEPS["Sallo"].Golkin = require("Golkin.pkg_init")
+DEPS["Sallo"].Tabullet = require("Tabullet.pkg_init")
 
 ---pkg module include
 
