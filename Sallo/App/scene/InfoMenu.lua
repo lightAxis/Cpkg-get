@@ -16,16 +16,16 @@ function SCENE:initialize(ProjNamespace, UILayout)
 
     self.Layout.bt_back.ClickEvent = function(obj, e)
         if e.Button == TBL.Enums.MouseButton.left then
-            self:goto_OwnerMenu()
+            self:goto_Addons()
         end
     end
 
 end
 
-function SCENE:goto_OwnerMenu()
+function SCENE:goto_Addons()
     self:detach_handelers()
-    self.PROJ.Scene.OwnerMenu:reset()
-    self.PROJ.UIRunner:attachScene(self.PROJ.Scene.OwnerMenu)
+    self.PROJ.Scene.Addons:reset()
+    self.PROJ.UIRunner:attachScene(self.PROJ.Scene.Addons)
 end
 
 function SCENE:reset()
