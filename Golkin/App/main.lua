@@ -4,8 +4,11 @@ local AppLib = DEPS.Golkin.AppLib
 
 local THIS = PKGS.Golkin
 local client = THIS.Web.Client:new()
-local serverID = client:getServerID()
+-- local serverID = client:getServerID()
 local protocol = PKGS.Golkin.ENV.CONST.protocol
+
+
+rednet.open(CPKG.rednetSide)
 
 
 --- make project global namespace
@@ -42,9 +45,9 @@ GolkinApp.Data = require("Golkin.App.Data")
 GolkinApp.Handle = require("Golkin.include.Web.Handle"):new()
 GolkinApp.EventRouter:attachRednetCallback(protocol, function(a, b, c, d)
     -- a: rednet_message, b:sender, c:msg, d:protocol
-    if (b == serverID) then
-        GolkinApp.Handle:parse(c)
-    end
+    -- if (b == serverID) then
+    GolkinApp.Handle:parse(c)
+    -- end
 end)
 GolkinApp.Client = client
 

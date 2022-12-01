@@ -87,6 +87,32 @@ function a.TB.infoContentEdit(bt)
     bt:setTextColor(TBL.Enums.Color.black)
 end
 
+---comment
+---@param tb Tabullet.TextBlock
+function a.TB.progressBar(tb)
+    a.TB.ToCenter(tb)
+    tb:setBackgroundColor(TBL.Enums.Color.None)
+    tb:setTextColor(TBL.Enums.Color.black)
+end
+
+---comment
+---@param tb Tabullet.TextBlock
+function a.TB.Level(tb)
+    tb:setTextHorizontalAlignment(TBL.Enums.HorizontalAlignmentMode.left)
+    tb:setTextVerticalAlignment(TBL.Enums.VerticalAlignmentMode.center)
+    tb:setBackgroundColor(TBL.Enums.Color.orange)
+    tb:setTextColor(TBL.Enums.Color.white)
+end
+
+---comment
+---@param tb Tabullet.TextBlock
+function a.TB.RankName(tb)
+    tb:setTextHorizontalAlignment(TBL.Enums.HorizontalAlignmentMode.right)
+    tb:setTextVerticalAlignment(TBL.Enums.VerticalAlignmentMode.center)
+    tb:setBackgroundColor(TBL.Enums.Color.brown)
+    tb:setTextColor(TBL.Enums.Color.white)
+end
+
 a.BT = {}
 ---vertical center, hori center
 ---@param bt Tabullet.Button
@@ -162,6 +188,15 @@ function a.LB.Content(lb)
     lb:setEvenIndexFG(TBL.Enums.Color.black)
     lb:setSelectedIndexBG(TBL.Enums.Color.cyan)
     lb:setSelectedIndexFG(TBL.Enums.Color.white)
+end
+
+a.PGB = {}
+
+---comment
+---@param pgb Tabullet.ProgressBar
+function a.PGB.EXPBar(pgb)
+    pgb.BG = TBL.Enums.Color.yellow
+    pgb.BarBG = TBL.Enums.Color.blue
 end
 
 ---make mainframe infopanel

@@ -73,6 +73,7 @@
       "app",
       "gen_Sallo_protocol",
       "gen_rank_table",
+      "see_scene",
     },
     Upgradable = false,
     DescPath = "Cpkg-get/Sallo/pkg_info.sz",
