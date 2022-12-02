@@ -196,6 +196,13 @@ a.PGB = {}
 ---@param pgb Tabullet.ProgressBar
 function a.PGB.EXPBar(pgb)
     pgb.BG = TBL.Enums.Color.yellow
+    pgb.BarBG = TBL.Enums.Color.cyan
+end
+
+---comment
+---@param pgb Tabullet.ProgressBar
+function a.PGB.EXPBar2(pgb)
+    pgb.BG = TBL.Enums.Color.orange
     pgb.BarBG = TBL.Enums.Color.blue
 end
 

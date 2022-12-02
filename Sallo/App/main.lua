@@ -2,6 +2,7 @@ local TBL = DEPS.Sallo.Tabullet
 local GOL = DEPS.Sallo.Golkin
 
 
+
 ---@class Sallo.App : Golkin.App
 local app = GOL.App
 

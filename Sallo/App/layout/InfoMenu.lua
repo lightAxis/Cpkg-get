@@ -106,7 +106,7 @@ end
 function SCENE_L:make_grid_namemxp(grid_p)
     local grid_main_infopanel1 = grid_p:genSubGrid(nil, 3, 2, 1, 3)
     grid_main_infopanel1:setHorizontalSetting({ "*" })
-    grid_main_infopanel1:setVerticalSetting({ "1", "1", "1", "*" })
+    grid_main_infopanel1:setVerticalSetting({ "1", "1", "1", "1", "*" })
     grid_main_infopanel1:updatePosLen()
 
     local grid_main_infoTop = grid_main_infopanel1:genSubGrid(nil, 1, 1)
@@ -130,20 +130,34 @@ function SCENE_L:make_grid_namemxp(grid_p)
     self.PROJ.Style.TB.RankName(tb_rankName)
     self.tb_rankName = tb_rankName
 
-    local pgb_mxp_gauge = TBL.ProgressBar:new(self.rootScreenCanvas, self.attachingScreen, "pgb_mxp_gauge")
-    grid_main_infopanel1:setPosLen(pgb_mxp_gauge, 1, 2, 1, 1)
-    self.PROJ.Style.PGB.EXPBar(pgb_mxp_gauge)
-    pgb_mxp_gauge:setValue(0.5)
-    pgb_mxp_gauge.BarDirection = TBL.Enums.Direction.horizontal
-    self.pgb_mxp_gauge = pgb_mxp_gauge
+    local pgb_exp_gauge = TBL.ProgressBar:new(self.rootScreenCanvas, self.attachingScreen, "pgb_exp_gauge")
+    grid_main_infopanel1:setPosLen(pgb_exp_gauge, 1, 2, 1, 1)
+    self.PROJ.Style.PGB.EXPBar(pgb_exp_gauge)
+    pgb_exp_gauge:setValue(0.5)
+    pgb_exp_gauge.BarDirection = TBL.Enums.Direction.horizontal
+    self.pgb_exp_gauge = pgb_exp_gauge
 
-    local tb_mxp_gauge = TBL.TextBlock:new(self.rootScreenCanvas, self.attachingScreen, "tb_mxp_gauge")
-    grid_main_infopanel1:setPosLen(tb_mxp_gauge, 1, 2, 1, 1)
-    self.PROJ.Style.TB.progressBar(tb_mxp_gauge)
-    tb_mxp_gauge:setText("13224.33 / 44293 (26.35%)")
-    self.tb_mxp_gauge = tb_mxp_gauge
+    local tb_exp_gauge = TBL.TextBlock:new(self.rootScreenCanvas, self.attachingScreen, "tb_exp_gauge")
+    grid_main_infopanel1:setPosLen(tb_exp_gauge, 1, 2, 1, 1)
+    self.PROJ.Style.TB.progressBar(tb_exp_gauge)
+    tb_exp_gauge:setText("13224.33 / 44293 (26.35%)")
+    self.tb_exp_gauge = tb_exp_gauge
 
-    self:set_mxp_gauge(13224.33, 44293)
+    local pgb_cap_gauge = TBL.ProgressBar:new(self.rootScreenCanvas, self.attachingScreen, "pgb_cap_gauge")
+    grid_main_infopanel1:setPosLen(pgb_cap_gauge, 1, 3, 1, 1)
+    self.PROJ.Style.PGB.EXPBar2(pgb_cap_gauge)
+    pgb_cap_gauge:setValue(0.5)
+    pgb_cap_gauge.BarDirection = TBL.Enums.Direction.horizontal
+    self.pgb_cap_gauge = pgb_cap_gauge
+
+    local tb_cap_gauge = TBL.TextBlock:new(self.rootScreenCanvas, self.attachingScreen, "tb_cap_gauge")
+    grid_main_infopanel1:setPosLen(tb_cap_gauge, 1, 3, 1, 1)
+    self.PROJ.Style.TB.progressBar(tb_cap_gauge)
+    tb_cap_gauge:setText("13224.33 / 44293 (26.35%)")
+    self.tb_cap_gauge = tb_cap_gauge
+
+    self:set_exp_gauge(13224.33, 44293)
+    self:set_cap_gauge(120, 480)
     self:set_info_top(132, "[testName!]", "master challenger")
 
     self:make_grid_info2(grid_main_infopanel1)
@@ -167,18 +181,27 @@ end
 ---comment
 ---@param now number
 ---@param max number
-function SCENE_L:set_mxp_gauge(now, max)
+function SCENE_L:set_exp_gauge(now, max)
     local text = tostring(string.format("%.2f / %.2f (%.2f", now, max, 100 * now / max) .. "%)")
-    self.pgb_mxp_gauge:setValue(now / max)
-    self.tb_mxp_gauge:setText(text)
+    self.pgb_exp_gauge:setValue(now / max)
+    self.tb_exp_gauge:setText(text)
+end
+
+---comment
+---@param now number
+---@param max number
+function SCENE_L:set_cap_gauge(now, max)
+    local text = tostring(string.format("%.2f / %.2f (%.2f", now, max, 100 * now / max) .. "%)")
+    self.pgb_cap_gauge:setValue(now / max)
+    self.tb_cap_gauge:setText(text)
 end
 
 ---comment
 ---@param grid_p Tabullet.Grid
 function SCENE_L:make_grid_info1(grid_p)
-    local grid_main_infopanel1 = grid_p:genSubGrid(nil, 1, 4, 3, 1)
-    grid_main_infopanel1:setHorizontalSetting({})
-    grid_main_infopanel1:setVerticalSetting({})
+    local grid_main_infopanel1 = grid_p:genSubGrid(nil, 1, 5, 1, 1)
+    grid_main_infopanel1:setHorizontalSetting({ "*", "3", "*" })
+    grid_main_infopanel1:setVerticalSetting({ "1", "1", "1", "1", "1", "1", "1", "1", "*" })
     grid_main_infopanel1:updatePosLen()
 end
 
@@ -186,23 +209,53 @@ end
 ---@param grid_p Tabullet.Grid
 function SCENE_L:make_grid_info2(grid_p)
 
-    local grid_main_infopanel2 = grid_p:genSubGrid(nil, 1, 4, 1, 1)
+    local grid_main_infopanel2 = grid_p:genSubGrid(nil, 1, 5, 1, 1)
     grid_main_infopanel2:setHorizontalSetting({ "*", "3", "*" })
     grid_main_infopanel2:setVerticalSetting({ "1", "1", "1", "1", "1", "1", "1", "1", "*" })
     grid_main_infopanel2:updatePosLen()
 
-    self.tbs_menu_2.MxpRateN, self.tbs_menu_2.MxpRateC = self:make_grid_info_combo("MxpRate", 1, 1, grid_main_infopanel2)
-    self.tbs_menu_2.TodayMxpN, self.tbs_menu_2.TodayMxpC = self:make_grid_info_combo("TodayMxp", 1, 4,
-        grid_main_infopanel2)
-    self.tbs_menu_2.TodayWorkHourN, self.tbs_menu_2.TodayWorkHourC = self:make_grid_info_combo("TodayWorkHour", 1, 7,
-        grid_main_infopanel2)
+    -- self.tbs_menu_1.ExpPerMinN, self.tbs_menu_1.ExpPerMinC = self:make_grid_info_combo("EXP/min", 1, 1,
+    --     grid_main_infopanel2)
+    -- self.tbs_menu_1.CapPerMinN, self.tbs_menu_1.CapPerMinC = self:make_grid_info_combo("CAP/min", 1, 4,
+    --     grid_main_infopanel2)
+    -- self.tbs_menu_1.GoldPerMinN, self.tbs_menu_1.GoldPerMinC = self:make_grid_info_combo("GOLD/min", 1, 7,
+    --     grid_main_infopanel2)
 
-    self.tbs_menu_2.TodayLeftHourN, self.tbs_menu_2.TodayLeftHourC = self:make_grid_info_combo("TodayLeftHour", 3, 1,
-        grid_main_infopanel2)
-    self.tbs_menu_2.TotalMxpN, self.tbs_menu_2.TotalMxpC = self:make_grid_info_combo("TotalMxp", 3, 4,
-        grid_main_infopanel2)
-    self.tbs_menu_2.TotalWorkHourN, self.tbs_menu_2.TotalWorkHourC = self:make_grid_info_combo("TotalWorkHour", 3, 7,
-        grid_main_infopanel2)
+    -- self.tbs_menu_1.ExpPerCapN, self.tbs_menu_1.ExpPerCapC = self:make_grid_info_combo("EXP/CAP", 3, 1,
+    --     grid_main_infopanel2)
+    -- self.tbs_menu_1.CapAmpN, self.tbs_menu_1.CapAmpC = self:make_grid_info_combo("CAP Amplifier", 3, 4,
+    --     grid_main_infopanel2)
+    -- self.tbs_menu_1.GoldPerCapN, self.tbs_menu_1.GoldPerCapC = self:make_grid_info_combo("GOLD/CAP", 3, 7,
+    --     grid_main_infopanel2)
+
+
+
+    -- self.tbs_menu_2.TodayExpN, self.tbs_menu_2.TodayExpC = self:make_grid_info_combo("EXP Today", 1, 1,
+    --     grid_main_infopanel2)
+    -- self.tbs_menu_2.TodayCapN, self.tbs_menu_2.TodayCapC = self:make_grid_info_combo("CAP Today", 1, 4,
+    --     grid_main_infopanel2)
+    -- self.tbs_menu_2.TodayGoldN, self.tbs_menu_2.TodayGoldC = self:make_grid_info_combo("GOLD Today", 1, 7,
+    --     grid_main_infopanel2)
+
+    -- self.tbs_menu_2.TotalExpN, self.tbs_menu_2.TotalExpC = self:make_grid_info_combo("EXP Total", 3, 1,
+    --     grid_main_infopanel2)
+    -- self.tbs_menu_2.TotalCapN, self.tbs_menu_2.TotalCapC = self:make_grid_info_combo("CAP Total", 3, 4,
+    --     grid_main_infopanel2)
+    -- self.tbs_menu_2.TotalGoldN, self.tbs_menu_2.TotalGoldC = self:make_grid_info_combo("GOLD Total", 3, 7,
+    --     grid_main_infopanel2)
+
+
+    -- self.tbs_menu_3.TotalSPN, self.tbs_menu_3.TotalSPC = self:make_grid_info_combo("Total SKp", 1, 1,
+    --     grid_main_infopanel2)
+    -- self.tbs_menu_3.LeftSPN, self.tbs_menu_3.LeftSPC = self:make_grid_info_combo("Left SKp", 1, 4,
+    --     grid_main_infopanel2)
+
+    -- self.tbs_menu_3.EffLevelN, self.tbs_menu_3.EffLevelN = self:make_grid_info_combo("Eff Level", 3, 1,
+    --     grid_main_infopanel2)
+    -- self.tbs_menu_3.ConLevelN, self.tbs_menu_3.ConLevelC = self:make_grid_info_combo("Con Level", 3, 4,
+    --     grid_main_infopanel2)
+    -- self.tbs_menu_3.ProLevelN, self.tbs_menu_3.ProLevelC = self:make_grid_info_combo("Pro Level", 3, 7,
+    --     grid_main_infopanel2)
 
 
     -- self.tbs_menu_2.mxpRateN, self.tbs_menu_2.mxpRateC = self:make_grid_info_combo("Mxp Rate", 1, 1, grid_main_infopanel)
@@ -235,7 +288,7 @@ function SCENE_L:make_grid_info2(grid_p)
     -- thema
     -- level
     -- rank
-    -- salary /h /d /M /Y
+    -- goldary /h /d /M /Y
     -- mxp_gauge
 
     --- details
@@ -254,13 +307,11 @@ function SCENE_L:make_grid_info2(grid_p)
     -- efficiency_level
 
     ---main 1
-    -- name
-    -- level
-    -- rank
 
-    -- salary /h /d /M /Y
-    -- mxp_gauge
+    -- goldary /h /d /M /Y
     -- thema(hidden)
+
+    -- 피로도 게이지
 
     ---main 2
     -- mxp t/min

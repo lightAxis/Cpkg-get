@@ -72,7 +72,7 @@
     Execs = {
       "app",
       "gen_Sallo_protocol",
-      "gen_rank_table",
+      "gen_param_table",
       "see_scene",
     },
     Upgradable = false,

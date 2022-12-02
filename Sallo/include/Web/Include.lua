@@ -13,11 +13,12 @@ protocol.Msg = require("Sallo.include.Web.Protocol.MsgDef")
 --- include Structs
 ---@class Sallo.Web.Protocol.Struct
 protocol.Struct = {}
-protocol.Struct.state_t = require("Sallo.include.Web.Protocol.Struct.state_t")
+protocol.Struct.main_t = require("Sallo.include.Web.Protocol.Struct.main_t")
 protocol.Struct.statistics_t = require("Sallo.include.Web.Protocol.Struct.statistics_t")
 protocol.Struct.thema_t = require("Sallo.include.Web.Protocol.Struct.thema_t")
-protocol.Struct.skillState_t = require("Sallo.include.Web.Protocol.Struct.skillState_t")
 protocol.Struct.history_t = require("Sallo.include.Web.Protocol.Struct.history_t")
+protocol.Struct.skillState_t = require("Sallo.include.Web.Protocol.Struct.skillState_t")
+protocol.Struct.stat_t = require("Sallo.include.Web.Protocol.Struct.stat_t")
 protocol.Struct.info_t = require("Sallo.include.Web.Protocol.Struct.info_t")
 
 --- include MsgStructs

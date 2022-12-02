@@ -1,7 +1,8 @@
 ---@class Sallo.Web.Protocol.Struct.info_t
 ---@field name string owner name of sallo info
 ---@field thema Sallo.Web.Protocol.Struct.thema_t thema struct field
----@field state Sallo.Web.Protocol.Struct.state_t state field of info
+---@field main Sallo.Web.Protocol.Struct.main_t main field of info
+---@field stat Sallo.Web.Protocol.Struct.stat_t stat field of info
 ---@field statistics Sallo.Web.Protocol.Struct.statistics_t statistics fiedl of info
 ---@field skillState Sallo.Web.Protocol.Struct.skillState_t skill state of info
 ---@field histories table<number, Sallo.Web.Protocol.Struct.history_t> history field of info. go
@@ -21,8 +22,11 @@ function struct.new()
     ---@type Sallo.Web.Protocol.Struct.thema_t
     a.thema = nil -- thema struct field
     
-    ---@type Sallo.Web.Protocol.Struct.state_t
-    a.state = {} -- state field of info
+    ---@type Sallo.Web.Protocol.Struct.main_t
+    a.main = {} -- main field of info
+    
+    ---@type Sallo.Web.Protocol.Struct.stat_t
+    a.stat = {} -- stat field of info
     
     ---@type Sallo.Web.Protocol.Struct.statistics_t
     a.statistics = {} -- statistics fiedl of info

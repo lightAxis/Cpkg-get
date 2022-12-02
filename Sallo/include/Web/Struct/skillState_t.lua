@@ -1,7 +1,7 @@
 ---@class Sallo.Web.Protocol.Struct.skillState_t
 ---@field total_sp number total skill point get until now
 ---@field left_sp number skill point left
----@field reputation_level number reputation skill level
+---@field concentration_level number concentration skill level
 ---@field efficiency_level number efficiency skill level
 ---@field proficiency_level number proficiency skill level
 ---@field new fun():Sallo.Web.Protocol.Struct.skillState_t
@@ -20,7 +20,7 @@ function struct.new()
     a.left_sp = nil -- skill point left
     
     ---@type number
-    a.reputation_level = nil -- reputation skill level
+    a.concentration_level = nil -- concentration skill level
     
     ---@type number
     a.efficiency_level = nil -- efficiency skill level

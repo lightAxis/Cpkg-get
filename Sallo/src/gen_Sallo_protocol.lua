@@ -33,7 +33,7 @@ builder:addEnum(enum("RANK_NAME", "enum name", {
     enumElm("ARCANE", 14, "level 14"),
     enumElm("BLUEHOLE", 15, "level 15"),
     enumElm("SKULL", 16, "level 16"),
-    enumElm("FALLOFFAME", 17, "level inf"),
+    enumElm("HALLOFFAME", 17, "level inf"),
 }))
 
 builder:addEnum(enum("THEMA", "thema of sallo", {
@@ -81,27 +81,39 @@ builder:addStruct(struct("thema_t", "struct of thema by sallo", {
     field("isVisible", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "is visible in the rank?"),
 }))
 
-builder:addStruct(struct("state_t", "struct of state by sallo", {
+builder:addStruct(struct("main_t", "struct of main bu sallo", {
     field("level", fieldType(efieldType.num), fieldInit(efieldType.nil_), "level number of info"),
     field("rank", fieldType(efieldType.custom, builder:getEnumClassName("RANK_NAME")), fieldInit(efieldType.num, -1),
         "rank enum of info"),
     field("salary", fieldType(efieldType.num), fieldInit(efieldType.nil_), "salary per hour number"),
-    field("mxp_gauge", fieldType(efieldType.num), fieldInit(efieldType.nil_), "max guage of current rank info"),
-    field("mxp", fieldType(efieldType.num), fieldInit(efieldType.nil_), "current mxp filled"),
+    field("exp_gauge", fieldType(efieldType.num), fieldInit(efieldType.nil_), "max guage of current rank info"),
+    field("exp", fieldType(efieldType.num), fieldInit(efieldType.nil_), "current exp filled"),
+    field("cap_gauge", fieldType(efieldType.num), fieldInit(efieldType.nil_), "max cap gauge"),
+    field("cap_left", fieldType(efieldType.num), fieldInit(efieldType.nil_), "cap point left today"),
+}))
+
+builder:addStruct(struct("stat_t", "struct of state by sallo", {
+    field("exp_per_min", fieldType(efieldType.num), fieldInit(efieldType.nil_), "exp per minute"),
+    field("cap_per_minute", fieldType(efieldType.num), fieldInit(efieldType.nil_), "cap usage per minute"),
+    field("gold_per_minute", fieldType(efieldType.num), fieldInit(efieldType.nil_), "goldary per minute"),
+    field("exp_per_cap", fieldType(efieldType.num), fieldInit(efieldType.nil_), "exp accisition per cap"),
+    field("cap_amplifier", fieldType(efieldType.num), fieldInit(efieldType.nil_), "cap amplifer for cap gauge"),
+    field("gold_per_cap", fieldType(efieldType.num), fieldInit(efieldType.nil_), "salaray per cap point"),
 }))
 
 builder:addStruct(struct("statistics_t", "struct of statistics by sallo", {
-    field("total_workHour", fieldType(efieldType.num), fieldInit(efieldType.nil_), "total worked hour"),
-    field("total_mxp", fieldType(efieldType.num), fieldInit(efieldType.nil_), "total mxp from start to now"),
-    field("today_workHour", fieldType(efieldType.num), fieldInit(efieldType.nil_), "workhour of today"),
-    field("today_leftHour", fieldType(efieldType.num), fieldInit(efieldType.nil_), "lefthour of today"),
-    field("today_mxp", fieldType(efieldType.num), fieldInit(efieldType.nil_), "mxp get today"),
+    field("today_exp", fieldType(efieldType.num), fieldInit(efieldType.nil_), "exp get today"),
+    field("today_cap", fieldType(efieldType.num), fieldInit(efieldType.nil_), "cap get today"),
+    field("today_gold", fieldType(efieldType.num), fieldInit(efieldType.nil_), "goldary get today"),
+    field("total_exp", fieldType(efieldType.num), fieldInit(efieldType.nil_), "exp get total"),
+    field("total_cap", fieldType(efieldType.num), fieldInit(efieldType.nil_), "cap get total"),
+    field("total_gold", fieldType(efieldType.num), fieldInit(efieldType.nil_), "goldary get total"),
 }))
 
 builder:addStruct(struct("skillState_t", "struct of skill state in info by sallo", {
     field("total_sp", fieldType(efieldType.num), fieldInit(efieldType.nil_), "total skill point get until now"),
     field("left_sp", fieldType(efieldType.num), fieldInit(efieldType.nil_), "skill point left"),
-    field("reputation_level", fieldType(efieldType.num), fieldInit(efieldType.nil_), "reputation skill level"),
+    field("concentration_level", fieldType(efieldType.num), fieldInit(efieldType.nil_), "concentration skill level"),
     field("efficiency_level", fieldType(efieldType.num), fieldInit(efieldType.nil_), "efficiency skill level"),
     field("proficiency_level", fieldType(efieldType.num), fieldInit(efieldType.nil_), "proficiency skill level"),
 }))
@@ -116,9 +128,12 @@ builder:addStruct(struct("info_t", "all information table of one person", {
     field("name", fieldType(efieldType.str), fieldInit(efieldType.nil_), "owner name of sallo info"),
     field("thema", fieldType(efieldType.custom, builder:getStructClassName("thema_t")), fieldInit(efieldType.nil_),
         "thema struct field"),
-    field("state", fieldType(efieldType.custom, builder:getStructClassName("state_t")),
+    field("main", fieldType(efieldType.custom, builder:getStructClassName("main_t")),
         fieldInit(efieldType.table, nil, nil),
-        "state field of info"),
+        "main field of info"),
+    field("stat", fieldType(efieldType.custom, builder:getStructClassName("stat_t")),
+        fieldInit(efieldType.table, nil, nil),
+        "stat field of info"),
     field("statistics", fieldType(efieldType.custom, builder:getStructClassName("statistics_t")),
         fieldInit(efieldType.table, nil, nil),
         "statistics fiedl of info"),

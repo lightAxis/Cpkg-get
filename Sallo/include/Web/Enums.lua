@@ -30,7 +30,7 @@ a.RANK_NAME = {
     ["ARCANE"] = 14, -- level 14
     ["BLUEHOLE"] = 15, -- level 15
     ["SKULL"] = 16, -- level 16
-    ["FALLOFFAME"] = 17, -- level inf
+    ["HALLOFFAME"] = 17, -- level inf
 }
 
 ---thema of sallo
