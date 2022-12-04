@@ -25,4 +25,8 @@ Sallo.ENV.PATH = fs.getDir(args[2])
 
 Sallo.Param = require("Sallo.include.Param.param")
 
+Sallo.Web = {}
+Sallo.Web.Protocol = require("Sallo.include.Web.Protocol.Include")
+Sallo.Web.Handle = require("Sallo.include.Web.Handle")
+
 return Sallo

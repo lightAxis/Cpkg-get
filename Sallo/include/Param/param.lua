@@ -12,10 +12,19 @@ local param = {
         ["protocol"] = "Sallo",
         ["serverName"] = "server",
         ["info_dir"] = "/userdata/infos"
-    }
+    },
+
+    ["PlayerdetectorName"] = "playerDetector",
+    ["ChatBoxName"] = "chatBox",
 }
 
-param.rank = require("Sallo.include.Param.param_rank")
-param.skill = require("Sallo.include.Param.param_skill")
+param.Rank = require("Sallo.include.Param.param_rank")
+param.Skill = {}
+param.Skill.CON = require("Sallo.include.Param.param_skill_CON")
+param.Skill.EFF = require("Sallo.include.Param.param_skill_EFF")
+param.Skill.PRO = require("Sallo.include.Param.param_skill_PRO")
+param.Price = {}
+param.Price.Rank = require("Sallo.include.Param.param_rankPrice")
+param.Price.Thema = require("Sallo.include.Param.param_rankthemaPrice")
 
 return param

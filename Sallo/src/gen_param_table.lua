@@ -27,7 +27,7 @@ glob.ranks = {}
 glob.className = "Sallo.Param.Rank"
 for i = 1, #rankNames, 1 do
     local a = {}
-    a.key = '"' .. rankNames[i] .. '"'
+    a.key = i
     a.content = {}
     a.content.rank_name = '"' .. rankNames[i] .. '"'
     a.content.rank_level = tostring(i)
@@ -45,30 +45,34 @@ cg:GenCode(glob, PKGS.Sallo.ENV.PATH .. "/include/param_template.em",
 
 --------------------level gen----------------
 ---comment
----@param total_num number
----@param total_mxp number
----@param a number
 ---@return table<number, number> tb_seg
 ---@return table<number, number> tb_total
-local function gen_txp(total_num, total_mxp, a)
-    local seg = 1 / total_num
+local function gen_txp()
+
+    local total_num = 159
+    local tb = {}
+    table.insert(tb, 0)
+    tb[1] = 100
+    for i = 2, total_num, 1 do
+        local d = 0
+        if (i <= 39) then d = 1.214575
+        elseif i <= 79 then d = 17.27767
+        elseif i <= 119 then d = 26.0394
+        elseif i <= 159 then d = 79.32645
+        end
+        tb[i] = tb[i - 1] + d
+    end
+    tb[total_num + 1] = -1
+
     local tb_total = {}
-    table.insert(tb_total, 0)
+    tb_total[0] = 0
     for i = 1, total_num, 1 do
-        local mxp = 0
-        -- print(math.pow(seg * i, 2))
-        mxp = ((seg * i) ^ a) * total_mxp
-        mxp = math.floor(mxp + 0.5)
-        table.insert(tb_total, mxp)
+        tb_total[i] = tb_total[i - 1] + tb[i]
     end
+    tb_total[0] = nil
+    tb_total[total_num + 1] = tb_total[total_num]
 
-    local tb_seg = {}
-
-    for i = 1, total_num, 1 do
-        table.insert(tb_seg, tb_total[i + 1] - tb_total[i])
-    end
-    table.remove(tb_total, 1)
-    return tb_seg, tb_total
+    return tb, tb_total
 end
 
 ---comment
@@ -95,7 +99,14 @@ end
 local function gen_sk_pt(total_num)
     local tb = {}
     for i = 1, total_num, 1 do
-        table.insert(tb, math.floor((i + 0.01) / 30))
+        local plus = 0
+        if (i <= 39) then plus = 0
+        elseif (i <= 79) then plus = 5
+        elseif (i <= 119) then plus = 7
+        elseif (i < 159) then plus = 9
+        elseif (i >= 160) then plus = 160
+        end
+        tb[i] = plus
     end
 
     local tb_stack = {}
@@ -112,7 +123,7 @@ local xmp_per_minute = 50
 local max_day = 30
 local total_level = 159
 
-local mxp_rank, mxp_stack = gen_txp(total_level, basic_max_hour * xmp_per_minute * 60 * max_day, 2.2)
+local mxp_rank, mxp_stack = gen_txp()
 local skill_pt, skill_pt_stack = gen_sk_pt(total_level)
 
 glob = {}
@@ -157,7 +168,7 @@ local skill_max_level = #rankNames
 local skill_stat_amp = 2.0
 
 local EFF_min = 10
-local EFF_max = 80
+local EFF_max = 100
 local tb_EFF_stat = gen_sk(skill_max_level, EFF_min, EFF_max)
 
 local CON_min = 1
@@ -183,11 +194,18 @@ glob.className = "Sallo.Param.Skill.Efficiency"
 glob.ranks = {}
 for i = 0, #rankNames, 1 do
     local a = {}
-    a.key = i + 1
+    a.key = i
     a.content = {}
     a.content.Level = i
     a.content.TXP_per_ACT = tb_EFF_stat[i + 1]
-    a.content.require_sp = i + 1
+    local requiresp = 0
+    if (i <= 3) then requiresp = 12
+    elseif (i <= 7) then requiresp = 24
+    elseif (i <= 11) then requiresp = 36
+    elseif (i <= 15) then requiresp = 48
+    else requiresp = -1
+    end
+    a.content.require_sp = requiresp
     table.insert(glob.ranks, a)
 end
 cg:GenCode(glob, PKGS.Sallo.ENV.PATH .. "/include/param_template.em",
@@ -199,11 +217,18 @@ glob.className = "Sallo.Param.Skill.Concentration"
 glob.ranks = {}
 for i = 0, #rankNames, 1 do
     local a = {}
-    a.key = i + 1
+    a.key = i
     a.content = {}
     a.content.Level = i
     a.content.ACT_amplifier = tb_CON_stat[i + 1]
-    a.content.require_sp = i + 1
+    local requiresp = 0
+    if (i <= 3) then requiresp = 12
+    elseif (i <= 7) then requiresp = 24
+    elseif (i <= 11) then requiresp = 36
+    elseif (i <= 15) then requiresp = 48
+    else requiresp = -1
+    end
+    a.content.require_sp = requiresp
     table.insert(glob.ranks, a)
 end
 cg:GenCode(glob, PKGS.Sallo.ENV.PATH .. "/include/param_template.em",
@@ -214,12 +239,19 @@ glob.className = "Sallo.Param.Skill.Proficiency"
 glob.ranks = {}
 for i = 0, #rankNames, 1 do
     local a = {}
-    a.key = i + 1
+    a.key = i
     a.content = {}
     a.content.Level = i
     a.content.SAL_per_ACT = tb_PRO_stat[i + 1]
-    a.content.require_sp = i + 1
+    local requiresp = 0
+    if (i <= 3) then requiresp = 12
+    elseif (i <= 7) then requiresp = 24
+    elseif (i <= 11) then requiresp = 36
+    elseif (i <= 15) then requiresp = 48
+    else requiresp = -1
+    end
+    a.content.require_sp = requiresp
     table.insert(glob.ranks, a)
 end
 cg:GenCode(glob, PKGS.Sallo.ENV.PATH .. "/include/param_template.em",
-    PKGS.Sallo.ENV.PATH .. "/include/Param/param_skill_SAL.lua")
+    PKGS.Sallo.ENV.PATH .. "/include/Param/param_skill_PRO.lua")

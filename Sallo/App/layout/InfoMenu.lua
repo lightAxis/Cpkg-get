@@ -1,4 +1,6 @@
 local class = require("Class.middleclass")
+local THIS = PKGS.Sallo
+local param = THIS.Param
 
 local TBL = DEPS.Golkin.Tabullet
 
@@ -13,17 +15,26 @@ local SCENE_L = class("Sallo.App.Layout.InfoMenu", TBL.UILayout)
 function SCENE_L:initialize(attachedScreen, projNamespace)
     TBL.UILayout.initialize(self, attachedScreen, projNamespace)
 
-    ---@type table<number, Tabullet.TextBlock>
+    ---@type table<string, Tabullet.TextBlock>
     self.tbs_menu_1 = {}
-    ---@type table<number, Tabullet.TextBlock>
+    -- -@type table<string, Tabullet.TextBlock>
     self.tbs_menu_2 = {}
-    ---@type table<number, Tabullet.TextBlock>
+    -- -@type table<string, Tabullet.TextBlock>
     self.tbs_menu_3 = {}
 
-    ---@type table<number, table<number, Tabullet.TextBlock>>
-    self.tbs_menus = { self.tbs_menu_1, self.tbs_menu_2, self.tbs_menu_3 }
+    ---@type table<number, table<string, Tabullet.TextBlock>>
+    self.tbs_menus = { [1] = self.tbs_menu_1, [2] = self.tbs_menu_2, [3] = self.tbs_menu_3 }
+
+    self.eMenu = { ["stat"] = 1, ["state"] = 2, ["statistics"] = 3 }
+
+    self.currMenu = self.eMenu.stat
 
     self:make_grid()
+
+    ---@type Sallo.Web.Protocol.Struct.info_t
+    self.selectedInfo = nil
+
+    -- self:select_menu(self.eMenu.stat)
 end
 
 function SCENE_L:make_grid()
@@ -214,123 +225,133 @@ function SCENE_L:make_grid_info2(grid_p)
     grid_main_infopanel2:setVerticalSetting({ "1", "1", "1", "1", "1", "1", "1", "1", "*" })
     grid_main_infopanel2:updatePosLen()
 
-    -- self.tbs_menu_1.ExpPerMinN, self.tbs_menu_1.ExpPerMinC = self:make_grid_info_combo("EXP/min", 1, 1,
-    --     grid_main_infopanel2)
-    -- self.tbs_menu_1.CapPerMinN, self.tbs_menu_1.CapPerMinC = self:make_grid_info_combo("CAP/min", 1, 4,
-    --     grid_main_infopanel2)
-    -- self.tbs_menu_1.GoldPerMinN, self.tbs_menu_1.GoldPerMinC = self:make_grid_info_combo("GOLD/min", 1, 7,
-    --     grid_main_infopanel2)
+    self.tbs_menu_1.ExpPerMinN, self.tbs_menu_1.ExpPerMinC = self:make_grid_info_combo("EXP/min", 1, 1,
+        grid_main_infopanel2)
+    self.tbs_menu_1.GoldPerMinN, self.tbs_menu_1.GoldPerMinC = self:make_grid_info_combo("GOLD/min", 1, 4,
+        grid_main_infopanel2)
+    self.tbs_menu_1.CapPerMinN, self.tbs_menu_1.CapPerMinC = self:make_grid_info_combo("CAP/min", 1, 7,
+        grid_main_infopanel2)
 
-    -- self.tbs_menu_1.ExpPerCapN, self.tbs_menu_1.ExpPerCapC = self:make_grid_info_combo("EXP/CAP", 3, 1,
-    --     grid_main_infopanel2)
-    -- self.tbs_menu_1.CapAmpN, self.tbs_menu_1.CapAmpC = self:make_grid_info_combo("CAP Amplifier", 3, 4,
-    --     grid_main_infopanel2)
-    -- self.tbs_menu_1.GoldPerCapN, self.tbs_menu_1.GoldPerCapC = self:make_grid_info_combo("GOLD/CAP", 3, 7,
-    --     grid_main_infopanel2)
-
-
-
-    -- self.tbs_menu_2.TodayExpN, self.tbs_menu_2.TodayExpC = self:make_grid_info_combo("EXP Today", 1, 1,
-    --     grid_main_infopanel2)
-    -- self.tbs_menu_2.TodayCapN, self.tbs_menu_2.TodayCapC = self:make_grid_info_combo("CAP Today", 1, 4,
-    --     grid_main_infopanel2)
-    -- self.tbs_menu_2.TodayGoldN, self.tbs_menu_2.TodayGoldC = self:make_grid_info_combo("GOLD Today", 1, 7,
-    --     grid_main_infopanel2)
-
-    -- self.tbs_menu_2.TotalExpN, self.tbs_menu_2.TotalExpC = self:make_grid_info_combo("EXP Total", 3, 1,
-    --     grid_main_infopanel2)
-    -- self.tbs_menu_2.TotalCapN, self.tbs_menu_2.TotalCapC = self:make_grid_info_combo("CAP Total", 3, 4,
-    --     grid_main_infopanel2)
-    -- self.tbs_menu_2.TotalGoldN, self.tbs_menu_2.TotalGoldC = self:make_grid_info_combo("GOLD Total", 3, 7,
-    --     grid_main_infopanel2)
-
-
-    -- self.tbs_menu_3.TotalSPN, self.tbs_menu_3.TotalSPC = self:make_grid_info_combo("Total SKp", 1, 1,
-    --     grid_main_infopanel2)
-    -- self.tbs_menu_3.LeftSPN, self.tbs_menu_3.LeftSPC = self:make_grid_info_combo("Left SKp", 1, 4,
-    --     grid_main_infopanel2)
-
-    -- self.tbs_menu_3.EffLevelN, self.tbs_menu_3.EffLevelN = self:make_grid_info_combo("Eff Level", 3, 1,
-    --     grid_main_infopanel2)
-    -- self.tbs_menu_3.ConLevelN, self.tbs_menu_3.ConLevelC = self:make_grid_info_combo("Con Level", 3, 4,
-    --     grid_main_infopanel2)
-    -- self.tbs_menu_3.ProLevelN, self.tbs_menu_3.ProLevelC = self:make_grid_info_combo("Pro Level", 3, 7,
-    --     grid_main_infopanel2)
-
-
-    -- self.tbs_menu_2.mxpRateN, self.tbs_menu_2.mxpRateC = self:make_grid_info_combo("Mxp Rate", 1, 1, grid_main_infopanel)
-    -- self.tbs_menu_2.
+    self.tbs_menu_1.ExpPerCapN, self.tbs_menu_1.ExpPerCapC = self:make_grid_info_combo("EXP/CAP", 3, 1,
+        grid_main_infopanel2)
+    self.tbs_menu_1.GoldPerCapN, self.tbs_menu_1.GoldPerCapC = self:make_grid_info_combo("GOLD/CAP", 3, 4,
+        grid_main_infopanel2)
+    self.tbs_menu_1.CapAmpN, self.tbs_menu_1.CapAmpC = self:make_grid_info_combo("CAP Amplifier", 3, 7,
+        grid_main_infopanel2)
 
 
 
-    -- local tb_menu_nameN, tb_menu_nameC, tb_menu_nameNL =
-    -- self.PROJ.Style.make_infoPanel_pair("ID", self.rootScreenCanvas, self.attachingScreen)
-    -- grid_main_infopanel:setPosLen(tb_menu_nameN, 1, 1)
-    -- grid_main_infopanel:setPosLen(tb_menu_nameC, 1, 2)
-    -- tb_menu_nameN.Len.x = tb_menu_nameNL
-    -- self.tb_menu_nameN = tb_menu_nameN
-    -- self.tb_menu_nameN
+    self.tbs_menu_2.TodayExpN, self.tbs_menu_2.TodayExpC = self:make_grid_info_combo("EXP Today", 1, 1,
+        grid_main_infopanel2)
+    self.tbs_menu_2.TodayCapN, self.tbs_menu_2.TodayCapC = self:make_grid_info_combo("CAP Today", 1, 4,
+        grid_main_infopanel2)
+    self.tbs_menu_2.TodayGoldN, self.tbs_menu_2.TodayGoldC = self:make_grid_info_combo("GOLD Today", 1, 7,
+        grid_main_infopanel2)
 
-    -- local tb_menu_levelN, tb_menu_levelC, tb_menu_levelNL =
-    -- self.PROJ.Style.make_infoPanel_pair("Level", self.rootScreenCanvas, self.attachingScreen)
-    -- grid_main_infopanel:setPosLen(tb_menu_levelN, 1, 4)
-    -- grid_main_infopanel:setPosLen(tb_menu_levelC, 1, 5)
-
-    -- local tb_menu_rankN, tb_menu_rankC, tb_menu_rankNL =
-    -- self.PROJ.Style.make_infoPanel_pair("Rank", self.rootScreenCanvas, self.attachingScreen)
-    -- grid_main_infopanel:setPosLen(tb_menu_rankN, 1, 7)
-    -- grid_main_infopanel:setPosLen(tb_menu_rankC, 1, 8)
+    self.tbs_menu_2.TotalExpN, self.tbs_menu_2.TotalExpC = self:make_grid_info_combo("EXP Total", 3, 1,
+        grid_main_infopanel2)
+    self.tbs_menu_2.TotalCapN, self.tbs_menu_2.TotalCapC = self:make_grid_info_combo("CAP Total", 3, 4,
+        grid_main_infopanel2)
+    self.tbs_menu_2.TotalGoldN, self.tbs_menu_2.TotalGoldC = self:make_grid_info_combo("GOLD Total", 3, 7,
+        grid_main_infopanel2)
 
 
+    self.tbs_menu_3.TotalSPN, self.tbs_menu_3.TotalSPC = self:make_grid_info_combo("Total SKp", 1, 1,
+        grid_main_infopanel2)
+    self.tbs_menu_3.LeftSPN, self.tbs_menu_3.LeftSPC = self:make_grid_info_combo("Left SKp", 1, 4,
+        grid_main_infopanel2)
 
-    --- basics
-    -- name
-    -- thema
-    -- level
-    -- rank
-    -- goldary /h /d /M /Y
-    -- mxp_gauge
+    self.tbs_menu_3.EffLevelN, self.tbs_menu_3.EffLevelC = self:make_grid_info_combo("Eff Level", 3, 1,
+        grid_main_infopanel2)
+    self.tbs_menu_3.ProLevelN, self.tbs_menu_3.ProLevelC = self:make_grid_info_combo("Pro Level", 3, 4,
+        grid_main_infopanel2)
+    self.tbs_menu_3.ConLevelN, self.tbs_menu_3.ConLevelC = self:make_grid_info_combo("Con Level", 3, 7,
+        grid_main_infopanel2)
 
-    --- details
-    -- mxp t/min
-    -- total_workHour
-    -- total_mxp
-    -- today_workhour
-    -- today_mxp
-    -- today_leftHour
+end
 
-    --- skills(hidden)
-    -- total_sp
-    -- left_sp
-    -- reputation_level
-    -- proficiency_level
-    -- efficiency_level
+function SCENE_L:select_menu(eMenu)
+    local bs = { false, false, false }
+    local left_visible = false
+    local right_visible = false
+    if (eMenu == self.eMenu.stat) then
+        bs[1] = true
+        right_visible = true
+    elseif eMenu == self.eMenu.state then
+        bs[2] = true
+        left_visible = true
+        right_visible = true
+    elseif eMenu == self.eMenu.statistics then
+        bs[3] = true
+        left_visible = true
+    else
+        error("error in Sallo, InfoMenu:" .. eMenu)
+    end
 
-    ---main 1
+    for i = 1, 3, 1 do
+        for k, v in pairs(self.tbs_menus[i]) do
+            v.Visible = bs[i]
+        end
+    end
 
-    -- goldary /h /d /M /Y
-    -- thema(hidden)
+    self.bt_left_arrow.Visible = left_visible
+    self.bt_right_arrow.Visible = right_visible
 
-    -- 피로도 게이지
+    local rankLevel = param.Rank[self.selectedInfo.main.rank].rank_level
+    if rankLevel < 4 then
+        self.tbs_menu_1.ExpPerCapN.Visible = false
+        self.tbs_menu_1.ExpPerCapC.Visible = false
+        self.tbs_menu_3.TotalSPN.Visible = false
+        self.tbs_menu_3.TotalSPC.Visible = false
+        self.tbs_menu_3.LeftSPN.Visible = false
+        self.tbs_menu_3.LeftSPC.Visible = false
+        self.tbs_menu_3.EffLevelN.Visible = false
+        self.tbs_menu_3.EffLevelC.Visible = false
+        if (eMenu == self.eMenu.state) then
+            self.bt_right_arrow.Visible = false
+        end
+    end
+    if rankLevel < 8 then
+        self.tbs_menu_1.GoldPerCapN.Visible = false
+        self.tbs_menu_1.GoldPerCapC.Visible = false
+        self.tbs_menu_3.ProLevelN.Visible = false
+        self.tbs_menu_3.ProLevelC.Visible = false
+    end
+    if rankLevel < 12 then
+        self.tbs_menu_1.CapAmpN.Visible = false
+        self.tbs_menu_1.CapAmpC.Visible = false
+        self.tbs_menu_3.ConLevelN.Visible = false
+        self.tbs_menu_3.ConLevelC.Visible = false
+    end
 
-    ---main 2
-    -- mxp t/min
-    -- today_mxp
-    -- today_workhour
+end
 
-    -- today_leftHour
-    -- total_mxp
-    -- total_workHour
+function SCENE_L:refresh_info()
+    if (self.selectedInfo ~= nil) then
+        self:set_info_top(self.selectedInfo.main.level, self.selectedInfo.name, self.selectedInfo.main.rank)
+        self:set_exp_gauge(self.selectedInfo.main.exp, self.selectedInfo.main.exp_gauge)
+        self:set_cap_gauge(self.selectedInfo.main.cap_left, self.selectedInfo.main.cap_gauge)
 
-    ---main 3
-    -- total_sp
-    -- left_sp
+        self.tbs_menu_1.ExpPerMinC:setText(string.format("%.2f", self.selectedInfo.stat.exp_per_min))
+        self.tbs_menu_1.GoldPerMinC:setText(string.format("%.2f", self.selectedInfo.stat.gold_per_minute))
+        self.tbs_menu_1.CapPerMinC:setText(string.format("%.2f", self.selectedInfo.stat.cap_per_minute))
+        self.tbs_menu_1.ExpPerCapC:setText(string.format("%.2f", self.selectedInfo.stat.exp_per_cap))
+        self.tbs_menu_1.GoldPerCapC:setText(string.format("%.2f", self.selectedInfo.stat.gold_per_cap))
+        self.tbs_menu_1.CapAmpC:setText(string.format("%.2f", self.selectedInfo.stat.cap_amplifier))
 
-    -- reputation_level
-    -- proficiency_level
-    -- efficiency_level
+        self.tbs_menu_2.TodayExpC:setText(string.format("%.2f", self.selectedInfo.statistics.today_exp))
+        self.tbs_menu_2.TodayCapC:setText(string.format("%.2f", self.selectedInfo.statistics.today_cap))
+        self.tbs_menu_2.TodayGoldC:setText(string.format("%.2f", self.selectedInfo.statistics.today_gold))
+        self.tbs_menu_2.TotalExpC:setText(string.format("%.2f", self.selectedInfo.statistics.total_exp))
+        self.tbs_menu_2.TodayCapC:setText(string.format("%.2f", self.selectedInfo.statistics.total_cap))
+        self.tbs_menu_2.TotalGoldC:setText(string.format("%.2f", self.selectedInfo.statistics.total_gold))
 
-
+        self.tbs_menu_3.TotalSPC:setText(string.format("%.2f", self.selectedInfo.skillState.total_sp))
+        self.tbs_menu_3.LeftSPC:setText(string.format("%.2f", self.selectedInfo.skillState.left_sp))
+        self.tbs_menu_3.EffLevelC:setText(string.format("%.2f", self.selectedInfo.skillState.efficiency_level))
+        self.tbs_menu_3.ProLevelC:setText(string.format("%.2f", self.selectedInfo.skillState.proficiency_level))
+        self.tbs_menu_3.ConLevelC:setText(string.format("%.2f", self.selectedInfo.skillState.concentration_level))
+    end
 end
 
 ---comment

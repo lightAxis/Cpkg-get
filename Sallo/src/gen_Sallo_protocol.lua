@@ -17,6 +17,7 @@ local fieldInit = Crotocol.GenTool.makeInitStr
 --- enum
 builder:addEnum(enum("RANK_NAME", "enum name", {
     enumElm("NONE", -1, "this is error"),
+    enumElm("UNRANKED", 0, "level 0"),
     enumElm("BRONZE", 1, "level 1"),
     enumElm("SILVER", 2, "level 2"),
     enumElm("GOLD", 3, "level 3"),
@@ -38,6 +39,7 @@ builder:addEnum(enum("RANK_NAME", "enum name", {
 
 builder:addEnum(enum("THEMA", "thema of sallo", {
     enumElm("NONE", -1, "this is error"),
+    enumElm("NO_THEMA", 0, "no thema"),
     enumElm("LESS_THAN_WORM", 1, "level 1, brown"),
     enumElm("QUICKSILVER", 2, "level 2, gray"),
     enumElm("GOLDILOCKS_ZONE", 3, "level 3 yellow"),
@@ -174,5 +176,5 @@ builder:addHeader(struct("ACK_RESERVE_SKILLPT_RESET", "reply msg of RESETVE_SKIL
 }))
 
 
-builder:generate(THIS.ENV.PATH .. "/include/Web")
-builder:generateHandler(THIS.ENV.PATH .. "/include/web", "require(\"Class.middleclass\")")
+builder:generate(THIS.ENV.PATH .. "/include/Web/Protocol")
+builder:generateHandler(THIS.ENV.PATH .. "/include/Web", "require(\"Class.middleclass\")")

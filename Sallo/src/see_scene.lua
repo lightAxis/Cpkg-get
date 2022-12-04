@@ -2,6 +2,8 @@ local THIS = require("Sallo.pkg_init")
 
 local TBL = DEPS.Sallo.Tabullet
 
+local protocol = THIS.Web.Protocol
+
 local mon_term = TBL.Screen:new(term, TBL.Enums.Side.NONE)
 -- local mon_term = TBL.Screen:new(peripheral.wrap("left"), TBL.Enums.Side.left)
 local temp = {}
@@ -20,7 +22,9 @@ temp.Param = require("Golkin.userdata.param")
 -- local LAYOUT = require("Golkin.App.Layout.RemoveAccount"):new(mon_term, temp)
 -- local LAYOUT = require("Golkin.App.Layout.ManualTextInput"):new(mon_term, temp)
 local LAYOUT = require("Sallo.App.layout.InfoMenu"):new(mon_term, temp)
-
+LAYOUT.selectedInfo = protocol.Struct.info_t:new()
+LAYOUT.selectedInfo.main.rank = protocol.Enum.RANK_NAME.BRONZE
+LAYOUT:select_menu(LAYOUT.eMenu.state)
 
 LAYOUT.attachingScreen:clear()
 LAYOUT.rootScreenCanvas:render()

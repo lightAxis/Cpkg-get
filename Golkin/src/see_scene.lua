@@ -2,8 +2,8 @@ local THIS = require("Golkin.pkg_init")
 
 local TBL = DEPS.Golkin.Tabullet
 
--- local mon_term = TBL.Screen:new(term, TBL.Enums.Side.NONE)
-local mon_term = TBL.Screen:new(peripheral.wrap("left"), TBL.Enums.Side.left)
+local mon_term = TBL.Screen:new(term, TBL.Enums.Side.NONE)
+-- local mon_term = TBL.Screen:new(peripheral.wrap("left"), TBL.Enums.Side.left)
 local temp = {}
 temp.Style = require("Golkin.App.Style.Common")
 temp.Param = require("Golkin.userdata.param")

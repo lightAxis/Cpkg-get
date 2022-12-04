@@ -14,6 +14,7 @@ a.ACK_GET_INFO_R = {
 ---@enum Sallo.Web.Protocol.Enum.RANK_NAME 
 a.RANK_NAME = {
     ["NONE"] = -1, -- this is error
+    ["UNRANKED"] = 0, -- level 0
     ["BRONZE"] = 1, -- level 1
     ["SILVER"] = 2, -- level 2
     ["GOLD"] = 3, -- level 3
@@ -37,6 +38,7 @@ a.RANK_NAME = {
 ---@enum Sallo.Web.Protocol.Enum.THEMA 
 a.THEMA = {
     ["NONE"] = -1, -- this is error
+    ["NO_THEMA"] = 0, -- no thema
     ["LESS_THAN_WORM"] = 1, -- level 1, brown
     ["QUICKSILVER"] = 2, -- level 2, gray
     ["GOLDILOCKS_ZONE"] = 3, -- level 3 yellow
