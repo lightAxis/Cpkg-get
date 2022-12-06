@@ -1,7 +1,7 @@
 ---@class Sallo.Web.Protocol.MsgStruct.ACK_GET_INFO : Sallo.Web.Protocol.MsgStruct.IMsgStruct
 ---@field state Sallo.Web.Protocol.Enum.ACK_GET_INFO_R state enum of reply
 ---@field success boolean success or not 
----@field state_t Sallo.Web.Protocol.Struct.info_t serialized info str
+---@field info Sallo.Web.Protocol.Struct.info_t serialized info str
 ---@field new fun():Sallo.Web.Protocol.MsgStruct.ACK_GET_INFO
 local struct = {}
 
@@ -18,7 +18,7 @@ function struct.new()
     a.success = nil -- success or not 
     
     ---@type Sallo.Web.Protocol.Struct.info_t
-    a.state_t = {} -- serialized info str
+    a.info = {} -- serialized info str
     
     return a
 end

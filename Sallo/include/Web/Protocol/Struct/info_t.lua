@@ -1,12 +1,12 @@
 ---@class Sallo.Web.Protocol.Struct.info_t
----@field name string owner name of sallo info
----@field thema Sallo.Web.Protocol.Struct.thema_t thema struct field
----@field main Sallo.Web.Protocol.Struct.main_t main field of info
----@field stat Sallo.Web.Protocol.Struct.stat_t stat field of info
----@field statistics Sallo.Web.Protocol.Struct.statistics_t statistics fiedl of info
----@field skillState Sallo.Web.Protocol.Struct.skillState_t skill state of info
----@field histories table<number, Sallo.Web.Protocol.Struct.history_t> history field of info. go
----@field reserved_skillpt_reset Sallo.Web.Protocol.Struct.skillState_t reserved skillpoint reset setting from owner
+---@field Name string owner name of sallo info
+---@field Password number password when used to revise the info content
+---@field Thema Sallo.Web.Protocol.Struct.thema_t thema struct field
+---@field Main Sallo.Web.Protocol.Struct.main_t main field of info
+---@field Stat Sallo.Web.Protocol.Struct.stat_t stat field of info
+---@field Statistics Sallo.Web.Protocol.Struct.statistics_t statistics fiedl of info
+---@field SkillState Sallo.Web.Protocol.Struct.skillState_t skill state of info
+---@field Histories table<number, Sallo.Web.Protocol.Struct.history_t> history field of info. go
 ---@field new fun():Sallo.Web.Protocol.Struct.info_t
 local struct = {}
 
@@ -17,28 +17,28 @@ function struct.new()
     local a = {}
 
     ---@type string
-    a.name = nil -- owner name of sallo info
+    a.Name = nil -- owner name of sallo info
+    
+    ---@type number
+    a.Password = nil -- password when used to revise the info content
     
     ---@type Sallo.Web.Protocol.Struct.thema_t
-    a.thema = nil -- thema struct field
+    a.Thema = nil -- thema struct field
     
     ---@type Sallo.Web.Protocol.Struct.main_t
-    a.main = {} -- main field of info
+    a.Main = {} -- main field of info
     
     ---@type Sallo.Web.Protocol.Struct.stat_t
-    a.stat = {} -- stat field of info
+    a.Stat = {} -- stat field of info
     
     ---@type Sallo.Web.Protocol.Struct.statistics_t
-    a.statistics = {} -- statistics fiedl of info
+    a.Statistics = {} -- statistics fiedl of info
     
     ---@type Sallo.Web.Protocol.Struct.skillState_t
-    a.skillState = {} -- skill state of info
+    a.SkillState = {} -- skill state of info
     
     ---@type table<number, Sallo.Web.Protocol.Struct.history_t>
-    a.histories = {} -- history field of info. go
-    
-    ---@type Sallo.Web.Protocol.Struct.skillState_t
-    a.reserved_skillpt_reset = nil -- reserved skillpoint reset setting from owner
+    a.Histories = {} -- history field of info. go
     
     return a
 end

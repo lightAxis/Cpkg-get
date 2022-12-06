@@ -1,6 +1,6 @@
 ---@class Sallo.Web.Protocol.Struct.thema_t
----@field enum Sallo.Web.Protocol.Enum.THEMA enum of thema
----@field name string name of thema
+---@field Enum Sallo.Web.Protocol.Enum.THEMA enum of thema
+---@field Name string name of thema
 ---@field isAquired boolean boolean is get?
 ---@field isVisible boolean is visible in the rank?
 ---@field new fun():Sallo.Web.Protocol.Struct.thema_t
@@ -13,10 +13,10 @@ function struct.new()
     local a = {}
 
     ---@type Sallo.Web.Protocol.Enum.THEMA
-    a.enum = -1 -- enum of thema
+    a.Enum = -1 -- enum of thema
     
     ---@type string
-    a.name = nil -- name of thema
+    a.Name = nil -- name of thema
     
     ---@type boolean
     a.isAquired = nil -- boolean is get?

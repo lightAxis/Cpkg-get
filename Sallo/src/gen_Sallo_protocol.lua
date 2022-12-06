@@ -60,96 +60,169 @@ builder:addEnum(enum("THEMA", "thema of sallo", {
     enumElm("BACK_TO_NORMAL", 18, "level 0 normal")
 }))
 
-builder:addEnum(enum("ACK_GET_INFO_R", "reply enum of ACK_GET_INFO", {
-    enumElm("NONE", -1, "this is error!"),
-    enumElm("NORMAL", 0, "standard for success or not"),
-    enumElm("INFO_FILE_CORRUPTED", -101, "info file is corrupted"),
+builder:addEnum(enum("ACK_REGISTER_INFO_R", "reply enum of ACK_REGISTER_INFO", {
+    enumElm("NONE", -1, "this is error"),
+    enumElm("INFO_ALREADY_EXISTS", -101, "info file is already exists"),
+    enumElm("NORMAL", 0, "standard for success"),
     enumElm("SUCCESS", 101, "success"),
 }))
 
-builder:addEnum(enum("ACK_RESERVE_SKILLPT_RESET_R", "reply enum of ACK_RESERVE_SKILLPT_RESET", {
+builder:addEnum(enum("ACK_SET_INFO_CONNECTED_ACCOUNT_R", "reply enum of ACK_SET_INFO_CONNECTED_ACCOUNT", {
     enumElm("NONE", -1, "this is error"),
-    enumElm("NO_OWNER_EXIST", -201, "no owner exist in ownerName"),
-    enumElm("SKILLPT_STATE_CONDITION_UNMET", -202, "skill point state does not make sense"),
+    enumElm("INFO_NOT_EXIST", -201, "info not exist in sallo server"),
+    enumElm("INFO_PASSWD_UNMET", -202, "info password is not matching"),
+    enumElm("ACCOUNT_NOT_EXIST", -203, "account not exist in golkin server"),
+    enumElm("ACCOUNT_OWNER_UNMET", -204, "account owner in unmet in  golkin server"),
+    enumElm("ACCOUNT_PASSWD_UNMET", -205, "account password in unmnet in golkin server"),
     enumElm("NORMAL", 0, "standard for success"),
     enumElm("SUCCESS", 201, "success")
 }))
 
+builder:addEnum(enum("ACK_GET_INFO_R", "reply enum of ACK_GET_INFO", {
+    enumElm("NONE", -1, "this is error!"),
+    enumElm("NORMAL", 0, "standard for success or not"),
+    enumElm("INFO_NOT_EXIST", -301, "info file is corrupted"),
+    enumElm("SUCCESS", 301, "success"),
+}))
+
+builder:addEnum(enum("ACK_GET_INFOS_R", "reply enum of ACK_GET_INFOS", {
+    enumElm("NONE", -1, "this is error!"),
+    enumElm("NO_INFO_EXIST", -401, "no info is registered in server"),
+    enumElm("NORMAL", 0, "standard for success or not"),
+    enumElm("SUCCESS", 401, "success"),
+}))
+
+builder:addEnum(enum("ACK_CHANGE_SKILL_STAT_R", "reply enum of ACK_CHANGE_SKILL_STAT", {
+    enumElm("NONE", -1, "this is error"),
+    enumElm("NO_OWNER_EXIST", -501, "no owner exist in ownerName"),
+    enumElm("TOTAL_SKILLPT_UNMET", -502, "total skillpoint in larger than current info"),
+    enumElm("SKILL_UNLOCK_CONDITION_UNMET", -503, "skill unlock state does not make sense"),
+    enumElm("NORMAL", 0, "standard for success"),
+    enumElm("SUCCESS", 501, "success")
+}))
+
+builder:addEnum(enum("ACK_BUY_SKILL_R", "reply enum of ACK_BUY_SKILL", {
+    enumElm("NONE", -1, "this is error!"),
+    enumElm("NO_INFO", -601, "no owner exist in owner names"),
+    enumElm("SALLO_PASSWORD_UNMET", -602, "password of sallo info unmnet"),
+    enumElm("SKILL_UNLOCK_CONDITION_UNMET", -603, "the unlock condition of this skill is unmet"),
+    enumElm("BANKING_ERROR", -604, "when banking error occurs"),
+    enumElm("NORMAL", 0, "standard for success"),
+    enumElm("SUCCESS", 601, "success")
+}))
+
+builder:addEnum(enum("ACK_BUY_THEMA_R", "reply enum of ACK_BUY_THEMA", {
+    enumElm("NONE", -1, "this is error!"),
+    enumElm("NO_INFO", -701, "no owner exist in owner names"),
+    enumElm("SALLO_PASSWORD_UNMET", -702, "password of sallo info unmnet"),
+    enumElm("THEMA_UNLOCK_CONDITION_UNMET", -703, "the unlock condition of this thema is unmet"),
+    enumElm("BANKING_ERROR", -704, "when banking error occurs"),
+    enumElm("NORMAL", 0, "standard for success"),
+    enumElm("SUCCESS", 701, "success")
+}))
+
+
+--- structs
 builder:addStruct(struct("thema_t", "struct of thema by sallo", {
-    field("enum", fieldType(efieldType.custom, builder:getEnumClassName("THEMA")), fieldInit(efieldType.num, -1),
+    field("Enum", fieldType(efieldType.custom, builder:getEnumClassName("THEMA")), fieldInit(efieldType.num, -1),
         "enum of thema"),
-    field("name", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of thema"),
+    field("Name", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of thema"),
     field("isAquired", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "boolean is get?"),
     field("isVisible", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "is visible in the rank?"),
 }))
 
 builder:addStruct(struct("main_t", "struct of main bu sallo", {
-    field("level", fieldType(efieldType.num), fieldInit(efieldType.nil_), "level number of info"),
-    field("rank", fieldType(efieldType.custom, builder:getEnumClassName("RANK_NAME")), fieldInit(efieldType.num, -1),
+    field("Level", fieldType(efieldType.num), fieldInit(efieldType.nil_), "level number of info"),
+    field("Rank", fieldType(efieldType.custom, builder:getEnumClassName("RANK_NAME")), fieldInit(efieldType.num, -1),
         "rank enum of info"),
-    field("salary", fieldType(efieldType.num), fieldInit(efieldType.nil_), "salary per hour number"),
-    field("exp_gauge", fieldType(efieldType.num), fieldInit(efieldType.nil_), "max guage of current rank info"),
-    field("exp", fieldType(efieldType.num), fieldInit(efieldType.nil_), "current exp filled"),
-    field("cap_gauge", fieldType(efieldType.num), fieldInit(efieldType.nil_), "max cap gauge"),
-    field("cap_left", fieldType(efieldType.num), fieldInit(efieldType.nil_), "cap point left today"),
+    field("Salary", fieldType(efieldType.num), fieldInit(efieldType.nil_), "salary per hour number"),
+    field("Exp_gauge", fieldType(efieldType.num), fieldInit(efieldType.nil_), "max guage of current rank info"),
+    field("Exp", fieldType(efieldType.num), fieldInit(efieldType.nil_), "current exp filled"),
+    field("Cap_gauge", fieldType(efieldType.num), fieldInit(efieldType.nil_), "max cap gauge"),
+    field("Cap_left", fieldType(efieldType.num), fieldInit(efieldType.nil_), "cap point left today"),
 }))
 
 builder:addStruct(struct("stat_t", "struct of state by sallo", {
-    field("exp_per_min", fieldType(efieldType.num), fieldInit(efieldType.nil_), "exp per minute"),
-    field("cap_per_minute", fieldType(efieldType.num), fieldInit(efieldType.nil_), "cap usage per minute"),
-    field("gold_per_minute", fieldType(efieldType.num), fieldInit(efieldType.nil_), "goldary per minute"),
-    field("exp_per_cap", fieldType(efieldType.num), fieldInit(efieldType.nil_), "exp accisition per cap"),
-    field("cap_amplifier", fieldType(efieldType.num), fieldInit(efieldType.nil_), "cap amplifer for cap gauge"),
-    field("gold_per_cap", fieldType(efieldType.num), fieldInit(efieldType.nil_), "salaray per cap point"),
+    field("Exp_per_min", fieldType(efieldType.num), fieldInit(efieldType.nil_), "exp per minute"),
+    field("Cap_per_minute", fieldType(efieldType.num), fieldInit(efieldType.nil_), "cap usage per minute"),
+    field("Gold_per_minute", fieldType(efieldType.num), fieldInit(efieldType.nil_), "goldary per minute"),
+    field("Exp_per_cap", fieldType(efieldType.num), fieldInit(efieldType.nil_), "exp accisition per cap"),
+    field("Cap_amplifier", fieldType(efieldType.num), fieldInit(efieldType.nil_), "cap amplifer for cap gauge"),
+    field("Gold_per_cap", fieldType(efieldType.num), fieldInit(efieldType.nil_), "salaray per cap point"),
 }))
 
 builder:addStruct(struct("statistics_t", "struct of statistics by sallo", {
-    field("today_exp", fieldType(efieldType.num), fieldInit(efieldType.nil_), "exp get today"),
-    field("today_cap", fieldType(efieldType.num), fieldInit(efieldType.nil_), "cap get today"),
-    field("today_gold", fieldType(efieldType.num), fieldInit(efieldType.nil_), "goldary get today"),
-    field("total_exp", fieldType(efieldType.num), fieldInit(efieldType.nil_), "exp get total"),
-    field("total_cap", fieldType(efieldType.num), fieldInit(efieldType.nil_), "cap get total"),
-    field("total_gold", fieldType(efieldType.num), fieldInit(efieldType.nil_), "goldary get total"),
+    field("Today_exp", fieldType(efieldType.num), fieldInit(efieldType.nil_), "exp get today"),
+    field("Today_cap", fieldType(efieldType.num), fieldInit(efieldType.nil_), "cap get today"),
+    field("Today_gold", fieldType(efieldType.num), fieldInit(efieldType.nil_), "goldary get today"),
+    field("Total_exp", fieldType(efieldType.num), fieldInit(efieldType.nil_), "exp get total"),
+    field("Total_cap", fieldType(efieldType.num), fieldInit(efieldType.nil_), "cap get total"),
+    field("Total_gold", fieldType(efieldType.num), fieldInit(efieldType.nil_), "goldary get total"),
 }))
 
 builder:addStruct(struct("skillState_t", "struct of skill state in info by sallo", {
-    field("total_sp", fieldType(efieldType.num), fieldInit(efieldType.nil_), "total skill point get until now"),
-    field("left_sp", fieldType(efieldType.num), fieldInit(efieldType.nil_), "skill point left"),
-    field("concentration_level", fieldType(efieldType.num), fieldInit(efieldType.nil_), "concentration skill level"),
-    field("efficiency_level", fieldType(efieldType.num), fieldInit(efieldType.nil_), "efficiency skill level"),
-    field("proficiency_level", fieldType(efieldType.num), fieldInit(efieldType.nil_), "proficiency skill level"),
+    field("Total_sp", fieldType(efieldType.num), fieldInit(efieldType.nil_), "total skill point get until now"),
+    field("Left_sp", fieldType(efieldType.num), fieldInit(efieldType.nil_), "skill point left"),
+    field("Concentration_level", fieldType(efieldType.num), fieldInit(efieldType.nil_), "concentration skill level"),
+    field("Efficiency_level", fieldType(efieldType.num), fieldInit(efieldType.nil_), "efficiency skill level"),
+    field("Proficiency_level", fieldType(efieldType.num), fieldInit(efieldType.nil_), "proficiency skill level"),
 }))
 
 builder:addStruct(struct("history_t", "struct of info history by sallo", {
-    field("dateTime", fieldType(efieldType.str), fieldInit(efieldType.nil_), "time when this history made"),
-    field("data", fieldType(efieldType.str), fieldInit(efieldType.nil_), "content of history by raw string")
+    field("DateTime", fieldType(efieldType.str), fieldInit(efieldType.nil_), "time when this history made"),
+    field("Data", fieldType(efieldType.str), fieldInit(efieldType.nil_), "content of history by raw string")
 }))
 
 -- struct
 builder:addStruct(struct("info_t", "all information table of one person", {
-    field("name", fieldType(efieldType.str), fieldInit(efieldType.nil_), "owner name of sallo info"),
-    field("thema", fieldType(efieldType.custom, builder:getStructClassName("thema_t")), fieldInit(efieldType.nil_),
+    field("Name", fieldType(efieldType.str), fieldInit(efieldType.nil_), "owner name of sallo info"),
+    field("Password", fieldType(efieldType.num), fieldInit(efieldType.nil_),
+        "password when used to revise the info content"),
+    field("Thema", fieldType(efieldType.custom, builder:getStructClassName("thema_t")), fieldInit(efieldType.nil_),
         "thema struct field"),
-    field("main", fieldType(efieldType.custom, builder:getStructClassName("main_t")),
+    field("Main", fieldType(efieldType.custom, builder:getStructClassName("main_t")),
         fieldInit(efieldType.table, nil, nil),
         "main field of info"),
-    field("stat", fieldType(efieldType.custom, builder:getStructClassName("stat_t")),
+    field("Stat", fieldType(efieldType.custom, builder:getStructClassName("stat_t")),
         fieldInit(efieldType.table, nil, nil),
         "stat field of info"),
-    field("statistics", fieldType(efieldType.custom, builder:getStructClassName("statistics_t")),
+    field("Statistics", fieldType(efieldType.custom, builder:getStructClassName("statistics_t")),
         fieldInit(efieldType.table, nil, nil),
         "statistics fiedl of info"),
-    field("skillState", fieldType(efieldType.custom, builder:getStructClassName("skillState_t")),
+    field("SkillState", fieldType(efieldType.custom, builder:getStructClassName("skillState_t")),
         fieldInit(efieldType.table, nil, nil),
         "skill state of info"),
-    field("histories", fieldType(efieldType.table, "number", builder:getStructClassName("history_t")),
+    field("Histories", fieldType(efieldType.table, "number", builder:getStructClassName("history_t")),
         fieldInit(efieldType.table, nil, nil),
         "history field of info. go"),
-    field("reserved_skillpt_reset", fieldType(efieldType.custom, builder:getStructClassName("skillState_t")),
-        fieldInit(efieldType.nil_), "reserved skillpoint reset setting from owner"),
 }))
 
 --- header
+builder:addHeader(struct("REGISTER_INFO", "register new info with passwd", {
+    field("ownerName", fieldType(efieldType.num), fieldInit(efieldType.nil_), "owner name of this info"),
+    field("passwd", fieldType(efieldType.str), fieldInit(efieldType.nil_), "passwd using when edit this info"),
+}))
+
+builder:addHeader(struct("ACK_REGISTER_INFO", "reply of REGISTER_INFO", {
+    field("state", fieldType(efieldType.custom, builder:getEnumClassName("ACK_REGISTER_INFO_R")),
+        fieldInit(efieldType.num, -1), "result state enum"),
+    field("success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not"),
+}))
+
+builder:addHeader(struct("SET_INFO_CONNECTED_ACCOUNT", "set connection between sallo info and golkin account", {
+    field("infoName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of info to connect"),
+    field("infoPasswd", fieldType(efieldType.str), fieldInit(efieldType.nil_), "password of info"),
+    field("accountName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of account to connect"),
+    field("accountPasswd", fieldType(efieldType.str), fieldInit(efieldType.nil_), "passwd of account to connect"),
+    field("accountOwner", fieldType(efieldType.str), fieldInit(efieldType.nil_), "owner of account to connect"),
+}))
+
+builder:addHeader(struct("ACK_SET_INFO_CONNECTED_ACCOUNT", "reply of SET_INFO_CONNECTED_ACCOUNT", {
+    field("state", fieldType(efieldType.custom, builder:getEnumClassName("ACK_SET_INFO_CONNECTED_ACCOUNT_R")),
+        fieldInit(efieldType.num, -1), "state of result"),
+    field("success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not"),
+}))
+
 builder:addHeader(struct("GET_INFO", "give back info_t of sallo", {
     field("name", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of sallo info to request")
 }))
@@ -159,21 +232,35 @@ builder:addHeader(struct("ACK_GET_INFO", "reply msg of GET_INFO", {
         fieldInit(efieldType.num, -1),
         "state enum of reply"),
     field("success", fieldType(efieldType.bool), fieldType(efieldType.nil_), "success or not "),
-    field("state_t", fieldType(efieldType.custom, builder:getStructClassName("info_t")),
+    field("info", fieldType(efieldType.custom, builder:getStructClassName("info_t")),
         fieldInit(efieldType.table, nil, nil), "serialized info str"),
 }))
 
-builder:addHeader(struct("RESERVE_SKILLPT_RESET", "send reserve skillpoint reset to server", {
+builder:addHeader(struct("GET_INFOS", "give back info list", {
+
+}))
+
+builder:addHeader(struct("ACK_GET_INFOS", "reply of GET_INFOS", {
+    field("state", fieldType(efieldType.custom, builder:getEnumClassName("ACK_GET_INFOS_R")),
+        fieldInit(efieldType.num, -1), "state of reply"),
+    field("success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not"),
+    field("infos", fieldType(efieldType.table, "number", builder:getStructClassName("info_t")),
+        fieldInit(efieldType.table, nil, nil), "info name list from server")
+}))
+
+builder:addHeader(struct("CHANGE_SKILL_STAT", "send reserve skillpoint reset to server", {
     field("ownerName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "owner name of info"),
     field("skillState", fieldType(efieldType.custom, builder:getStructClassName("skillState_t")),
         fieldInit(efieldType.nil_), "skill state to reserve reset")
 }))
 
-builder:addHeader(struct("ACK_RESERVE_SKILLPT_RESET", "reply msg of RESETVE_SKILLPT_RESET", {
-    field("state", fieldType(efieldType.custom, builder:getEnumClassName("ACK_RESERVE_SKILLPT_RESET_R")),
+builder:addHeader(struct("ACK_CHANGE_SKILL_STAT", "reply msg of RESETVE_SKILLPT_RESET", {
+    field("state", fieldType(efieldType.custom, builder:getEnumClassName("ACK_CHANGE_SKILL_STAT_R")),
         fieldInit(efieldType.num, -1), "return state"),
     field("success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not"),
 }))
+
+
 
 
 builder:generate(THIS.ENV.PATH .. "/include/Web/Protocol")

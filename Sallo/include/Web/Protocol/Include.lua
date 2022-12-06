@@ -24,9 +24,15 @@ protocol.Struct.info_t = require("Sallo.include.Web.Protocol.Struct.info_t")
 --- include MsgStructs
 ---@class Sallo.Web.Protocol.MsgStruct
 protocol.MsgStruct = {}
+protocol.MsgStruct.ACK_REGISTER_INFO = require("Sallo.include.Web.Protocol.MsgStruct.ACK_REGISTER_INFO")
 protocol.MsgStruct.ACK_GET_INFO = require("Sallo.include.Web.Protocol.MsgStruct.ACK_GET_INFO")
-protocol.MsgStruct.ACK_RESERVE_SKILLPT_RESET = require("Sallo.include.Web.Protocol.MsgStruct.ACK_RESERVE_SKILLPT_RESET")
-protocol.MsgStruct.RESERVE_SKILLPT_RESET = require("Sallo.include.Web.Protocol.MsgStruct.RESERVE_SKILLPT_RESET")
 protocol.MsgStruct.GET_INFO = require("Sallo.include.Web.Protocol.MsgStruct.GET_INFO")
+protocol.MsgStruct.GET_INFOS = require("Sallo.include.Web.Protocol.MsgStruct.GET_INFOS")
+protocol.MsgStruct.SET_INFO_CONNECTED_ACCOUNT = require("Sallo.include.Web.Protocol.MsgStruct.SET_INFO_CONNECTED_ACCOUNT")
+protocol.MsgStruct.REGISTER_INFO = require("Sallo.include.Web.Protocol.MsgStruct.REGISTER_INFO")
+protocol.MsgStruct.CHANGE_SKILL_STAT = require("Sallo.include.Web.Protocol.MsgStruct.CHANGE_SKILL_STAT")
+protocol.MsgStruct.ACK_CHANGE_SKILL_STAT = require("Sallo.include.Web.Protocol.MsgStruct.ACK_CHANGE_SKILL_STAT")
+protocol.MsgStruct.ACK_GET_INFOS = require("Sallo.include.Web.Protocol.MsgStruct.ACK_GET_INFOS")
+protocol.MsgStruct.ACK_SET_INFO_CONNECTED_ACCOUNT = require("Sallo.include.Web.Protocol.MsgStruct.ACK_SET_INFO_CONNECTED_ACCOUNT")
 
 return protocol
