@@ -8,7 +8,7 @@ local client = THIS.Web.Client:new()
 local protocol = PKGS.Golkin.ENV.CONST.protocol
 
 
-rednet.open(CPKG.rednetSide)
+
 
 
 --- make project global namespace
@@ -17,6 +17,9 @@ local GolkinApp = {}
 
 ----- build app
 function GolkinApp:build()
+    -- open rednet
+    rednet.open(CPKG.rednetSide)
+
     --- initialize EventRouter
     --- this routes to UI Event and rednet event to other functions
     self.EventRouter = AppLib.EventRounter:new()
