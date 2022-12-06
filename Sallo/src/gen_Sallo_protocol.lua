@@ -135,7 +135,6 @@ builder:addStruct(struct("main_t", "struct of main bu sallo", {
     field("Level", fieldType(efieldType.num), fieldInit(efieldType.nil_), "level number of info"),
     field("Rank", fieldType(efieldType.custom, builder:getEnumClassName("RANK_NAME")), fieldInit(efieldType.num, -1),
         "rank enum of info"),
-    field("Salary", fieldType(efieldType.num), fieldInit(efieldType.nil_), "salary per hour number"),
     field("Exp_gauge", fieldType(efieldType.num), fieldInit(efieldType.nil_), "max guage of current rank info"),
     field("Exp", fieldType(efieldType.num), fieldInit(efieldType.nil_), "current exp filled"),
     field("Cap_gauge", fieldType(efieldType.num), fieldInit(efieldType.nil_), "max cap gauge"),
@@ -176,8 +175,9 @@ builder:addStruct(struct("history_t", "struct of info history by sallo", {
 -- struct
 builder:addStruct(struct("info_t", "all information table of one person", {
     field("Name", fieldType(efieldType.str), fieldInit(efieldType.nil_), "owner name of sallo info"),
-    field("Password", fieldType(efieldType.num), fieldInit(efieldType.nil_),
+    field("Password", fieldType(efieldType.str), fieldInit(efieldType.nil_),
         "password when used to revise the info content"),
+    field("AccountName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "account connected to this info"),
     field("Thema", fieldType(efieldType.custom, builder:getStructClassName("thema_t")), fieldInit(efieldType.nil_),
         "thema struct field"),
     field("Main", fieldType(efieldType.custom, builder:getStructClassName("main_t")),
@@ -199,40 +199,40 @@ builder:addStruct(struct("info_t", "all information table of one person", {
 
 --- header
 builder:addHeader(struct("REGISTER_INFO", "register new info with passwd", {
-    field("ownerName", fieldType(efieldType.num), fieldInit(efieldType.nil_), "owner name of this info"),
-    field("passwd", fieldType(efieldType.str), fieldInit(efieldType.nil_), "passwd using when edit this info"),
+    field("OwnerName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "owner name of this info"),
+    field("Passwd", fieldType(efieldType.str), fieldInit(efieldType.nil_), "passwd using when edit this info"),
 }))
 
 builder:addHeader(struct("ACK_REGISTER_INFO", "reply of REGISTER_INFO", {
-    field("state", fieldType(efieldType.custom, builder:getEnumClassName("ACK_REGISTER_INFO_R")),
+    field("State", fieldType(efieldType.custom, builder:getEnumClassName("ACK_REGISTER_INFO_R")),
         fieldInit(efieldType.num, -1), "result state enum"),
-    field("success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not"),
+    field("Success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not"),
 }))
 
 builder:addHeader(struct("SET_INFO_CONNECTED_ACCOUNT", "set connection between sallo info and golkin account", {
-    field("infoName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of info to connect"),
-    field("infoPasswd", fieldType(efieldType.str), fieldInit(efieldType.nil_), "password of info"),
-    field("accountName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of account to connect"),
-    field("accountPasswd", fieldType(efieldType.str), fieldInit(efieldType.nil_), "passwd of account to connect"),
-    field("accountOwner", fieldType(efieldType.str), fieldInit(efieldType.nil_), "owner of account to connect"),
+    field("InfoName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of info to connect"),
+    field("InfoPasswd", fieldType(efieldType.str), fieldInit(efieldType.nil_), "password of info"),
+    field("AccountName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of account to connect"),
+    field("AccountPasswd", fieldType(efieldType.str), fieldInit(efieldType.nil_), "passwd of account to connect"),
+    field("AccountOwner", fieldType(efieldType.str), fieldInit(efieldType.nil_), "owner of account to connect"),
 }))
 
 builder:addHeader(struct("ACK_SET_INFO_CONNECTED_ACCOUNT", "reply of SET_INFO_CONNECTED_ACCOUNT", {
-    field("state", fieldType(efieldType.custom, builder:getEnumClassName("ACK_SET_INFO_CONNECTED_ACCOUNT_R")),
+    field("State", fieldType(efieldType.custom, builder:getEnumClassName("ACK_SET_INFO_CONNECTED_ACCOUNT_R")),
         fieldInit(efieldType.num, -1), "state of result"),
-    field("success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not"),
+    field("Success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not"),
 }))
 
 builder:addHeader(struct("GET_INFO", "give back info_t of sallo", {
-    field("name", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of sallo info to request")
+    field("Name", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of sallo info to request")
 }))
 
 builder:addHeader(struct("ACK_GET_INFO", "reply msg of GET_INFO", {
-    field("state", fieldType(efieldType.custom, builder:getEnumClassName("ACK_GET_INFO_R")),
+    field("State", fieldType(efieldType.custom, builder:getEnumClassName("ACK_GET_INFO_R")),
         fieldInit(efieldType.num, -1),
         "state enum of reply"),
-    field("success", fieldType(efieldType.bool), fieldType(efieldType.nil_), "success or not "),
-    field("info", fieldType(efieldType.custom, builder:getStructClassName("info_t")),
+    field("Success", fieldType(efieldType.bool), fieldType(efieldType.nil_), "success or not "),
+    field("Info", fieldType(efieldType.custom, builder:getStructClassName("info_t")),
         fieldInit(efieldType.table, nil, nil), "serialized info str"),
 }))
 
@@ -241,23 +241,23 @@ builder:addHeader(struct("GET_INFOS", "give back info list", {
 }))
 
 builder:addHeader(struct("ACK_GET_INFOS", "reply of GET_INFOS", {
-    field("state", fieldType(efieldType.custom, builder:getEnumClassName("ACK_GET_INFOS_R")),
+    field("State", fieldType(efieldType.custom, builder:getEnumClassName("ACK_GET_INFOS_R")),
         fieldInit(efieldType.num, -1), "state of reply"),
-    field("success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not"),
-    field("infos", fieldType(efieldType.table, "number", builder:getStructClassName("info_t")),
+    field("Success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not"),
+    field("Infos", fieldType(efieldType.table, "number", builder:getStructClassName("info_t")),
         fieldInit(efieldType.table, nil, nil), "info name list from server")
 }))
 
 builder:addHeader(struct("CHANGE_SKILL_STAT", "send reserve skillpoint reset to server", {
-    field("ownerName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "owner name of info"),
-    field("skillState", fieldType(efieldType.custom, builder:getStructClassName("skillState_t")),
+    field("OwnerName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "owner name of info"),
+    field("SkillState", fieldType(efieldType.custom, builder:getStructClassName("skillState_t")),
         fieldInit(efieldType.nil_), "skill state to reserve reset")
 }))
 
 builder:addHeader(struct("ACK_CHANGE_SKILL_STAT", "reply msg of RESETVE_SKILLPT_RESET", {
-    field("state", fieldType(efieldType.custom, builder:getEnumClassName("ACK_CHANGE_SKILL_STAT_R")),
+    field("State", fieldType(efieldType.custom, builder:getEnumClassName("ACK_CHANGE_SKILL_STAT_R")),
         fieldInit(efieldType.num, -1), "return state"),
-    field("success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not"),
+    field("Success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not"),
 }))
 
 

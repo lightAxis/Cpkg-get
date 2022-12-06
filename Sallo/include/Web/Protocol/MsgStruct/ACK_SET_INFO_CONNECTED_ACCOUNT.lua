@@ -1,6 +1,6 @@
 ---@class Sallo.Web.Protocol.MsgStruct.ACK_SET_INFO_CONNECTED_ACCOUNT : Sallo.Web.Protocol.MsgStruct.IMsgStruct
----@field state Sallo.Web.Protocol.Enum.ACK_SET_INFO_CONNECTED_ACCOUNT_R state of result
----@field success boolean success or not
+---@field State Sallo.Web.Protocol.Enum.ACK_SET_INFO_CONNECTED_ACCOUNT_R state of result
+---@field Success boolean success or not
 ---@field new fun():Sallo.Web.Protocol.MsgStruct.ACK_SET_INFO_CONNECTED_ACCOUNT
 local struct = {}
 
@@ -11,10 +11,10 @@ function struct.new()
     local a = {}
 
     ---@type Sallo.Web.Protocol.Enum.ACK_SET_INFO_CONNECTED_ACCOUNT_R
-    a.state = -1 -- state of result
+    a.State = -1 -- state of result
     
     ---@type boolean
-    a.success = nil -- success or not
+    a.Success = nil -- success or not
     
     return a
 end

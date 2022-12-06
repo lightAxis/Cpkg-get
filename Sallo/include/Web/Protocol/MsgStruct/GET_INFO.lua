@@ -1,5 +1,5 @@
 ---@class Sallo.Web.Protocol.MsgStruct.GET_INFO : Sallo.Web.Protocol.MsgStruct.IMsgStruct
----@field name string name of sallo info to request
+---@field Name string name of sallo info to request
 ---@field new fun():Sallo.Web.Protocol.MsgStruct.GET_INFO
 local struct = {}
 
@@ -10,7 +10,7 @@ function struct.new()
     local a = {}
 
     ---@type string
-    a.name = nil -- name of sallo info to request
+    a.Name = nil -- name of sallo info to request
     
     return a
 end

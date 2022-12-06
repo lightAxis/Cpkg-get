@@ -1,6 +1,6 @@
 ---@class Sallo.Web.Protocol.MsgStruct.ACK_REGISTER_INFO : Sallo.Web.Protocol.MsgStruct.IMsgStruct
----@field state Sallo.Web.Protocol.Enum.ACK_REGISTER_INFO_R result state enum
----@field success boolean success or not
+---@field State Sallo.Web.Protocol.Enum.ACK_REGISTER_INFO_R result state enum
+---@field Success boolean success or not
 ---@field new fun():Sallo.Web.Protocol.MsgStruct.ACK_REGISTER_INFO
 local struct = {}
 
@@ -11,10 +11,10 @@ function struct.new()
     local a = {}
 
     ---@type Sallo.Web.Protocol.Enum.ACK_REGISTER_INFO_R
-    a.state = -1 -- result state enum
+    a.State = -1 -- result state enum
     
     ---@type boolean
-    a.success = nil -- success or not
+    a.Success = nil -- success or not
     
     return a
 end

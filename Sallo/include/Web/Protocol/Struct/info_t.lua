@@ -1,6 +1,7 @@
 ---@class Sallo.Web.Protocol.Struct.info_t
 ---@field Name string owner name of sallo info
----@field Password number password when used to revise the info content
+---@field Password string password when used to revise the info content
+---@field AccountName string account connected to this info
 ---@field Thema Sallo.Web.Protocol.Struct.thema_t thema struct field
 ---@field Main Sallo.Web.Protocol.Struct.main_t main field of info
 ---@field Stat Sallo.Web.Protocol.Struct.stat_t stat field of info
@@ -19,8 +20,11 @@ function struct.new()
     ---@type string
     a.Name = nil -- owner name of sallo info
     
-    ---@type number
+    ---@type string
     a.Password = nil -- password when used to revise the info content
+    
+    ---@type string
+    a.AccountName = nil -- account connected to this info
     
     ---@type Sallo.Web.Protocol.Struct.thema_t
     a.Thema = nil -- thema struct field

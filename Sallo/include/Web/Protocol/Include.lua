@@ -4,6 +4,9 @@ local protocol = {}
 --- include Enums
 protocol.Enum = require("Sallo.include.Web.Protocol.Enums")
 
+--- include Enums_INV
+protocol.Enum_INV = require("Sallo.include.Web.Protocol.Enums_INV")
+
 --- include HeaderDef
 protocol.Header = require("Sallo.include.Web.Protocol.HeaderDef")
 
