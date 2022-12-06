@@ -4,6 +4,9 @@ local protocol = {}
 --- include Enums
 protocol.Enum = require("&{Builder.RequirePrefix}&.Enums")
 
+--- include Enums_INV
+protocol.Enum_INV = require("&{Builder.RequirePrefix}&.Enums_INV")
+
 --- include HeaderDef
 protocol.Header = require("&{Builder.RequirePrefix}&.HeaderDef")
 

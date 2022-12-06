@@ -115,6 +115,8 @@ function builder:generate(targetPath)
     generator:GenCode(global, tempPath .. "/HeaderDef.em", targetPath .. "/HeaderDef.lua")
     -- generate Enums file
     generator:GenCode(global, tempPath .. "/Enums.em", targetPath .. "/Enums.lua")
+    -- generate Enums_INV file
+    generator:GenCode(global, tempPath .. "/Enums_INV.em", targetPath .. "/Enums_INV.lua")
     -- generate Msg definition
     generator:GenCode(global, tempPath .. "/MsgDef.em", targetPath .. "/MsgDef.lua")
 
