@@ -8,7 +8,8 @@ a.ACK_BUY_SKILL_R_INV = {
     [-601] = "NO_INFO", -- no owner exist in owner names
     [-602] = "SALLO_PASSWORD_UNMET", -- password of sallo info unmnet
     [-603] = "SKILL_UNLOCK_CONDITION_UNMET", -- the unlock condition of this skill is unmet
-    [-604] = "BANKING_ERROR", -- when banking error occurs
+    [-604] = "BANKING_REQUEST_TIMEOUT", -- banking request timeout
+    [-605] = "BANKING_ERROR", -- when banking error occurs
     [0] = "NORMAL", -- standard for success
     [601] = "SUCCESS", -- success
 }
@@ -64,7 +65,8 @@ a.ACK_BUY_THEMA_R_INV = {
     [-701] = "NO_INFO", -- no owner exist in owner names
     [-702] = "SALLO_PASSWORD_UNMET", -- password of sallo info unmnet
     [-703] = "THEMA_UNLOCK_CONDITION_UNMET", -- the unlock condition of this thema is unmet
-    [-704] = "BANKING_ERROR", -- when banking error occurs
+    [-704] = "BANKING_REQUEST_TIMEOUT", -- banking request timeout
+    [-705] = "BANKING_ERROR", -- when banking error occurs
     [0] = "NORMAL", -- standard for success
     [701] = "SUCCESS", -- success
 }

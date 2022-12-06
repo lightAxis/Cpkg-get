@@ -106,7 +106,8 @@ builder:addEnum(enum("ACK_BUY_SKILL_R", "reply enum of ACK_BUY_SKILL", {
     enumElm("NO_INFO", -601, "no owner exist in owner names"),
     enumElm("SALLO_PASSWORD_UNMET", -602, "password of sallo info unmnet"),
     enumElm("SKILL_UNLOCK_CONDITION_UNMET", -603, "the unlock condition of this skill is unmet"),
-    enumElm("BANKING_ERROR", -604, "when banking error occurs"),
+    enumElm("BANKING_REQUEST_TIMEOUT", -604, "banking request timeout"),
+    enumElm("BANKING_ERROR", -605, "when banking error occurs"),
     enumElm("NORMAL", 0, "standard for success"),
     enumElm("SUCCESS", 601, "success")
 }))
@@ -116,7 +117,8 @@ builder:addEnum(enum("ACK_BUY_THEMA_R", "reply enum of ACK_BUY_THEMA", {
     enumElm("NO_INFO", -701, "no owner exist in owner names"),
     enumElm("SALLO_PASSWORD_UNMET", -702, "password of sallo info unmnet"),
     enumElm("THEMA_UNLOCK_CONDITION_UNMET", -703, "the unlock condition of this thema is unmet"),
-    enumElm("BANKING_ERROR", -704, "when banking error occurs"),
+    enumElm("BANKING_REQUEST_TIMEOUT", -704, "banking request timeout"),
+    enumElm("BANKING_ERROR", -705, "when banking error occurs"),
     enumElm("NORMAL", 0, "standard for success"),
     enumElm("SUCCESS", 701, "success")
 }))
