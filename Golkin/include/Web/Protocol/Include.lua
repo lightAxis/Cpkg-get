@@ -4,6 +4,9 @@ local protocol = {}
 --- include Enums
 protocol.Enum = require("Golkin.include.Web.Protocol.Enums")
 
+--- include Enums_INV
+protocol.Enum_INV = require("Golkin.include.Web.Protocol.Enums_INV")
+
 --- include HeaderDef
 protocol.Header = require("Golkin.include.Web.Protocol.HeaderDef")
 
