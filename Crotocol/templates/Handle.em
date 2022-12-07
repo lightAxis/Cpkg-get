@@ -10,13 +10,17 @@ end
 
 ---trigger handler from msg
 ---@param msgStr string
+---@return &{Builder.Name}&.Msg msg
+---@return &{Builder:__makeHeaderClassName("IMsgStruct")}& msgStruct
 function handle:parse(msgStr)
     ---@type &{Builder.Name}&.Msg
     local msg = textutils.unserialize(msgStr)
+    local msgStruct = textutils.unserialize(msg.MsgStructStr)
     local func = self.__MsgStructMap[msg.Header]
-    if func == nil then return nil end
-
-    func(msg, textutils.unserialize(msg.MsgStructStr))
+    if func ~= nil then
+        func(msg, msgStruct)
+    end
+    return msg, msgStruct
 end
 
 ---attach message handle to header

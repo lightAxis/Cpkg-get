@@ -10,13 +10,17 @@ end
 
 ---trigger handler from msg
 ---@param msgStr string
+---@return Golkin.Web.Protocol.Msg msg
+---@return Golkin.Web.Protocol.MsgStruct.IMsgStruct msgStruct
 function handle:parse(msgStr)
     ---@type Golkin.Web.Protocol.Msg
     local msg = textutils.unserialize(msgStr)
+    local msgStruct = textutils.unserialize(msg.MsgStructStr)
     local func = self.__MsgStructMap[msg.Header]
-    if func == nil then return nil end
-
-    func(msg, textutils.unserialize(msg.MsgStructStr))
+    if func ~= nil then
+        func(msg, msgStruct)
+    end
+    return msg, msgStruct
 end
 
 ---attach message handle to header
