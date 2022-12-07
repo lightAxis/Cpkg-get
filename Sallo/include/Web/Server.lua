@@ -1,12 +1,13 @@
 --- include
 local THIS = PKGS.Sallo
 local protocol = THIS.Web.Protocol
-local handle = THIS.Web.Handle
+local handle = THIS.Web.Handle:new()
 local class = require("Class.middleclass")
 local param = THIS.Param
 
 local Golkin = DEPS.Sallo.Golkin
-local Golkin_handle = Golkin.Web.Handle
+local Golkin_handle = Golkin.Web.Handle:new()
+local Golkin_client = Golkin.Web.Client:new()
 local Golkin_protocol = Golkin.Web.Protocol
 local Golkin_param = Golkin.ENV.CONST
 
@@ -30,15 +31,22 @@ local Server = class("Sallo.Web.Server")
 ---@field Prefix string
 ---@field Player string
 
+---@class Sallo.Web.Server.Event_t
+---@field a string
+---@field b string
+---@field c string
+---@field d string
+
 
 function Server:initialize()
     self.__Sallo_handle = handle:new()
     self.__Golkin_handle = Golkin_handle:new()
 
+    ---@type table<number, Sallo.Web.Server.Event_t>
+    self.__EventQueue = {}
+
     self.__PlayerQuaryTimerID = nil
     self.__ChatboxQueueTimerID = nil
-    self.__RequestTimeoutID = nil
-    self.__TimeoutFun = nil
 
     self.__GolkinServerID = nil
 
@@ -70,13 +78,95 @@ function Server:initialize()
         self:__handle_SET_INFO_CONNECTED_ACCOUNT(msg, msgstruct)
     end)
 
-    --- attach handler of golkin
-    self.__Golkin_handle:attachMsgHandle(Golkin_protocol.Header.GET_ACCOUNT, function(msg, msgstruct)
+    -- --- attach handler of golkin
+    -- self.__Golkin_handle:attachMsgHandle(Golkin_protocol.Header.GET_ACCOUNT, function(msg, msgstruct)
 
-    end)
-    self.__Golkin_handle:attachMsgHandle(Golkin_protocol.Header.ACK_SEND, function(msg, msgstruct)
+    -- end)
+    -- self.__Golkin_handle:attachMsgHandle(Golkin_protocol.Header.ACK_SEND, function(msg, msgstruct)
 
-    end)
+    -- end)
+end
+
+---await until new event recieved at queue or pullEvent
+---@return string eventName
+---@return string param1
+---@return string param2
+---@return string param3
+function Server:__await_pullEvent()
+    while true do
+        ---@type Sallo.Web.Server.Event_t|nil
+        local first = table.remove(self.__EventQueue, 1)
+        if (first ~= nil) then
+            return first.a, first.b, first.c, first.d
+        end
+        return os.pullEvent()
+    end
+end
+
+---await until new target event recieved. stack other to event queue
+---@return string eventName
+---@return string param1
+---@return string param2
+---@return string param3
+function Server:__await_pullEvent_protocol_header(SenderID, protocolName, protocolHandle, targetHeader, timeout)
+    local timeoutID = nil
+
+    if (timeout ~= nil) then
+        if (timeout < 0) then
+            error("timer value cannot under 0! : " .. tostring(timeout))
+        end
+        timeoutID = os.startTimer(timeout)
+    end
+
+    while true do
+        local a, b, c, d = os.pullEvent()
+
+        --- check message to come
+        if a == "rednet_message" then
+            if SenderID ~= nil and b == SenderID then
+                if protocolName ~= nil and protocolHandle ~= nil and d == protocolName then
+                    local msg, msgstruct = protocolHandle:parse(c)
+                    if targetHeader ~= nil and msg.Header == targetHeader then
+                        if timeoutID ~= nil then
+                            os.cancelTimer(timeoutID)
+                        end
+                        return a, b, c, d
+                    end
+                end
+            end
+        end
+
+        --- check if timeout occured
+        if timeoutID ~= nil and a == "timer" and b == timeoutID then
+            return a, b, c, d
+        end
+
+        --- all condition unmet, add to event queue
+        table.insert(self.__EventQueue, { ["a"] = a, ["b"] = b, ["c"] = c, ["d"] = d })
+
+    end
+end
+
+---wait until golkin msg come
+---@param golkin_header Golkin.Web.Protocol.Header
+---@param timeout number >0
+---@return Golkin.Web.Protocol.Msg|nil msg nill when timeout
+---@return Golkin.Web.Protocol.MsgStruct.IMsgStruct|nil msgStruct nill when timeout
+function Server:__await_pullEvent_Golkin(golkin_header, timeout)
+    local a, b, c, d = self:__await_pullEvent_protocol_header(self.__GolkinServerID, Golkin_param.protocol,
+        self.__Golkin_handle,
+        golkin_header, timeout)
+
+    -- check is timeout
+    if a ~= "rednet_message" then
+        return nil, nil
+    end
+
+    ---@type Golkin.Web.Protocol.Msg
+    local msg = textutils.unserialize(c)
+    ---@type Golkin.Web.Protocol.MsgStruct.IMsgStruct
+    local msgstruct = textutils.unserialize(msg.MsgStructStr)
+    return msg, msgstruct
 end
 
 ---get golkin server id
@@ -236,14 +326,13 @@ function Server:make_new_info()
     return new_info
 end
 
-function Server:__display_error_msg(stateNum, inv)
-    print("error:" .. tostring(stateNum))
+function Server:__display_result_msg(isSuccess, stateNum, inv)
+    if isSuccess == true then
+        print("good:" .. tostring(stateNum))
+    else
+        print("error:" .. tostring(stateNum))
+    end
     print(inv[stateNum])
-end
-
-function Server:__display_success_msg(stateNum)
-    print("good:" .. tostring(stateNum))
-    print("SUCCESS")
 end
 
 function Server:start()
@@ -278,7 +367,7 @@ function Server:start()
     print("starting server main thread...")
     while true do
         -- rednet_message, fromID, msg, protocol
-        local a, b, c, d = os.pullEvent()
+        local a, b, c, d = self:__await_pullEvent()
         if a == "rednet_message" and d == param.Web.protocol then
             print("---------------")
             print("get Sallo msg from id : " .. b)
@@ -296,11 +385,6 @@ function Server:start()
         end
         if a == "timer" and b == self.__ChatboxQueueTimerID then
             self:__ChatboxQueueCheck()
-        end
-        if a == "timer" and b == self.__RequestTimeoutID then
-            if (self.__TimeoutFun ~= nil) then
-                self.__TimeoutFun()
-            end
         end
 
     end
@@ -335,7 +419,7 @@ function Server:__handle_GET_INFO(msg, msgstruct)
         replyMsgStruct.State = replyEnum.INFO_NOT_EXIST
         replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-        self:__display_error_msg(replyMsgStruct.State, replyEnum_INV)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
         return nil
     end
     local passwd = info.Password
@@ -345,7 +429,7 @@ function Server:__handle_GET_INFO(msg, msgstruct)
     replyMsgStruct.State = replyEnum.SUCCESS
     replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
     self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-    self:__display_success_msg(replyMsgStruct.State)
+    self:__display_result_msg(true, replyMsgStruct.State, replyEnum_INV)
 end
 
 ---handle GET_INFOS msg
@@ -392,7 +476,7 @@ function Server:__handle_REGISTER_INFO(msg, msgstruct)
         replyMsgStruct.State = replyEnum.INFO_ALREADY_EXISTS
         replyMsgStruct.Success = false
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-        self:__display_error_msg(replyMsgStruct.State, replyEnum_INV)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
         return nil
     end
 
@@ -408,91 +492,94 @@ function Server:__handle_REGISTER_INFO(msg, msgstruct)
     replyMsgStruct.State = replyEnum.SUCCESS
     replyMsgStruct.Success = true
     self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-    self:__display_success_msg(replyMsgStruct.State)
+    self:__display_result_msg(true, replyMsgStruct.State, replyEnum_INV)
 end
 
 --- handle SET_INFO_ACCOUNT
 ---@param msg Sallo.Web.Protocol.Msg
----@param msgstruct Sallo.Web.Protocol.MsgStruct.SET_INFO_CONNECTED_ACCOUNT
-function Server:__handle_SET_INFO_CONNECTED_ACCOUNT(msg, msgstruct)
+---@param msgStruct Sallo.Web.Protocol.MsgStruct.SET_INFO_CONNECTED_ACCOUNT
+function Server:__handle_SET_INFO_CONNECTED_ACCOUNT(msg, msgStruct)
     local replyMsgStruct = protocol.MsgStruct.ACK_SET_INFO_CONNECTED_ACCOUNT:new()
     local replyEnum = protocol.Enum.ACK_SET_INFO_CONNECTED_ACCOUNT_R
     local replyHeader = protocol.Header.ACK_SET_INFO_CONNECTED_ACCOUNT
     local replyEnum_INV = protocol.Enum_INV.ACK_SET_INFO_CONNECTED_ACCOUNT_R_INV
 
     -- try parse info from cache
-    local prev_info = self:__getInfo(msgstruct.InfoName)
+    local prev_info = self:__getInfo(msgStruct.InfoName)
     if prev_info == nil then
         replyMsgStruct.State = replyEnum.ACCOUNT_NOT_EXIST
         replyMsgStruct.Success = false
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-        self:__display_error_msg(replyMsgStruct.State, replyEnum_INV)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
         return nil
     end
 
     --- check passwd unmet
-    if prev_info.Password ~= msgstruct.InfoPasswd then
+    if prev_info.Password ~= msgStruct.InfoPasswd then
         replyMsgStruct.State = replyEnum.INFO_PASSWD_UNMET
         replyMsgStruct.Success = false
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-        self:__display_error_msg(replyMsgStruct.State, replyEnum_INV)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
         return nil
     end
 
-    -- prepare for get account info from golkin server
-    self.__Golkin_handle:attachMsgHandle(Golkin_protocol.Header.ACK_GET_ACCOUNT, function(msg_, msgstruct_)
-        ---@cast msgstruct_ Golkin.Web.Protocol.MsgStruct.ACK_GET_ACCOUNT
-        local replyEnum_ = Golkin_protocol.Enum.ACK_GET_ACCOUNT_R
-        os.cancelTimer(self.__RequestTimeoutID)
+    -- send golkin server to get account info
+    Golkin_client:send_GET_ACCOUNT(msgStruct.AccountName, msgStruct.AccountPasswd)
 
-        if msgstruct_.State == replyEnum_.NO_ACCOUNT_FOR_NAME then
-            replyMsgStruct.State = replyEnum.ACCOUNT_NOT_EXIST
-            replyMsgStruct.Success = false
-            self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-            self:__display_error_msg(replyMsgStruct.State, replyEnum_INV)
-            return nil
-        end
+    --- wait until golkin send and recieve golkin ack msgs, timeout 1 sec
+    local golkinMsg, golkinMsgStruct = self:__await_pullEvent_Golkin(Golkin_protocol.Header.ACK_GET_ACCOUNT, 1)
+    local golkin_replyEnum = Golkin_protocol.Enum.ACK_GET_ACCOUNT_R
+    local golkin_replyEnum_INV = Golkin_protocol.Enum_INV.ACK_GET_ACCOUNT_R_INV
+    ---@cast golkinMsgStruct Golkin.Web.Protocol.MsgStruct.ACK_GET_ACCOUNT
 
-        if msgstruct_.State == replyEnum_.PASSWD_UNMET then
-            replyMsgStruct.State = replyEnum.ACCOUNT_PASSWD_UNMET
-            replyMsgStruct.Success = false
-            self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-            self:__display_error_msg(replyMsgStruct.State, replyEnum_INV)
-            return nil
-        end
-
-        if msgstruct_.Account.Owner ~= msgstruct.AccountOwner then
-            replyMsgStruct.State = replyEnum.ACCOUNT_OWNER_UNMET
-            replyMsgStruct.Success = false
-            self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-            self:__display_error_msg(replyMsgStruct.State, replyEnum_INV)
-            return nil
-        end
-
-        if msgstruct_.State == replyEnum_.SUCCESS then
-            replyMsgStruct.State = replyEnum.SUCCESS
-            replyMsgStruct.Success = true
-            self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-            self:__display_success_msg(replyMsgStruct.State)
-            return nil
-        else
-            replyMsgStruct.State = replyEnum.NONE
-            replyMsgStruct.Success = false
-            self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-            self:__display_error_msg(replyMsgStruct.State, replyEnum_INV)
-            return nil
-        end
-    end)
-
-    self.__TimeoutFun = function()
-        self.__Golkin_handle:detachMsgHandle(Golkin_protocol.Header.ACK_GET_ACCOUNT)
-        replyMsgStruct.State = replyEnum.BANKING_REQUEST_TIMEOUT
+    -- if banking failed with no account error
+    if golkinMsgStruct.State == golkin_replyEnum.NO_ACCOUNT_FOR_NAME then
+        replyMsgStruct.State = replyEnum.ACCOUNT_NOT_EXIST
         replyMsgStruct.Success = false
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-        self:__display_error_msg(replyMsgStruct.State, replyEnum_INV)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
+        return nil
     end
-    self.__RequestTimeoutID
 
+    -- check banking failed with password unmet
+    if golkinMsgStruct.State == golkin_replyEnum.PASSWD_UNMET then
+        replyMsgStruct.State = replyEnum.ACCOUNT_PASSWD_UNMET
+        replyMsgStruct.Success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
+        return nil
+    end
+
+    -- check bank owner unmet
+    if golkinMsgStruct.Account.Owner ~= msgStruct.AccountOwner then
+        replyMsgStruct.State = replyEnum.ACCOUNT_OWNER_UNMET
+        replyMsgStruct.Success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
+        return nil
+    end
+
+    -- check other bank error occured
+    if golkinMsgStruct.Success == false then
+        replyMsgStruct.State = replyEnum.BANKING_ERROR
+        replyMsgStruct.BankErrorMsg = golkin_replyEnum_INV[golkinMsgStruct.State]
+        replyMsgStruct.Success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
+        self:__display_result_msg(false, golkinMsgStruct.State, golkin_replyEnum_INV)
+        return nil
+    end
+
+    -- fix account connected to new one
+    prev_info.AccountName = msgStruct.AccountName
+    -- save revised info
+    self:__saveInfo(prev_info)
+
+    -- return success msg
+    replyMsgStruct.State = replyEnum.SUCCESS
+    replyMsgStruct.Success = true
+    self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+    self:__display_result_msg(true, replyMsgStruct.State, replyEnum_INV)
 end
 
 function Server:__quaryPlayerData()
