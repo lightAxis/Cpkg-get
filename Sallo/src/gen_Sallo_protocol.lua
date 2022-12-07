@@ -74,6 +74,7 @@ builder:addEnum(enum("ACK_SET_INFO_CONNECTED_ACCOUNT_R", "reply enum of ACK_SET_
     enumElm("ACCOUNT_NOT_EXIST", -203, "account not exist in golkin server"),
     enumElm("ACCOUNT_OWNER_UNMET", -204, "account owner in unmet in  golkin server"),
     enumElm("ACCOUNT_PASSWD_UNMET", -205, "account password in unmnet in golkin server"),
+    enumElm("BANKING_REQUEST_TIMEOUT", -206, "timeout for banking request"),
     enumElm("NORMAL", 0, "standard for success"),
     enumElm("SUCCESS", 201, "success")
 }))

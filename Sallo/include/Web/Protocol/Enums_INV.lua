@@ -114,6 +114,7 @@ a.ACK_SET_INFO_CONNECTED_ACCOUNT_R_INV = {
     [-203] = "ACCOUNT_NOT_EXIST", -- account not exist in golkin server
     [-204] = "ACCOUNT_OWNER_UNMET", -- account owner in unmet in  golkin server
     [-205] = "ACCOUNT_PASSWD_UNMET", -- account password in unmnet in golkin server
+    [-206] = "BANKING_REQUEST_TIMEOUT", -- timeout for banking request
     [0] = "NORMAL", -- standard for success
     [201] = "SUCCESS", -- success
 }
