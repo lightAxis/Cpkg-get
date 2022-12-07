@@ -75,6 +75,7 @@ builder:addEnum(enum("ACK_SET_INFO_CONNECTED_ACCOUNT_R", "reply enum of ACK_SET_
     enumElm("ACCOUNT_OWNER_UNMET", -204, "account owner in unmet in  golkin server"),
     enumElm("ACCOUNT_PASSWD_UNMET", -205, "account password in unmnet in golkin server"),
     enumElm("BANKING_REQUEST_TIMEOUT", -206, "timeout for banking request"),
+    enumElm("BANKING_ERROR", -207, "account from banking has error"),
     enumElm("NORMAL", 0, "standard for success"),
     enumElm("SUCCESS", 201, "success")
 }))
@@ -223,6 +224,7 @@ builder:addHeader(struct("SET_INFO_CONNECTED_ACCOUNT", "set connection between s
 builder:addHeader(struct("ACK_SET_INFO_CONNECTED_ACCOUNT", "reply of SET_INFO_CONNECTED_ACCOUNT", {
     field("State", fieldType(efieldType.custom, builder:getEnumClassName("ACK_SET_INFO_CONNECTED_ACCOUNT_R")),
         fieldInit(efieldType.num, -1), "state of result"),
+    field("BankErrorMsg", fieldType(efieldType.str), fieldInit(efieldType.nil_), "error msg from banking"),
     field("Success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not"),
 }))
 

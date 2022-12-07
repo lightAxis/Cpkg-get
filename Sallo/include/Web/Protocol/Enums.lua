@@ -115,6 +115,7 @@ a.ACK_SET_INFO_CONNECTED_ACCOUNT_R = {
     ["ACCOUNT_OWNER_UNMET"] = -204, -- account owner in unmet in  golkin server
     ["ACCOUNT_PASSWD_UNMET"] = -205, -- account password in unmnet in golkin server
     ["BANKING_REQUEST_TIMEOUT"] = -206, -- timeout for banking request
+    ["BANKING_ERROR"] = -207, -- account from banking has error
     ["NORMAL"] = 0, -- standard for success
     ["SUCCESS"] = 201, -- success
 }

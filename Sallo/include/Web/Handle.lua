@@ -10,13 +10,17 @@ end
 
 ---trigger handler from msg
 ---@param msgStr string
+---@return Sallo.Web.Protocol.Msg msg
+---@return Sallo.Web.Protocol.MsgStruct.IMsgStruct msgStruct
 function handle:parse(msgStr)
     ---@type Sallo.Web.Protocol.Msg
     local msg = textutils.unserialize(msgStr)
+    local msgStruct = textutils.unserialize(msg.MsgStructStr)
     local func = self.__MsgStructMap[msg.Header]
-    if func == nil then return nil end
-
-    func(msg, textutils.unserialize(msg.MsgStructStr))
+    if func ~= nil then
+        func(msg, msgStruct)
+    end
+    return msg, msgStruct
 end
 
 ---attach message handle to header
