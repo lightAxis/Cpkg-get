@@ -15,7 +15,7 @@ local Golkin_param = Golkin.ENV.CONST
 ---@field __Golkin_handle Golkin.Web.Protocol.Handle
 ---@field __PlayerQuaryTimerID number
 ---@field __ChatboxQueueTimerID number
----@field __requestTimeoutID number
+---@field __RequestTimeoutID number
 ---@field __TimeoutFun fun()
 ---@field __PlayerDetector Vef.AP.PlayerDetector
 ---@field __ChatBox Vef.AP.ChatBox
@@ -48,6 +48,35 @@ function Server:initialize()
 
     self.__cachedInfos = {}
     self.__infoPath = THIS.ENV.PATH .. param.Web.info_dir
+
+    --- attach handler of sallo
+    self.__Sallo_handle:attachMsgHandle(protocol.Header.CHANGE_SKILL_STAT, function(msg, msgstruct)
+
+    end)
+    self.__Sallo_handle:attachMsgHandle(protocol.Header.GET_INFO, function(msg, msgstruct)
+        ---@cast msgstruct Sallo.Web.Protocol.MsgStruct.GET_INFO
+        self:__handle_GET_INFO(msg, msgstruct)
+    end)
+    self.__Sallo_handle:attachMsgHandle(protocol.Header.GET_INFOS, function(msg, msgstruct)
+        ---@cast msgstruct Sallo.Web.Protocol.MsgStruct.GET_INFOS
+        self:__handle_GET_INFOS(msg, msgstruct)
+    end)
+    self.__Sallo_handle:attachMsgHandle(protocol.Header.REGISTER_INFO, function(msg, msgstruct)
+        ---@cast msgstruct Sallo.Web.Protocol.MsgStruct.REGISTER_INFO
+        self:__handle_REGISTER_INFO(msg, msgstruct)
+    end)
+    self.__Sallo_handle:attachMsgHandle(protocol.Header.SET_INFO_CONNECTED_ACCOUNT, function(msg, msgstruct)
+        ---@cast msgstruct Sallo.Web.Protocol.MsgStruct.SET_INFO_CONNECTED_ACCOUNT
+        self:__handle_SET_INFO_CONNECTED_ACCOUNT(msg, msgstruct)
+    end)
+
+    --- attach handler of golkin
+    self.__Golkin_handle:attachMsgHandle(Golkin_protocol.Header.GET_ACCOUNT, function(msg, msgstruct)
+
+    end)
+    self.__Golkin_handle:attachMsgHandle(Golkin_protocol.Header.ACK_SEND, function(msg, msgstruct)
+
+    end)
 end
 
 ---get golkin server id
@@ -121,7 +150,17 @@ end
 ---save account to cache
 ---@param info Sallo.Web.Protocol.Struct.info_t
 function Server:__saveToInfoCache(info)
-    self.__cachedInfos[info.name] = info
+    self.__cachedInfos[info.Name] = info
+end
+
+---save account to server
+---@param info Sallo.Web.Protocol.Struct.info_t
+function Server:__saveInfo(info)
+    self:__saveToInfoCache(info)
+    local accountPath = self.__infoPath .. "/" .. info.Name .. ".sz"
+    local f = fs.open(accountPath, "w")
+    f.write(textutils.serialize(info))
+    f.close()
 end
 
 ---get account info
@@ -142,6 +181,69 @@ function Server:__getInfo(infoName)
         end
     end
     return account
+end
+
+function Server:make_new_info()
+    --- make new info and send
+    local new_info = protocol.Struct.info_t:new()
+    new_info.Histories = {}
+
+    local main_t = protocol.Struct.main_t:new()
+    main_t.Cap_gauge = 480
+    main_t.Cap_left = 480
+    main_t.Exp = 0
+    main_t.Exp_gauge = param.Level[1].mxp_gauge
+    main_t.Level = 1
+    main_t.Rank = protocol.Enum.RANK_NAME.UNRANKED
+    new_info.Main = main_t
+
+    -- new_info.Name = msgstruct.OwnerName
+    -- new_info.Password = msgstruct.Passwd
+
+    local skillState_t = protocol.Struct.skillState_t:new()
+    skillState_t.Concentration_level = 0
+    skillState_t.Efficiency_level = 0
+    skillState_t.Proficiency_level = 0
+    skillState_t.Left_sp = 0
+    skillState_t.Total_sp = 0
+    new_info.SkillState = skillState_t
+
+    local stat_t = protocol.Struct.stat_t:new()
+    stat_t.Cap_amplifier = param.Skill.CON[0].ACT_amplifier
+    stat_t.Cap_per_minute = param.CAP_per_min_default * stat_t.Cap_amplifier
+    stat_t.Exp_per_cap = param.Skill.EFF[0].TXP_per_ACT
+    stat_t.Exp_per_min = stat_t.Exp_per_cap * stat_t.Cap_per_minute
+    stat_t.Gold_per_cap = param.Skill.PRO[0].SAL_per_ACT
+    stat_t.Gold_per_minute = stat_t.Gold_per_cap * stat_t.Cap_per_minute
+    new_info.Stat = stat_t
+
+    local statistics_t = protocol.Struct.statistics_t:new()
+    statistics_t.Today_cap = 0
+    statistics_t.Today_exp = 0
+    statistics_t.Today_gold = 0
+    statistics_t.Total_cap = 0
+    statistics_t.Total_exp = 0
+    statistics_t.Total_gold = 0
+    new_info.Statistics = statistics_t
+
+    local thema_t = protocol.Struct.thema_t:new()
+    thema_t.Enum = protocol.Enum.THEMA.BACK_TO_NORMAL
+    thema_t.Name = "BACK_TO_NORMAL"
+    thema_t.isAquired = true
+    thema_t.isVisible = true
+    new_info.Thema = thema_t
+
+    return new_info
+end
+
+function Server:__display_error_msg(stateNum, inv)
+    print("error:" .. tostring(stateNum))
+    print(inv[stateNum])
+end
+
+function Server:__display_success_msg(stateNum)
+    print("good:" .. tostring(stateNum))
+    print("SUCCESS")
 end
 
 function Server:start()
@@ -195,7 +297,7 @@ function Server:start()
         if a == "timer" and b == self.__ChatboxQueueTimerID then
             self:__ChatboxQueueCheck()
         end
-        if a == "timer" and b == self.__requestTimeoutID then
+        if a == "timer" and b == self.__RequestTimeoutID then
             if (self.__TimeoutFun ~= nil) then
                 self.__TimeoutFun()
             end
@@ -224,16 +326,16 @@ function Server:__handle_GET_INFO(msg, msgstruct)
     print("handle GET_INFO msg")
     local replyMsgStruct = protocol.MsgStruct.ACK_GET_INFO:new()
     local replyEnum = protocol.Enum.ACK_GET_INFO_R
+    local replyEnum_INV = protocol.Enum_INV.ACK_GET_INFOS_R_INV
     local replyHeader = protocol.Header.ACK_GET_INFO
 
     --- try query info table
-    local info = self:__getInfo(msgstruct.name)
+    local info = self:__getInfo(msgstruct.Name)
     if info == nil then
         replyMsgStruct.State = replyEnum.INFO_NOT_EXIST
         replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-        print("error:" .. tostring(replyMsgStruct.State))
-        print("INFO_NOT_EXIST")
+        self:__display_error_msg(replyMsgStruct.State, replyEnum_INV)
         return nil
     end
     local passwd = info.Password
@@ -243,8 +345,7 @@ function Server:__handle_GET_INFO(msg, msgstruct)
     replyMsgStruct.State = replyEnum.SUCCESS
     replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
     self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-    print("good:" .. tostring(replyMsgStruct.State))
-    print("SUCCESS")
+    self:__display_success_msg(replyMsgStruct.State)
 end
 
 ---handle GET_INFOS msg
@@ -273,6 +374,125 @@ function Server:__handle_GET_INFOS(msg, msgstruct)
     replyMsgStruct.state = replyEnum.SUCCESS
     replyMsgStruct.success = replyEnum.NORMAL < replyMsgStruct.state
     self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+end
+
+---handle REGISTER_INFO msg
+---@param msg Sallo.Web.Protocol.Msg
+---@param msgstruct Sallo.Web.Protocol.MsgStruct.REGISTER_INFO
+function Server:__handle_REGISTER_INFO(msg, msgstruct)
+    print("handle REGISTER_INFO msg")
+    local replyMsgStruct = protocol.MsgStruct.ACK_REGISTER_INFO:new()
+    local replyEnum = protocol.Enum.ACK_REGISTER_INFO_R
+    local replyEnum_INV = protocol.Enum_INV.ACK_REGISTER_INFO_R_INV
+    local replyHeader = protocol.Header.ACK_REGISTER_INFO
+
+    --- check if prev info exist
+    local prev_info = self:__getInfo(msgstruct.OwnerName)
+    if (prev_info ~= nil) then
+        replyMsgStruct.State = replyEnum.INFO_ALREADY_EXISTS
+        replyMsgStruct.Success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_error_msg(replyMsgStruct.State, replyEnum_INV)
+        return nil
+    end
+
+    -- make new info
+    local new_info = self:make_new_info()
+    new_info.Name = msgstruct.OwnerName
+    new_info.Password = msgstruct.Passwd
+
+    -- save to file
+    self:__saveInfo(new_info)
+
+    -- send back reply
+    replyMsgStruct.State = replyEnum.SUCCESS
+    replyMsgStruct.Success = true
+    self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+    self:__display_success_msg(replyMsgStruct.State)
+end
+
+--- handle SET_INFO_ACCOUNT
+---@param msg Sallo.Web.Protocol.Msg
+---@param msgstruct Sallo.Web.Protocol.MsgStruct.SET_INFO_CONNECTED_ACCOUNT
+function Server:__handle_SET_INFO_CONNECTED_ACCOUNT(msg, msgstruct)
+    local replyMsgStruct = protocol.MsgStruct.ACK_SET_INFO_CONNECTED_ACCOUNT:new()
+    local replyEnum = protocol.Enum.ACK_SET_INFO_CONNECTED_ACCOUNT_R
+    local replyHeader = protocol.Header.ACK_SET_INFO_CONNECTED_ACCOUNT
+    local replyEnum_INV = protocol.Enum_INV.ACK_SET_INFO_CONNECTED_ACCOUNT_R_INV
+
+    -- try parse info from cache
+    local prev_info = self:__getInfo(msgstruct.InfoName)
+    if prev_info == nil then
+        replyMsgStruct.State = replyEnum.ACCOUNT_NOT_EXIST
+        replyMsgStruct.Success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_error_msg(replyMsgStruct.State, replyEnum_INV)
+        return nil
+    end
+
+    --- check passwd unmet
+    if prev_info.Password ~= msgstruct.InfoPasswd then
+        replyMsgStruct.State = replyEnum.INFO_PASSWD_UNMET
+        replyMsgStruct.Success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_error_msg(replyMsgStruct.State, replyEnum_INV)
+        return nil
+    end
+
+    -- prepare for get account info from golkin server
+    self.__Golkin_handle:attachMsgHandle(Golkin_protocol.Header.ACK_GET_ACCOUNT, function(msg_, msgstruct_)
+        ---@cast msgstruct_ Golkin.Web.Protocol.MsgStruct.ACK_GET_ACCOUNT
+        local replyEnum_ = Golkin_protocol.Enum.ACK_GET_ACCOUNT_R
+        os.cancelTimer(self.__RequestTimeoutID)
+
+        if msgstruct_.State == replyEnum_.NO_ACCOUNT_FOR_NAME then
+            replyMsgStruct.State = replyEnum.ACCOUNT_NOT_EXIST
+            replyMsgStruct.Success = false
+            self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+            self:__display_error_msg(replyMsgStruct.State, replyEnum_INV)
+            return nil
+        end
+
+        if msgstruct_.State == replyEnum_.PASSWD_UNMET then
+            replyMsgStruct.State = replyEnum.ACCOUNT_PASSWD_UNMET
+            replyMsgStruct.Success = false
+            self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+            self:__display_error_msg(replyMsgStruct.State, replyEnum_INV)
+            return nil
+        end
+
+        if msgstruct_.Account.Owner ~= msgstruct.AccountOwner then
+            replyMsgStruct.State = replyEnum.ACCOUNT_OWNER_UNMET
+            replyMsgStruct.Success = false
+            self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+            self:__display_error_msg(replyMsgStruct.State, replyEnum_INV)
+            return nil
+        end
+
+        if msgstruct_.State == replyEnum_.SUCCESS then
+            replyMsgStruct.State = replyEnum.SUCCESS
+            replyMsgStruct.Success = true
+            self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+            self:__display_success_msg(replyMsgStruct.State)
+            return nil
+        else
+            replyMsgStruct.State = replyEnum.NONE
+            replyMsgStruct.Success = false
+            self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+            self:__display_error_msg(replyMsgStruct.State, replyEnum_INV)
+            return nil
+        end
+    end)
+
+    self.__TimeoutFun = function()
+        self.__Golkin_handle:detachMsgHandle(Golkin_protocol.Header.ACK_GET_ACCOUNT)
+        replyMsgStruct.State = replyEnum.BANKING_REQUEST_TIMEOUT
+        replyMsgStruct.Success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_error_msg(replyMsgStruct.State, replyEnum_INV)
+    end
+    self.__RequestTimeoutID
+
 end
 
 function Server:__quaryPlayerData()
