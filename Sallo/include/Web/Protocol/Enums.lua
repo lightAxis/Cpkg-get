@@ -1,17 +1,17 @@
 ---@class Sallo.Web.Protocol.Enum
 local a = {}
 
----reply enum of ACK_BUY_SKILL
----@enum Sallo.Web.Protocol.Enum.ACK_BUY_SKILL_R 
-a.ACK_BUY_SKILL_R = {
+---reply enum of ACK_BUY_THEMA
+---@enum Sallo.Web.Protocol.Enum.ACK_BUY_THEMA_R 
+a.ACK_BUY_THEMA_R = {
     ["NONE"] = -1, -- this is error!
-    ["NO_INFO"] = -601, -- no owner exist in owner names
-    ["SALLO_PASSWORD_UNMET"] = -602, -- password of sallo info unmnet
-    ["SKILL_UNLOCK_CONDITION_UNMET"] = -603, -- the unlock condition of this skill is unmet
-    ["BANKING_REQUEST_TIMEOUT"] = -604, -- banking request timeout
-    ["BANKING_ERROR"] = -605, -- when banking error occurs
+    ["NO_INFO"] = -701, -- no owner exist in owner names
+    ["SALLO_PASSWORD_UNMET"] = -702, -- password of sallo info unmnet
+    ["THEMA_UNLOCK_CONDITION_UNMET"] = -703, -- the unlock condition of this thema is unmet
+    ["BANKING_REQUEST_TIMEOUT"] = -704, -- banking request timeout
+    ["BANKING_ERROR"] = -705, -- when banking error occurs
     ["NORMAL"] = 0, -- standard for success
-    ["SUCCESS"] = 601, -- success
+    ["SUCCESS"] = 701, -- success
 }
 
 ---enum name
@@ -36,48 +36,6 @@ a.RANK_NAME = {
     ["BLUEHOLE"] = 15, -- level 15
     ["SKULL"] = 16, -- level 16
     ["HALLOFFAME"] = 17, -- level inf
-}
-
----reply enum of ACK_REGISTER_INFO
----@enum Sallo.Web.Protocol.Enum.ACK_REGISTER_INFO_R 
-a.ACK_REGISTER_INFO_R = {
-    ["NONE"] = -1, -- this is error
-    ["INFO_ALREADY_EXISTS"] = -101, -- info file is already exists
-    ["NORMAL"] = 0, -- standard for success
-    ["SUCCESS"] = 101, -- success
-}
-
----reply enum of ACK_CHANGE_SKILL_STAT
----@enum Sallo.Web.Protocol.Enum.ACK_CHANGE_SKILL_STAT_R 
-a.ACK_CHANGE_SKILL_STAT_R = {
-    ["NONE"] = -1, -- this is error
-    ["NO_OWNER_EXIST"] = -501, -- no owner exist in ownerName
-    ["TOTAL_SKILLPT_UNMET"] = -502, -- total skillpoint in larger than current info
-    ["SKILL_UNLOCK_CONDITION_UNMET"] = -503, -- skill unlock state does not make sense
-    ["NORMAL"] = 0, -- standard for success
-    ["SUCCESS"] = 501, -- success
-}
-
----reply enum of ACK_BUY_THEMA
----@enum Sallo.Web.Protocol.Enum.ACK_BUY_THEMA_R 
-a.ACK_BUY_THEMA_R = {
-    ["NONE"] = -1, -- this is error!
-    ["NO_INFO"] = -701, -- no owner exist in owner names
-    ["SALLO_PASSWORD_UNMET"] = -702, -- password of sallo info unmnet
-    ["THEMA_UNLOCK_CONDITION_UNMET"] = -703, -- the unlock condition of this thema is unmet
-    ["BANKING_REQUEST_TIMEOUT"] = -704, -- banking request timeout
-    ["BANKING_ERROR"] = -705, -- when banking error occurs
-    ["NORMAL"] = 0, -- standard for success
-    ["SUCCESS"] = 701, -- success
-}
-
----reply enum of ACK_GET_INFO
----@enum Sallo.Web.Protocol.Enum.ACK_GET_INFO_R 
-a.ACK_GET_INFO_R = {
-    ["NONE"] = -1, -- this is error!
-    ["NORMAL"] = 0, -- standard for success or not
-    ["INFO_NOT_EXIST"] = -301, -- info file is corrupted
-    ["SUCCESS"] = 301, -- success
 }
 
 ---thema of sallo
@@ -105,6 +63,48 @@ a.THEMA = {
     ["BACK_TO_NORMAL"] = 18, -- level 0 normal
 }
 
+---reply enum of ACK_BUY_RANK
+---@enum Sallo.Web.Protocol.Enum.ACK_BUY_RANK_R 
+a.ACK_BUY_RANK_R = {
+    ["NONE"] = -1, -- this is error!
+    ["NO_INFO"] = -601, -- no owner exist in owner names
+    ["SALLO_PASSWORD_UNMET"] = -602, -- password of sallo info unmnet
+    ["RANK_UNLOCK_CONDITION_UNMET"] = -603, -- the unlock condition of this rank is unmet
+    ["BANKING_REQUEST_TIMEOUT"] = -604, -- banking request timeout
+    ["BANKING_ERROR"] = -605, -- when banking error occurs
+    ["NORMAL"] = 0, -- standard for success
+    ["SUCCESS"] = 601, -- success
+}
+
+---reply enum of ACK_CHANGE_SKILL_STAT
+---@enum Sallo.Web.Protocol.Enum.ACK_CHANGE_SKILL_STAT_R 
+a.ACK_CHANGE_SKILL_STAT_R = {
+    ["NONE"] = -1, -- this is error
+    ["NO_OWNER_EXIST"] = -501, -- no owner exist in ownerName
+    ["TOTAL_SKILLPT_UNMET"] = -502, -- total skillpoint in larger than current info
+    ["SKILL_UNLOCK_CONDITION_UNMET"] = -503, -- skill unlock state does not make sense
+    ["NORMAL"] = 0, -- standard for success
+    ["SUCCESS"] = 501, -- success
+}
+
+---reply enum of ACK_GET_INFO
+---@enum Sallo.Web.Protocol.Enum.ACK_GET_INFO_R 
+a.ACK_GET_INFO_R = {
+    ["NONE"] = -1, -- this is error!
+    ["NORMAL"] = 0, -- standard for success or not
+    ["INFO_NOT_EXIST"] = -301, -- info file is corrupted
+    ["SUCCESS"] = 301, -- success
+}
+
+---reply enum of ACK_GET_INFOS
+---@enum Sallo.Web.Protocol.Enum.ACK_GET_INFOS_R 
+a.ACK_GET_INFOS_R = {
+    ["NONE"] = -1, -- this is error!
+    ["NO_INFO_EXIST"] = -401, -- no info is registered in server
+    ["NORMAL"] = 0, -- standard for success or not
+    ["SUCCESS"] = 401, -- success
+}
+
 ---reply enum of ACK_SET_INFO_CONNECTED_ACCOUNT
 ---@enum Sallo.Web.Protocol.Enum.ACK_SET_INFO_CONNECTED_ACCOUNT_R 
 a.ACK_SET_INFO_CONNECTED_ACCOUNT_R = {
@@ -120,13 +120,22 @@ a.ACK_SET_INFO_CONNECTED_ACCOUNT_R = {
     ["SUCCESS"] = 201, -- success
 }
 
----reply enum of ACK_GET_INFOS
----@enum Sallo.Web.Protocol.Enum.ACK_GET_INFOS_R 
-a.ACK_GET_INFOS_R = {
+---reply enum of ACK_REGISTER_INFO
+---@enum Sallo.Web.Protocol.Enum.ACK_REGISTER_INFO_R 
+a.ACK_REGISTER_INFO_R = {
+    ["NONE"] = -1, -- this is error
+    ["INFO_ALREADY_EXISTS"] = -101, -- info file is already exists
+    ["NORMAL"] = 0, -- standard for success
+    ["SUCCESS"] = 101, -- success
+}
+
+---type of skill
+---@enum Sallo.Web.Protocol.Enum.SKILLTYPE 
+a.SKILLTYPE = {
     ["NONE"] = -1, -- this is error!
-    ["NO_INFO_EXIST"] = -401, -- no info is registered in server
-    ["NORMAL"] = 0, -- standard for success or not
-    ["SUCCESS"] = 401, -- success
+    ["EFFICIENCY"] = 1, -- efficiency
+    ["PROFICIENCY"] = 2, -- proficiency
+    ["CONCENTRATION"] = 3, -- concentration
 }
 
 

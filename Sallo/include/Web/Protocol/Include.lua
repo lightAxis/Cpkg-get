@@ -27,9 +27,13 @@ protocol.Struct.info_t = require("Sallo.include.Web.Protocol.Struct.info_t")
 --- include MsgStructs
 ---@class Sallo.Web.Protocol.MsgStruct
 protocol.MsgStruct = {}
+protocol.MsgStruct.ACK_BUY_THEMA = require("Sallo.include.Web.Protocol.MsgStruct.ACK_BUY_THEMA")
 protocol.MsgStruct.ACK_REGISTER_INFO = require("Sallo.include.Web.Protocol.MsgStruct.ACK_REGISTER_INFO")
 protocol.MsgStruct.ACK_GET_INFO = require("Sallo.include.Web.Protocol.MsgStruct.ACK_GET_INFO")
+protocol.MsgStruct.BUY_THEMA = require("Sallo.include.Web.Protocol.MsgStruct.BUY_THEMA")
+protocol.MsgStruct.BUY_RANK = require("Sallo.include.Web.Protocol.MsgStruct.BUY_RANK")
 protocol.MsgStruct.GET_INFO = require("Sallo.include.Web.Protocol.MsgStruct.GET_INFO")
+protocol.MsgStruct.ACK_BUY_RANK = require("Sallo.include.Web.Protocol.MsgStruct.ACK_BUY_RANK")
 protocol.MsgStruct.GET_INFOS = require("Sallo.include.Web.Protocol.MsgStruct.GET_INFOS")
 protocol.MsgStruct.SET_INFO_CONNECTED_ACCOUNT = require("Sallo.include.Web.Protocol.MsgStruct.SET_INFO_CONNECTED_ACCOUNT")
 protocol.MsgStruct.REGISTER_INFO = require("Sallo.include.Web.Protocol.MsgStruct.REGISTER_INFO")
