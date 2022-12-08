@@ -60,6 +60,13 @@ builder:addEnum(enum("THEMA", "thema of sallo", {
     enumElm("BACK_TO_NORMAL", 18, "level 0 normal")
 }))
 
+builder:addEnum(enum("SKILLTYPE", "type of skill", {
+    enumElm("NONE", -1, "this is error!"),
+    enumElm("EFFICIENCY", 1, "efficiency"),
+    enumElm("PROFICIENCY", 2, "proficiency"),
+    enumElm("CONCENTRATION", 3, "concentration"),
+}))
+
 builder:addEnum(enum("ACK_REGISTER_INFO_R", "reply enum of ACK_REGISTER_INFO", {
     enumElm("NONE", -1, "this is error"),
     enumElm("INFO_ALREADY_EXISTS", -101, "info file is already exists"),
@@ -103,11 +110,11 @@ builder:addEnum(enum("ACK_CHANGE_SKILL_STAT_R", "reply enum of ACK_CHANGE_SKILL_
     enumElm("SUCCESS", 501, "success")
 }))
 
-builder:addEnum(enum("ACK_BUY_SKILL_R", "reply enum of ACK_BUY_SKILL", {
+builder:addEnum(enum("ACK_BUY_RANK_R", "reply enum of ACK_BUY_RANK", {
     enumElm("NONE", -1, "this is error!"),
     enumElm("NO_INFO", -601, "no owner exist in owner names"),
     enumElm("SALLO_PASSWORD_UNMET", -602, "password of sallo info unmnet"),
-    enumElm("SKILL_UNLOCK_CONDITION_UNMET", -603, "the unlock condition of this skill is unmet"),
+    enumElm("RANK_UNLOCK_CONDITION_UNMET", -603, "the unlock condition of this rank is unmet"),
     enumElm("BANKING_REQUEST_TIMEOUT", -604, "banking request timeout"),
     enumElm("BANKING_ERROR", -605, "when banking error occurs"),
     enumElm("NORMAL", 0, "standard for success"),
@@ -263,6 +270,36 @@ builder:addHeader(struct("ACK_CHANGE_SKILL_STAT", "reply msg of RESETVE_SKILLPT_
     field("State", fieldType(efieldType.custom, builder:getEnumClassName("ACK_CHANGE_SKILL_STAT_R")),
         fieldInit(efieldType.num, -1), "return state"),
     field("Success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not"),
+}))
+
+builder:addHeader(struct("BUY_RANK", "buy skill from account", {
+    field("OwnerName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "owner name of info and account"),
+    field("InfoPasswd", fieldType(efieldType.str), fieldInit(efieldType.nil_), "info password"),
+    field("AccountPasswd", fieldType(efieldType.str), fieldInit(efieldType.nil_), "passwd of account to send send"),
+    field("Rank", fieldType(efieldType.custom, builder:getEnumClassName("RANK_NAME")),
+        fieldInit(efieldType.num, -1), "rank to buy"),
+}))
+
+builder:addHeader(struct("ACK_BUY_RANK", "reply msg of BUY_RANK", {
+    field("state", fieldType(efieldType.custom, builder:getEnumClassName("ACK_BUY_RANK_R")),
+        fieldInit(efieldType.num, -1), "result state enum"),
+    field("banking_state", fieldType(efieldType.num), fieldInit(efieldType.num, -1), "banking state from golkin"),
+    field("success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not")
+}))
+
+builder:addHeader(struct("BUY_THEMA", "buy skill from account", {
+    field("OwnerName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "owner name of info and account"),
+    field("InfoPasswd", fieldType(efieldType.str), fieldInit(efieldType.nil_), "info password"),
+    field("AccountPasswd", fieldType(efieldType.str), fieldInit(efieldType.nil_), "passwd of account to send send"),
+    field("Thema", fieldType(efieldType.custom, builder:getEnumClassName("THEMA")),
+        fieldInit(efieldType.num, -1), "thema to buy"),
+}))
+
+builder:addHeader(struct("ACK_BUY_THEMA", "reply msg of BUY_THEMA", {
+    field("state", fieldType(efieldType.custom, builder:getEnumClassName("ACK_BUY_THEMA_R")),
+        fieldInit(efieldType.num, -1), "result state enum"),
+    field("banking_state", fieldType(efieldType.num), fieldInit(efieldType.num, -1), "banking state from golkin"),
+    field("success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not")
 }))
 
 

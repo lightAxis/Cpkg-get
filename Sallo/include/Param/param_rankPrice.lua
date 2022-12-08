@@ -1,67 +1,89 @@
 ---@class Sallo.Param.Skill.RankPrice
 local a = {
-    ["Bronze"] = {
+    [0] = {
+        ["rankName"] = "UnRanked",
+        ["unlocked_rank_level"] = -1,
+        ["rankPrice"] = -1,
+    },
+    [1] = {
+        ["rankName"] = "Bronze",
         ["unlocked_rank_level"] = 0,
         ["rankPrice"] = 0,
     },
-    ["Silver"] = {
+    [2] = {
+        ["rankName"] = "Silver",
         ["unlocked_rank_level"] = 1,
         ["rankPrice"] = 6000,
     },
-    ["Gold"] = {
+    [3] = {
+        ["rankName"] = "Gold",
         ["unlocked_rank_level"] = 2,
         ["rankPrice"] = 7000,
     },
-    ["Platinum"] = {
+    [4] = {
+        ["rankName"] = "Platinum",
         ["unlocked_rank_level"] = 3,
         ["rankPrice"] = 8000,
     },
-    ["Diamond"] = {
+    [5] = {
+        ["rankName"] = "Diamond",
         ["unlocked_rank_level"] = 4,
         ["rankPrice"] = 9000,
     },
-    ["Master"] = {
+    [6] = {
+        ["rankName"] = "Master",
         ["unlocked_rank_level"] = 5,
         ["rankPrice"] = 12000,
     },
-    ["GrandMaster"] = {
+    [7] = {
+        ["rankName"] = "GrandMaster",
         ["unlocked_rank_level"] = 6,
         ["rankPrice"] = 15000,
     },
-    ["Challenger"] = {
+    [8] = {
+        ["rankName"] = "Challenger",
         ["unlocked_rank_level"] = 7,
         ["rankPrice"] = 18000,
     },
-    ["MasterChallenger"] = {
+    [9] = {
+        ["rankName"] = "MasterChallenger",
         ["unlocked_rank_level"] = 8,
         ["rankPrice"] = 21000,
     },
-    ["Selendis"] = {
+    [10] = {
+        ["rankName"] = "Selendis",
         ["unlocked_rank_level"] = 9,
         ["rankPrice"] = 33000,
     },
-    ["Honor"] = {
+    [11] = {
+        ["rankName"] = "Honor",
         ["unlocked_rank_level"] = 10,
         ["rankPrice"] = 45000,
     },
-    ["Rage"] = {
+    [12] = {
+        ["rankName"] = "Rage",
         ["unlocked_rank_level"] = 11,
         ["rankPrice"] = 67000,
     },
-    ["Bahar"] = {
+    [13] = {
+        ["rankName"] = "Bahar",
         ["unlocked_rank_level"] = 12,
         ["rankPrice"] = 99000,
     },
-    ["Arcane"] = {
+    [14] = {
+        ["rankName"] = "Arcane",
         ["unlocked_rank_level"] = 13,
         ["rankPrice"] = 105000,
     },
-    ["BlueHole"] = {
+    [15] = {
+        ["rankName"] = "BlueHole",
         ["unlocked_rank_level"] = 14,
         ["rankPrice"] = 123000,
     },
-    ["Skull"] = {
+    [16] = {
+        ["rankName"] = "Skull",
         ["unlocked_rank_level"] = 15,
         ["rankPrice"] = 140000,
     },
 }
+return a

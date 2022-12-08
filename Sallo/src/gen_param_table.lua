@@ -31,13 +31,19 @@ for i = 1, #rankNames, 1 do
     a.content = {}
     a.content.rank_name = '"' .. rankNames[i] .. '"'
     a.content.rank_level = tostring(i)
-    a.content.level_min = i * 10 - 10
-    a.content.level_max = i * 10 - 1
+    a.content.level_min = 10 * (i - 1)
     -- a.mxp_gauge = tostring(mxp_rank[i])
     -- a.mxp_total = tostring(mxp_stack[i])
     -- a.skill_pt = tostring(skill_pt)
-    table.insert(glob.ranks, a)
+    glob.ranks[i] = a
 end
+local a = {}
+a.key = 0
+a.content = {}
+a.content.rank_name = '"Unranked"'
+a.content.rank_level = "0"
+a.content.level_min = 0
+glob.ranks[0] = a
 
 cg:GenCode(glob, PKGS.Sallo.ENV.PATH .. "/include/param_template.em",
     PKGS.Sallo.ENV.PATH .. "/include/Param/param_rank.lua")
@@ -206,6 +212,9 @@ for i = 0, #rankNames, 1 do
     else requiresp = -1
     end
     a.content.require_sp = requiresp
+    local unlock_rank_level = i + 1
+    if i < 4 then unlock_rank_level = 5 end
+    a.content.unlock_rank_level = unlock_rank_level
     table.insert(glob.ranks, a)
 end
 cg:GenCode(glob, PKGS.Sallo.ENV.PATH .. "/include/param_template.em",
@@ -229,6 +238,9 @@ for i = 0, #rankNames, 1 do
     else requiresp = -1
     end
     a.content.require_sp = requiresp
+    local unlock_rank_level = i + 1
+    if i < 8 then unlock_rank_level = 9 end
+    a.content.unlock_rank_level = unlock_rank_level
     table.insert(glob.ranks, a)
 end
 cg:GenCode(glob, PKGS.Sallo.ENV.PATH .. "/include/param_template.em",
@@ -251,6 +263,9 @@ for i = 0, #rankNames, 1 do
     else requiresp = -1
     end
     a.content.require_sp = requiresp
+    local unlock_rank_level = i + 1
+    if i < 12 then unlock_rank_level = 13 end
+    a.content.unlock_rank_level = unlock_rank_level
     table.insert(glob.ranks, a)
 end
 cg:GenCode(glob, PKGS.Sallo.ENV.PATH .. "/include/param_template.em",

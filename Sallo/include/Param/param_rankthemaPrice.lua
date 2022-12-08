@@ -1,4 +1,4 @@
----@class Sallo.Param.Skill.RankPrice
+---@class Sallo.Param.Skill.ThemaPrice
 local a = {
     ["LESS_THAN_WORM"]       = {
         ["unlocked_rank_level"] = 1,
@@ -65,3 +65,5 @@ local a = {
         ["rankPrice"] = 400000,
     },
 }
+
+return a
