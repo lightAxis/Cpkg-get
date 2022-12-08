@@ -59,7 +59,8 @@ function Server:initialize()
 
     --- attach handler of sallo
     self.__Sallo_handle:attachMsgHandle(protocol.Header.CHANGE_SKILL_STAT, function(msg, msgstruct)
-
+        ---@cast msgstruct Sallo.Web.Protocol.MsgStruct.CHANGE_SKILL_STAT
+        self:__handle_CHANGE_SKILL_STAT(msg, msgstruct)
     end)
     self.__Sallo_handle:attachMsgHandle(protocol.Header.GET_INFO, function(msg, msgstruct)
         ---@cast msgstruct Sallo.Web.Protocol.MsgStruct.GET_INFO
@@ -76,6 +77,12 @@ function Server:initialize()
     self.__Sallo_handle:attachMsgHandle(protocol.Header.SET_INFO_CONNECTED_ACCOUNT, function(msg, msgstruct)
         ---@cast msgstruct Sallo.Web.Protocol.MsgStruct.SET_INFO_CONNECTED_ACCOUNT
         self:__handle_SET_INFO_CONNECTED_ACCOUNT(msg, msgstruct)
+    end)
+    self.__Sallo_handle:attachMsgHandle(protocol.Header.BUY_RANK, function(msg, msgstruct)
+        ---@cast msgstruct Sallo.Web.Protocol.MsgStruct.BUY_RANK
+    end)
+    self.__Sallo_handle:attachMsgHandle(protocol.Header.BUY_THEMA, function(msg, msgstruct)
+        ---@cast msgstruct Sallo.Web.Protocol.MsgStruct.BUY_THEMA
     end)
 
     -- --- attach handler of golkin
@@ -122,17 +129,18 @@ function Server:__await_pullEvent_protocol_header(SenderID, protocolName, protoc
         local a, b, c, d = os.pullEvent()
 
         --- check message to come
-        if a == "rednet_message" then
-            if SenderID ~= nil and b == SenderID then
-                if protocolName ~= nil and protocolHandle ~= nil and d == protocolName then
-                    local msg, msgstruct = protocolHandle:parse(c)
-                    if targetHeader ~= nil and msg.Header == targetHeader then
-                        if timeoutID ~= nil then
-                            os.cancelTimer(timeoutID)
-                        end
-                        return a, b, c, d
-                    end
+        if a == "rednet_message" and
+            SenderID ~= nil and
+            b == SenderID and
+            protocolName ~= nil and
+            d == protocolName and
+            protocolHandle ~= nil then
+            local msg, msgstruct = protocolHandle:parse(c)
+            if targetHeader ~= nil and msg.Header == targetHeader then
+                if timeoutID ~= nil then
+                    os.cancelTimer(timeoutID)
                 end
+                return a, b, c, d
             end
         end
 
@@ -580,6 +588,272 @@ function Server:__handle_SET_INFO_CONNECTED_ACCOUNT(msg, msgStruct)
     replyMsgStruct.Success = true
     self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
     self:__display_result_msg(true, replyMsgStruct.State, replyEnum_INV)
+end
+
+---handle CHANGE_SKILL_STAT
+---@param msg Sallo.Web.Protocol.Msg
+---@param msgStruct Sallo.Web.Protocol.MsgStruct.CHANGE_SKILL_STAT
+function Server:__handle_CHANGE_SKILL_STAT(msg, msgStruct)
+    local replyMsgStruct = protocol.MsgStruct.ACK_CHANGE_SKILL_STAT:new()
+    local replyEnum = protocol.Enum.ACK_CHANGE_SKILL_STAT_R
+    local replyEnum_INV = protocol.Enum_INV.ACK_CHANGE_SKILL_STAT_R_INV
+    local replyHeader = protocol.Header.ACK_CHANGE_SKILL_STAT
+
+    -- try parse info
+    local prev_info = self:__getInfo(msgStruct.OwnerName)
+    if prev_info == nil then
+        replyMsgStruct.State = replyEnum.NO_OWNER_EXIST
+        replyMsgStruct.Success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
+        return nil
+    end
+
+    -- check skill state validity
+    local valid = self:__checkSkillStateValid(msgStruct.SkillState, prev_info)
+    if valid == false then
+        replyMsgStruct.State = replyEnum.SKILL_UNLOCK_CONDITION_UNMET
+        replyMsgStruct.Success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
+        return nil
+    end
+
+    -- change skillstate to new one
+    prev_info.SkillState = msgStruct.SkillState
+    self:__saveInfo(prev_info)
+
+    -- return success
+    replyMsgStruct.State = replyEnum.SUCCESS
+    replyMsgStruct.Success = true
+    self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+    self:__display_result_msg(true, replyMsgStruct.State, replyEnum_INV)
+end
+
+---check skill state validity
+---@param skillState Sallo.Web.Protocol.Struct.skillState_t
+---@param curr_info Sallo.Web.Protocol.Struct.info_t
+---@return boolean result
+function Server:__checkSkillStateValid(skillState, curr_info)
+    -- check is skill make sense
+
+    -- check skill level strange
+    if skillState.Efficiency_level > 16 or skillState.Concentration_level > 16 or
+        skillState.Proficiency_level > 16 or
+        skillState.Efficiency_level < 0 or skillState.Concentration_level < 0 or
+        skillState.Proficiency_level < 0 then
+        return false
+    end
+
+    -- check skillstate total sp plus left sp to check with param
+    local total_sp_basic = skillState.Total_sp + skillState.Left_sp
+    if total_sp_basic ~= param.Level[curr_info.Main.Level].skill_pt_stack then
+        return false
+    end
+
+    -- impossible skill level for current rank check
+    local curr_rank_level = param.Rank[curr_info.Main.Rank].rank_level
+    if param.Skill.EFF[skillState.Efficiency_level].unlock_rank_level > curr_rank_level or
+        param.Skill.CON[skillState.Concentration_level].unlock_rank_level > curr_rank_level or
+        param.Skill.PRO[skillState.Proficiency_level].unlock_rank_level > curr_rank_level then
+        return false
+    end
+
+    -- get total sp of all skills
+    local total_sp
+    for i = 0, skillState.Efficiency_level, 1 do
+        total_sp = total_sp + param.Skill.EFF[i].require_sp
+    end
+    for i = 0, skillState.Concentration_level, 1 do
+        total_sp = total_sp + param.Skill.CON[i].require_sp
+    end
+    for i = 0, skillState.Proficiency_level, 1 do
+        total_sp = total_sp + param.Skill.PRO[i].require_sp
+    end
+    total_sp = total_sp - param.Skill.EFF[skillState.Efficiency_level].require_sp
+    total_sp = total_sp - param.Skill.CON[skillState.Concentration_level].require_sp
+    total_sp = total_sp - param.Skill.PRO[skillState.Proficiency_level].require_sp
+
+    -- check total used sp with skillstate used sp
+    if skillState.Total_sp ~= total_sp then
+        return false
+    end
+
+    -- return true
+    return true
+end
+
+---handle BUY_RANK msg
+---@param msg Sallo.Web.Protocol.Msg
+---@param msgStruct Sallo.Web.Protocol.MsgStruct.BUY_RANK
+function Server:__handle_BUY_RANK(msg, msgStruct)
+    local replyMsgStruct = protocol.MsgStruct.ACK_BUY_RANK:new()
+    local replyEnum = protocol.Enum.ACK_BUY_RANK_R
+    local replyEnum_INV = protocol.Enum_INV.ACK_BUY_RANK_R_INV
+    local replyHeader = protocol.Header.ACK_BUY_RANK
+
+    -- try get current info
+    local curr_info = self:__getInfo(msgStruct.OwnerName)
+    if curr_info == nil then
+        replyMsgStruct.state = replyEnum.NO_INFO
+        replyMsgStruct.success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        return nil
+    end
+
+    -- if info passwd unmet
+    if curr_info.Password ~= msgStruct.InfoPasswd then
+        replyMsgStruct.state = replyEnum.SALLO_PASSWORD_UNMET
+        replyMsgStruct.success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        return nil
+    end
+
+    -- check rank validity condition
+    if param.Rank[msgStruct.Rank].level_min > curr_info.Main.Level or
+        msgStruct.Rank == protocol.Enum.RANK_NAME.UNRANKED then
+        replyMsgStruct.state = replyEnum.RANK_UNLOCK_CONDITION_UNMET
+        replyMsgStruct.success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        return nil
+    end
+
+    -- prepare send struct
+    local send_t = Golkin_client:getSend_t()
+    send_t.owner = curr_info.Name
+    send_t.password = msgStruct.AccountPasswd
+    send_t.from = curr_info.AccountName
+    send_t.fromMsg = "buyRank"
+    send_t.to = param.account.name
+    send_t.toMsg = "buyRank"
+    send_t.balance = param.Price.Rank[msgStruct.Rank].rankPrice
+
+    -- send request to golkin server
+    Golkin_client:send_SEND(send_t)
+
+    -- await to get recieve, or timeout
+    local golkin_msg, golkin_msgStruct = self:__await_pullEvent_Golkin(Golkin_protocol.Header.ACK_SEND, 1)
+    ---@cast golkin_msgStruct Golkin.Web.Protocol.MsgStruct.ACK_SEND
+    ---@cast golkin_msg Golkin.Web.Protocol.Msg
+    local golkin_enum = Golkin_protocol.Enum.ACK_SEND_R
+    local golkin_enum_INV = Golkin_protocol.Enum_INV.ACK_SEND_R_INV
+
+    -- if timeout
+    if golkin_msg == nil then
+        replyMsgStruct.state = replyEnum.BANKING_REQUEST_TIMEOUT
+        replyMsgStruct.success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        return nil
+    end
+
+    -- if banking has error
+    if golkin_msgStruct.Success == false then
+        replyMsgStruct.state = replyEnum.BANKING_ERROR
+        replyMsgStruct.success = false
+        replyMsgStruct.banking_state = golkin_msgStruct.State
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        self:__display_result_msg(false, golkin_msgStruct, golkin_enum_INV)
+        return nil
+    end
+
+    -- set account buy rank
+    curr_info.Main.Rank = msgStruct.Rank
+    self:__saveInfo(curr_info)
+
+    -- send success
+    replyMsgStruct.state = replyEnum.SUCCESS
+    replyMsgStruct.success = true
+    replyMsgStruct.banking_state = golkin_msgStruct.State
+    self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+    self:__display_result_msg(true, replyMsgStruct.state, replyEnum_INV)
+end
+
+---handle msg BUT_THEMA
+---@param msg Sallo.Web.Protocol.Msg
+---@param msgStruct Sallo.Web.Protocol.MsgStruct.BUY_THEMA
+function Server:__handle_BUY_THEMA(msg, msgStruct)
+    local replyMsgStruct = protocol.MsgStruct.ACK_BUY_THEMA:new()
+    local replyEnum = protocol.Enum.ACK_BUY_THEMA_R
+    local replyEnum_INV = protocol.Enum_INV.ACK_BUY_THEMA_R_INV
+    local replyHeader = protocol.Header.ACK_BUY_THEMA
+
+    -- try get current info
+    local curr_info = self:__getInfo(msgStruct.OwnerName)
+    if curr_info == nil then
+        replyMsgStruct.state = replyEnum.NO_INFO
+        replyMsgStruct.success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        return nil
+    end
+
+    -- if info passwd unmet
+    if curr_info.Password ~= msgStruct.InfoPasswd then
+        replyMsgStruct.state = replyEnum.SALLO_PASSWORD_UNMET
+        replyMsgStruct.success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        return nil
+    end
+
+    -- check rank validity condition
+    if param.Price.Thema[msgStruct.Thema].unlocked_rank_level < curr_info.Main.Rank then
+        replyMsgStruct.state = replyEnum.THEMA_UNLOCK_CONDITION_UNMET
+        replyMsgStruct.success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        return nil
+    end
+
+    -- prepare send struct
+    local send_t = Golkin_client:getSend_t()
+    send_t.owner = curr_info.Name
+    send_t.password = msgStruct.AccountPasswd
+    send_t.from = curr_info.AccountName
+    send_t.fromMsg = "buyThema"
+    send_t.to = param.account.name
+    send_t.toMsg = "buyThema"
+    send_t.balance = param.Price.Thema[msgStruct.Thema].rankPrice
+
+    -- send request to golkin server
+    Golkin_client:send_SEND(send_t)
+
+    -- await to get recieve, or timeout
+    local golkin_msg, golkin_msgStruct = self:__await_pullEvent_Golkin(Golkin_protocol.Header.ACK_SEND, 1)
+    ---@cast golkin_msgStruct Golkin.Web.Protocol.MsgStruct.ACK_SEND
+    ---@cast golkin_msg Golkin.Web.Protocol.Msg
+    local golkin_enum = Golkin_protocol.Enum.ACK_SEND_R
+    local golkin_enum_INV = Golkin_protocol.Enum_INV.ACK_SEND_R_INV
+
+    -- if timeout
+    if golkin_msg == nil then
+        replyMsgStruct.state = replyEnum.BANKING_REQUEST_TIMEOUT
+        replyMsgStruct.success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        return nil
+    end
+
+    -- if banking has error
+    if golkin_msgStruct.Success == false then
+        replyMsgStruct.state = replyEnum.BANKING_ERROR
+        replyMsgStruct.success = false
+        replyMsgStruct.banking_state = golkin_msgStruct.State
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        self:__display_result_msg(false, golkin_msgStruct, golkin_enum_INV)
+        return nil
+    end
+
+    -- set info to get thema
+
+
+
 end
 
 function Server:__quaryPlayerData()
