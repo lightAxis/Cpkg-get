@@ -287,8 +287,8 @@ function Server:make_new_info()
     new_info.Histories = {}
 
     local main_t = protocol.Struct.main_t:new()
-    main_t.Cap_gauge = 480
-    main_t.Cap_left = 480
+    main_t.Act_gauge = 480
+    main_t.Act_left = 480
     main_t.Exp = 0
     main_t.Exp_gauge = param.Level[1].mxp_gauge
     main_t.Level = 1
@@ -307,19 +307,19 @@ function Server:make_new_info()
     new_info.SkillState = skillState_t
 
     local stat_t = protocol.Struct.stat_t:new()
-    stat_t.Cap_amplifier = param.Skill.CON[0].ACT_amplifier
-    stat_t.Cap_per_minute = param.CAP_per_min_default * stat_t.Cap_amplifier
-    stat_t.Exp_per_cap = param.Skill.EFF[0].TXP_per_ACT
-    stat_t.Exp_per_min = stat_t.Exp_per_cap * stat_t.Cap_per_minute
-    stat_t.Gold_per_cap = param.Skill.PRO[0].SAL_per_ACT
-    stat_t.Gold_per_minute = stat_t.Gold_per_cap * stat_t.Cap_per_minute
+    stat_t.Act_amplifier = param.Skill.CON[0].ACT_amplifier
+    stat_t.Act_per_minute = param.ACT_per_min_default * stat_t.Act_amplifier
+    stat_t.Exp_per_act = param.Skill.EFF[0].EXP_per_ACT
+    stat_t.Exp_per_min = stat_t.Exp_per_act * stat_t.Act_per_minute
+    stat_t.Gold_per_act = param.Skill.PRO[0].SAL_per_ACT
+    stat_t.Gold_per_minute = stat_t.Gold_per_act * stat_t.Act_per_minute
     new_info.Stat = stat_t
 
     local statistics_t = protocol.Struct.statistics_t:new()
-    statistics_t.Today_cap = 0
+    statistics_t.Today_act = 0
     statistics_t.Today_exp = 0
     statistics_t.Today_gold = 0
-    statistics_t.Total_cap = 0
+    statistics_t.Total_act = 0
     statistics_t.Total_exp = 0
     statistics_t.Total_gold = 0
     new_info.Statistics = statistics_t
@@ -711,6 +711,15 @@ function Server:__handle_BUY_RANK(msg, msgStruct)
         return nil
     end
 
+    -- if reply msgstruct already achieved
+    if curr_info.Main.Rank >= msgStruct.Rank then
+        replyMsgStruct.state = replyEnum.RANK_ALREADY_EXIST
+        replyMsgStruct.success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        return nil
+    end
+
     -- check rank validity condition
     if param.Rank[msgStruct.Rank].level_min > curr_info.Main.Level or
         msgStruct.Rank == protocol.Enum.RANK_NAME.UNRANKED then
@@ -801,6 +810,22 @@ function Server:__handle_BUY_THEMA(msg, msgStruct)
         return nil
     end
 
+    -- check item already exist
+    local thema_already_exist = false
+    for k, v in pairs(curr_info.Items) do
+        if v.ItemType == protocol.Enum.ITEM_TYPE.THEMA and
+            v.ItemIndex == msgStruct.Thema then
+            thema_already_exist = true
+        end
+    end
+    if thema_already_exist == true then
+        replyMsgStruct.state = replyEnum.THEMA_ALREADY_EXIST
+        replyMsgStruct.success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        return nil
+    end
+
     -- check rank validity condition
     if param.Price.Thema[msgStruct.Thema].unlocked_rank_level < curr_info.Main.Rank then
         replyMsgStruct.state = replyEnum.THEMA_UNLOCK_CONDITION_UNMET
@@ -851,9 +876,17 @@ function Server:__handle_BUY_THEMA(msg, msgStruct)
     end
 
     -- set info to get thema
+    local new_thema_item = protocol.Struct.item_t:new()
+    new_thema_item.ItemType = protocol.Enum.ITEM_TYPE.THEMA
+    new_thema_item.ItemIndex = msgStruct.Thema
+    table.insert(curr_info.Items, new_thema_item)
+    self:__saveInfo(curr_info)
 
-
-
+    -- return success msg
+    replyMsgStruct.state = replyEnum.SUCCESS
+    replyMsgStruct.success = true
+    self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+    self:__display_result_msg(true, replyMsgStruct.state, replyEnum_INV)
 end
 
 function Server:__quaryPlayerData()

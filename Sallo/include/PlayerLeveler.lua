@@ -1,4 +1,5 @@
 local THIS = PKGS.Sallo
+local param = PKGS.Sallo.Param
 
 local class = require("Class.middleclass")
 
@@ -16,6 +17,11 @@ end
 ---@return Sallo.Web.Protocol.Struct.info_t
 function playerLeveler:getPlayerInfo()
     return self.__info
+end
+
+function playerLeveler:refresh_stat()
+    local info = self.__info
+    info.Stat.Cap_amplifier = param.Skill.CON[info.SkillState.Concentration_level].ACT_amplifier
 end
 
 return playerLeveler
