@@ -17,6 +17,7 @@ protocol.Msg = require("Sallo.include.Web.Protocol.MsgDef")
 ---@class Sallo.Web.Protocol.Struct
 protocol.Struct = {}
 protocol.Struct.main_t = require("Sallo.include.Web.Protocol.Struct.main_t")
+protocol.Struct.item_t = require("Sallo.include.Web.Protocol.Struct.item_t")
 protocol.Struct.statistics_t = require("Sallo.include.Web.Protocol.Struct.statistics_t")
 protocol.Struct.thema_t = require("Sallo.include.Web.Protocol.Struct.thema_t")
 protocol.Struct.history_t = require("Sallo.include.Web.Protocol.Struct.history_t")

@@ -67,6 +67,11 @@ builder:addEnum(enum("SKILLTYPE", "type of skill", {
     enumElm("CONCENTRATION", 3, "concentration"),
 }))
 
+builder:addEnum(enum("ITEM_TYPE", "enum of item type", {
+    enumElm("NONE", -1, "this is error"),
+    enumElm("THEMA", 1, "thema item to decorate name in leaderboard"),
+}))
+
 builder:addEnum(enum("ACK_REGISTER_INFO_R", "reply enum of ACK_REGISTER_INFO", {
     enumElm("NONE", -1, "this is error"),
     enumElm("INFO_ALREADY_EXISTS", -101, "info file is already exists"),
@@ -114,9 +119,10 @@ builder:addEnum(enum("ACK_BUY_RANK_R", "reply enum of ACK_BUY_RANK", {
     enumElm("NONE", -1, "this is error!"),
     enumElm("NO_INFO", -601, "no owner exist in owner names"),
     enumElm("SALLO_PASSWORD_UNMET", -602, "password of sallo info unmnet"),
-    enumElm("RANK_UNLOCK_CONDITION_UNMET", -603, "the unlock condition of this rank is unmet"),
-    enumElm("BANKING_REQUEST_TIMEOUT", -604, "banking request timeout"),
-    enumElm("BANKING_ERROR", -605, "when banking error occurs"),
+    enumElm("RANK_ALREADY_EXIST", -603, "rank already bought"),
+    enumElm("RANK_UNLOCK_CONDITION_UNMET", -604, "the unlock condition of this rank is unmet"),
+    enumElm("BANKING_REQUEST_TIMEOUT", -605, "banking request timeout"),
+    enumElm("BANKING_ERROR", -606, "when banking error occurs"),
     enumElm("NORMAL", 0, "standard for success"),
     enumElm("SUCCESS", 601, "success")
 }))
@@ -125,12 +131,14 @@ builder:addEnum(enum("ACK_BUY_THEMA_R", "reply enum of ACK_BUY_THEMA", {
     enumElm("NONE", -1, "this is error!"),
     enumElm("NO_INFO", -701, "no owner exist in owner names"),
     enumElm("SALLO_PASSWORD_UNMET", -702, "password of sallo info unmnet"),
-    enumElm("THEMA_UNLOCK_CONDITION_UNMET", -703, "the unlock condition of this thema is unmet"),
-    enumElm("BANKING_REQUEST_TIMEOUT", -704, "banking request timeout"),
-    enumElm("BANKING_ERROR", -705, "when banking error occurs"),
+    enumElm("THEMA_ALREADY_EXIST", -703, "thema already exist in item"),
+    enumElm("THEMA_UNLOCK_CONDITION_UNMET", -704, "the unlock condition of this thema is unmet"),
+    enumElm("BANKING_REQUEST_TIMEOUT", -705, "banking request timeout"),
+    enumElm("BANKING_ERROR", -706, "when banking error occurs"),
     enumElm("NORMAL", 0, "standard for success"),
     enumElm("SUCCESS", 701, "success")
 }))
+
 
 
 --- structs
@@ -148,25 +156,25 @@ builder:addStruct(struct("main_t", "struct of main bu sallo", {
         "rank enum of info"),
     field("Exp_gauge", fieldType(efieldType.num), fieldInit(efieldType.nil_), "max guage of current rank info"),
     field("Exp", fieldType(efieldType.num), fieldInit(efieldType.nil_), "current exp filled"),
-    field("Cap_gauge", fieldType(efieldType.num), fieldInit(efieldType.nil_), "max cap gauge"),
-    field("Cap_left", fieldType(efieldType.num), fieldInit(efieldType.nil_), "cap point left today"),
+    field("Act_gauge", fieldType(efieldType.num), fieldInit(efieldType.nil_), "max act gauge"),
+    field("Act_left", fieldType(efieldType.num), fieldInit(efieldType.nil_), "act point left today"),
 }))
 
 builder:addStruct(struct("stat_t", "struct of state by sallo", {
     field("Exp_per_min", fieldType(efieldType.num), fieldInit(efieldType.nil_), "exp per minute"),
-    field("Cap_per_minute", fieldType(efieldType.num), fieldInit(efieldType.nil_), "cap usage per minute"),
+    field("Act_per_minute", fieldType(efieldType.num), fieldInit(efieldType.nil_), "act usage per minute"),
     field("Gold_per_minute", fieldType(efieldType.num), fieldInit(efieldType.nil_), "goldary per minute"),
-    field("Exp_per_cap", fieldType(efieldType.num), fieldInit(efieldType.nil_), "exp accisition per cap"),
-    field("Cap_amplifier", fieldType(efieldType.num), fieldInit(efieldType.nil_), "cap amplifer for cap gauge"),
-    field("Gold_per_cap", fieldType(efieldType.num), fieldInit(efieldType.nil_), "salaray per cap point"),
+    field("Exp_per_act", fieldType(efieldType.num), fieldInit(efieldType.nil_), "exp accisition per act"),
+    field("Act_amplifier", fieldType(efieldType.num), fieldInit(efieldType.nil_), "act amplifer for act gauge"),
+    field("Gold_per_act", fieldType(efieldType.num), fieldInit(efieldType.nil_), "salaray per act point"),
 }))
 
 builder:addStruct(struct("statistics_t", "struct of statistics by sallo", {
     field("Today_exp", fieldType(efieldType.num), fieldInit(efieldType.nil_), "exp get today"),
-    field("Today_cap", fieldType(efieldType.num), fieldInit(efieldType.nil_), "cap get today"),
+    field("Today_act", fieldType(efieldType.num), fieldInit(efieldType.nil_), "act get today"),
     field("Today_gold", fieldType(efieldType.num), fieldInit(efieldType.nil_), "goldary get today"),
     field("Total_exp", fieldType(efieldType.num), fieldInit(efieldType.nil_), "exp get total"),
-    field("Total_cap", fieldType(efieldType.num), fieldInit(efieldType.nil_), "cap get total"),
+    field("Total_act", fieldType(efieldType.num), fieldInit(efieldType.nil_), "act get total"),
     field("Total_gold", fieldType(efieldType.num), fieldInit(efieldType.nil_), "goldary get total"),
 }))
 
@@ -181,6 +189,13 @@ builder:addStruct(struct("skillState_t", "struct of skill state in info by sallo
 builder:addStruct(struct("history_t", "struct of info history by sallo", {
     field("DateTime", fieldType(efieldType.str), fieldInit(efieldType.nil_), "time when this history made"),
     field("Data", fieldType(efieldType.str), fieldInit(efieldType.nil_), "content of history by raw string")
+}))
+
+builder:addStruct(struct("item_t", "struct of item", {
+    field("ItemType", fieldType(efieldType.custom, builder:getEnumClassName("ITEM_TYPE")),
+        fieldInit(efieldType.num, -1), "item type enum"),
+    field("ItemIndex", fieldType(efieldType.num), fieldInit(efieldType.nil_), "item index, by enum"),
+    field("Name", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of the item")
 }))
 
 -- struct
@@ -206,6 +221,8 @@ builder:addStruct(struct("info_t", "all information table of one person", {
     field("Histories", fieldType(efieldType.table, "number", builder:getStructClassName("history_t")),
         fieldInit(efieldType.table, nil, nil),
         "history field of info. go"),
+    field("Items", fieldType(efieldType.table, "number", builder:getStructClassName("item_t")),
+        fieldInit(efieldType.table, nil, nil), "owned items list for info"),
 }))
 
 --- header

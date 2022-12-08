@@ -1,9 +1,9 @@
 ---@class Sallo.Web.Protocol.Struct.statistics_t
 ---@field Today_exp number exp get today
----@field Today_cap number cap get today
+---@field Today_act number act get today
 ---@field Today_gold number goldary get today
 ---@field Total_exp number exp get total
----@field Total_cap number cap get total
+---@field Total_act number act get total
 ---@field Total_gold number goldary get total
 ---@field new fun():Sallo.Web.Protocol.Struct.statistics_t
 local struct = {}
@@ -18,7 +18,7 @@ function struct.new()
     a.Today_exp = nil -- exp get today
     
     ---@type number
-    a.Today_cap = nil -- cap get today
+    a.Today_act = nil -- act get today
     
     ---@type number
     a.Today_gold = nil -- goldary get today
@@ -27,7 +27,7 @@ function struct.new()
     a.Total_exp = nil -- exp get total
     
     ---@type number
-    a.Total_cap = nil -- cap get total
+    a.Total_act = nil -- act get total
     
     ---@type number
     a.Total_gold = nil -- goldary get total

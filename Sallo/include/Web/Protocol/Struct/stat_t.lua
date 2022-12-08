@@ -1,10 +1,10 @@
 ---@class Sallo.Web.Protocol.Struct.stat_t
 ---@field Exp_per_min number exp per minute
----@field Cap_per_minute number cap usage per minute
+---@field Act_per_minute number act usage per minute
 ---@field Gold_per_minute number goldary per minute
----@field Exp_per_cap number exp accisition per cap
----@field Cap_amplifier number cap amplifer for cap gauge
----@field Gold_per_cap number salaray per cap point
+---@field Exp_per_act number exp accisition per act
+---@field Act_amplifier number act amplifer for act gauge
+---@field Gold_per_act number salaray per act point
 ---@field new fun():Sallo.Web.Protocol.Struct.stat_t
 local struct = {}
 
@@ -18,19 +18,19 @@ function struct.new()
     a.Exp_per_min = nil -- exp per minute
     
     ---@type number
-    a.Cap_per_minute = nil -- cap usage per minute
+    a.Act_per_minute = nil -- act usage per minute
     
     ---@type number
     a.Gold_per_minute = nil -- goldary per minute
     
     ---@type number
-    a.Exp_per_cap = nil -- exp accisition per cap
+    a.Exp_per_act = nil -- exp accisition per act
     
     ---@type number
-    a.Cap_amplifier = nil -- cap amplifer for cap gauge
+    a.Act_amplifier = nil -- act amplifer for act gauge
     
     ---@type number
-    a.Gold_per_cap = nil -- salaray per cap point
+    a.Gold_per_act = nil -- salaray per act point
     
     return a
 end

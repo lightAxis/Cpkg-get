@@ -3,8 +3,8 @@
 ---@field Rank Sallo.Web.Protocol.Enum.RANK_NAME rank enum of info
 ---@field Exp_gauge number max guage of current rank info
 ---@field Exp number current exp filled
----@field Cap_gauge number max cap gauge
----@field Cap_left number cap point left today
+---@field Act_gauge number max act gauge
+---@field Act_left number act point left today
 ---@field new fun():Sallo.Web.Protocol.Struct.main_t
 local struct = {}
 
@@ -27,10 +27,10 @@ function struct.new()
     a.Exp = nil -- current exp filled
     
     ---@type number
-    a.Cap_gauge = nil -- max cap gauge
+    a.Act_gauge = nil -- max act gauge
     
     ---@type number
-    a.Cap_left = nil -- cap point left today
+    a.Act_left = nil -- act point left today
     
     return a
 end

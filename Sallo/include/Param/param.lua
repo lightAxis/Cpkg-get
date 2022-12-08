@@ -17,7 +17,7 @@ local param = {
     ["PlayerdetectorName"] = "playerDetector",
     ["ChatBoxName"] = "chatBox",
 
-    ["CAP_per_min_default"] = 10
+    ["ACT_per_min_default"] = 10
 }
 
 param.Level = require("Sallo.include.Param.param_level")

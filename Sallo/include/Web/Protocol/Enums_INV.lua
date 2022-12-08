@@ -7,9 +7,10 @@ a.ACK_BUY_THEMA_R_INV = {
     [-1] = "NONE", -- this is error!
     [-701] = "NO_INFO", -- no owner exist in owner names
     [-702] = "SALLO_PASSWORD_UNMET", -- password of sallo info unmnet
-    [-703] = "THEMA_UNLOCK_CONDITION_UNMET", -- the unlock condition of this thema is unmet
-    [-704] = "BANKING_REQUEST_TIMEOUT", -- banking request timeout
-    [-705] = "BANKING_ERROR", -- when banking error occurs
+    [-703] = "THEMA_ALREADY_EXIST", -- thema already exist in item
+    [-704] = "THEMA_UNLOCK_CONDITION_UNMET", -- the unlock condition of this thema is unmet
+    [-705] = "BANKING_REQUEST_TIMEOUT", -- banking request timeout
+    [-706] = "BANKING_ERROR", -- when banking error occurs
     [0] = "NORMAL", -- standard for success
     [701] = "SUCCESS", -- success
 }
@@ -69,11 +70,21 @@ a.ACK_BUY_RANK_R_INV = {
     [-1] = "NONE", -- this is error!
     [-601] = "NO_INFO", -- no owner exist in owner names
     [-602] = "SALLO_PASSWORD_UNMET", -- password of sallo info unmnet
-    [-603] = "RANK_UNLOCK_CONDITION_UNMET", -- the unlock condition of this rank is unmet
-    [-604] = "BANKING_REQUEST_TIMEOUT", -- banking request timeout
-    [-605] = "BANKING_ERROR", -- when banking error occurs
+    [-603] = "RANK_ALREADY_EXIST", -- rank already bought
+    [-604] = "RANK_UNLOCK_CONDITION_UNMET", -- the unlock condition of this rank is unmet
+    [-605] = "BANKING_REQUEST_TIMEOUT", -- banking request timeout
+    [-606] = "BANKING_ERROR", -- when banking error occurs
     [0] = "NORMAL", -- standard for success
     [601] = "SUCCESS", -- success
+}
+
+---reply enum of ACK_GET_INFOS
+---@enum Sallo.Web.Protocol.Enum.ACK_GET_INFOS_R_INV 
+a.ACK_GET_INFOS_R_INV = {
+    [-1] = "NONE", -- this is error!
+    [-401] = "NO_INFO_EXIST", -- no info is registered in server
+    [0] = "NORMAL", -- standard for success or not
+    [401] = "SUCCESS", -- success
 }
 
 ---reply enum of ACK_CHANGE_SKILL_STAT
@@ -94,15 +105,6 @@ a.ACK_GET_INFO_R_INV = {
     [0] = "NORMAL", -- standard for success or not
     [-301] = "INFO_NOT_EXIST", -- info file is corrupted
     [301] = "SUCCESS", -- success
-}
-
----reply enum of ACK_GET_INFOS
----@enum Sallo.Web.Protocol.Enum.ACK_GET_INFOS_R_INV 
-a.ACK_GET_INFOS_R_INV = {
-    [-1] = "NONE", -- this is error!
-    [-401] = "NO_INFO_EXIST", -- no info is registered in server
-    [0] = "NORMAL", -- standard for success or not
-    [401] = "SUCCESS", -- success
 }
 
 ---reply enum of ACK_SET_INFO_CONNECTED_ACCOUNT
@@ -127,6 +129,13 @@ a.ACK_REGISTER_INFO_R_INV = {
     [-101] = "INFO_ALREADY_EXISTS", -- info file is already exists
     [0] = "NORMAL", -- standard for success
     [101] = "SUCCESS", -- success
+}
+
+---enum of item type
+---@enum Sallo.Web.Protocol.Enum.ITEM_TYPE_INV 
+a.ITEM_TYPE_INV = {
+    [-1] = "NONE", -- this is error
+    [1] = "THEMA", -- thema item to decorate name in leaderboard
 }
 
 ---type of skill

@@ -139,8 +139,8 @@ for i = 1, total_level, 1 do
     local a = {}
     a.key = i
     a.content = {}
-    a.content.mxp_gauge = mxp_rank[i]
-    a.content.mxp_stack = mxp_stack[i]
+    a.content.exp_gauge = mxp_rank[i]
+    a.content.exp_stack = mxp_stack[i]
     a.content.skill_pt = skill_pt[i]
     a.content.skill_pt_stack = skill_pt_stack[i]
     table.insert(glob.ranks, a)
@@ -203,7 +203,7 @@ for i = 0, #rankNames, 1 do
     a.key = i
     a.content = {}
     a.content.Level = i
-    a.content.TXP_per_ACT = tb_EFF_stat[i + 1]
+    a.content.EXP_per_ACT = tb_EFF_stat[i + 1]
     local requiresp = 0
     if (i <= 3) then requiresp = 12
     elseif (i <= 7) then requiresp = 24
@@ -254,7 +254,7 @@ for i = 0, #rankNames, 1 do
     a.key = i
     a.content = {}
     a.content.Level = i
-    a.content.SAL_per_ACT = tb_PRO_stat[i + 1]
+    a.content.GOLD_per_ACT = tb_PRO_stat[i + 1]
     local requiresp = 0
     if (i <= 3) then requiresp = 12
     elseif (i <= 7) then requiresp = 24
