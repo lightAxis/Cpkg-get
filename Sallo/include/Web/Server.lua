@@ -4,6 +4,7 @@ local protocol = THIS.Web.Protocol
 local handle = THIS.Web.Handle:new()
 local class = require("Class.middleclass")
 local param = THIS.Param
+local PlayerLeveler = THIS.PlayerLeveler
 
 local Golkin = DEPS.Sallo.Golkin
 local Golkin_handle = Golkin.Web.Handle:new()
@@ -15,6 +16,8 @@ local Golkin_param = Golkin.ENV.CONST
 ---@field __Sallo_handle Sallo.Web.Protocol.Handle
 ---@field __Golkin_handle Golkin.Web.Protocol.Handle
 ---@field __PlayerQuaryTimerID number
+---@field __lastPlayerQuaryMinuteStr string
+---@field __lastPlayerQuaryDayStr string
 ---@field __ChatboxQueueTimerID number
 ---@field __RequestTimeoutID number
 ---@field __TimeoutFun fun()
@@ -28,6 +31,7 @@ local Server = class("Sallo.Web.Server")
 
 ---@class Sallo.Web.Server.ChatBoxContent
 ---@field Msg string
+---@field IsServerMsg boolean
 ---@field Prefix string
 ---@field Player string
 
@@ -46,6 +50,9 @@ function Server:initialize()
     self.__EventQueue = {}
 
     self.__PlayerQuaryTimerID = nil
+    self.__lastPlayerQuaryMinuteStr = nil
+    self.__lastPlayerQuaryDayStr = nil
+
     self.__ChatboxQueueTimerID = nil
 
     self.__GolkinServerID = nil
@@ -331,6 +338,8 @@ function Server:make_new_info()
     thema_t.isVisible = true
     new_info.Thema = thema_t
 
+    new_info.SalaryLeft = 0
+
     return new_info
 end
 
@@ -372,6 +381,15 @@ function Server:start()
         a.print("chatbox message : " .. message .. "/" .. prefix .. "/" .. user)
     end
 
+    print("start ChatBox thread, 30 sec")
+    self.__ChatboxQueueTimerID = os.startTimer(30)
+
+    print("start player detector thread, 10 sec")
+    self.__PlayerQuaryTimerID = os.startTimer(10)
+
+    self.__lastPlayerQuaryDayStr = os.date('%d')
+    self.__lastPlayerQuaryMinuteStr = os.date('%M')
+
     print("starting server main thread...")
     while true do
         -- rednet_message, fromID, msg, protocol
@@ -390,9 +408,11 @@ function Server:start()
             print("----------------")
             print("start quarying player datas..")
             self:__quaryPlayerData()
+            self.__PlayerQuaryTimerID = os.startTimer(10)
         end
         if a == "timer" and b == self.__ChatboxQueueTimerID then
             self:__ChatboxQueueCheck()
+            self.__ChatboxQueueTimerID = os.startTimer(30)
         end
 
     end
@@ -889,10 +909,143 @@ function Server:__handle_BUY_THEMA(msg, msgStruct)
     self:__display_result_msg(true, replyMsgStruct.state, replyEnum_INV)
 end
 
+--- quary player online data, do player info refresh
 function Server:__quaryPlayerData()
+    local currDay = os.date('%d')
+    local currMin = os.date('%M')
+    local infos = self.__cachedInfos
+    local currentPlayers = self.__PlayerDetector.getOnlinePlayers()
+
+    local changeMin = false
+    local changeDay = false
+    -- min changed
+    if currMin ~= self.__lastPlayerQuaryMinuteStr then
+        changeMin = true
+    end
+
+    -- day changed
+    if currDay ~= self.__lastPlayerQuaryDayStr then
+        changeDay = true
+    end
+
+    self.__lastPlayerQuaryDayStr = currDay
+    self.__lastPlayerQuaryMinuteStr = currMin
+
+
+    -- cached & exist now
+    for k, v in pairs(infos) do
+        for kk, vv in pairs(currentPlayers) do
+            if v.Name == vv then
+                if changeMin then self:changeMin(v) end
+            end
+        end
+    end
+
+    for k, v in pairs(infos) do
+        if changeDay then self:changeDay(v) end
+    end
+end
+
+---extract msgs from playerleveler and add to chatbox queue in server
+---@param pl Sallo.PlayerLeveler
+function Server:__extractMsgsFromPlayerLeveler(pl)
+    local playerMsgs = pl:getPlayerMsg()
+    local serverMsgs = pl:getServerMsg()
+    for k, v in pairs(playerMsgs) do
+        ---@type Sallo.Web.Server.ChatBoxContent
+        local a = {}
+        a.IsServerMsg = false
+        a.Player = pl:getPlayerInfo().Name
+        a.Prefix = "Sallo"
+        a.Msg = v
+        table.insert(self.__ChatBoxQueue, a)
+    end
+    for k, v in pairs(serverMsgs) do
+        ---@type Sallo.Web.Server.ChatBoxContent
+        local a = {}
+        a.IsServerMsg = true
+        a.Player = nil
+        a.Prefix = "Sallo"
+        a.Msg = v
+        table.insert(self.__ChatBoxQueue, a)
+    end
+    pl:flushMsgs()
+end
+
+---change min of info
+---@param info Sallo.Web.Protocol.Struct.info_t
+function Server:changeMin(info)
+    local pl = PlayerLeveler:new(info)
+    pl:addMin()
+    self:__extractMsgsFromPlayerLeveler(pl)
+end
+
+--- change day of info
+---@param info Sallo.Web.Protocol.Struct.info_t
+function Server:changeDay(info)
+    local pl = PlayerLeveler:new(info)
+    local todayGold = pl:addDay()
+
+    -- if not work, no send money
+    if todayGold == nil then
+        pl:flushMsgs()
+        return nil
+    end
+
+    -- add msgs
+    self:__extractMsgsFromPlayerLeveler(pl)
+
+    -- make send request to golkin
+    local send_t = Golkin_client:getSend_t()
+    send_t.owner = param.account.owner
+    send_t.password = param.account.passwd
+    send_t.from = param.account.name
+    send_t.fromMsg = info.Name .. " : " .. string.format("%.2f", todayGold)
+    send_t.to = info.AccountName
+    send_t.toMsg = "Salary"
+    send_t.balance = todayGold
+    Golkin_client:send_SEND(send_t)
+
+    -- await for golkin response
+    local replyMsg, replyMsgStruct = self:__await_pullEvent_Golkin(Golkin_protocol.Header.ACK_SEND, 1)
+    ---@cast replyMsg Golkin.Web.Protocol.Msg
+    ---@cast replyMsgStruct Golkin.Web.Protocol.MsgStruct.ACK_SEND
+
+    --- timeout
+    if replyMsg == nil then
+        info.SalaryLeft = info.SalaryLeft + todayGold
+        print("salary send timeout!")
+        print("player name : " .. info.Name, " / salary : " .. string.format("%.2f", todayGold))
+    end
+
+    --reply is not good
+    if replyMsgStruct.Success == false then
+        info.SalaryLeft = info.SalaryLeft + todayGold
+        print("salary send failed!")
+        print("player name : " .. info.Name, " / salary : " .. string.format("%.2f", todayGold))
+        self:__display_result_msg(false, replyMsgStruct.State, Golkin_protocol.Enum_INV.ACK_SEND_R_INV)
+        return nil
+    end
+
+    -- success
+    print("salary sended!")
+    print("player name : " .. info.Name, " / salary : " .. string.format("%.2f", todayGold))
 
 end
 
+--- chatbox has cooldown timeout. look throught the chatbox queue, if player online than show msg
 function Server:__ChatboxQueueCheck()
+
+    local currentPlayer = self.__PlayerDetector.getOnlinePlayers()
+
+    for i = 1, #(self.__ChatBoxQueue), 1 do
+        for kk, vv in pairs(currentPlayer) do
+            if (self.__ChatBoxQueue[i].Player == vv) then
+                self.__ChatBox.sendMessage(self.__ChatBoxQueue[i].Msg, self.__ChatBoxQueue[i].Prefix)
+                table.remove(self.__ChatBoxQueue, i)
+                return nil
+            end
+        end
+    end
 
 end
