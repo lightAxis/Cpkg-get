@@ -9,6 +9,7 @@
 ---@field SkillState Sallo.Web.Protocol.Struct.skillState_t skill state of info
 ---@field Histories table<number, Sallo.Web.Protocol.Struct.history_t> history field of info. go
 ---@field Items table<number, Sallo.Web.Protocol.Struct.item_t> owned items list for info
+---@field SalaryLeft number salary left to send to player
 ---@field new fun():Sallo.Web.Protocol.Struct.info_t
 local struct = {}
 
@@ -47,6 +48,9 @@ function struct.new()
     
     ---@type table<number, Sallo.Web.Protocol.Struct.item_t>
     a.Items = {} -- owned items list for info
+    
+    ---@type number
+    a.SalaryLeft = nil -- salary left to send to player
     
     return a
 end

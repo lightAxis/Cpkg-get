@@ -223,6 +223,7 @@ builder:addStruct(struct("info_t", "all information table of one person", {
         "history field of info. go"),
     field("Items", fieldType(efieldType.table, "number", builder:getStructClassName("item_t")),
         fieldInit(efieldType.table, nil, nil), "owned items list for info"),
+    field("SalaryLeft", fieldType(efieldType.num), fieldInit(efieldType.nil_), "salary left to send to player")
 }))
 
 --- header
