@@ -31,5 +31,6 @@ Sallo.Web = {}
 Sallo.Web.Protocol = require("Sallo.include.Web.Protocol.Include")
 Sallo.Web.Handle = require("Sallo.include.Web.Handle")
 Sallo.Web.Server = require("Sallo.include.Web.Server")
+Sallo.Web.Client = require("Sallo.include.Web.Client")
 
 return Sallo
