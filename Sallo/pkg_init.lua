@@ -23,6 +23,8 @@ Sallo.ENV = {}
 ---@type string
 Sallo.ENV.PATH = fs.getDir(args[2])
 
+Sallo.PlayerLeveler = require("Sallo.include.PlayerLeveler")
+
 Sallo.Param = require("Sallo.include.Param.param")
 
 Sallo.Web = {}
