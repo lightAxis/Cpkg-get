@@ -1,13 +1,13 @@
 --- include
 local THIS = PKGS.Sallo
 local protocol = THIS.Web.Protocol
-local handle = THIS.Web.Handle:new()
+local handle = THIS.Web.Handle
 local class = require("Class.middleclass")
 local param = THIS.Param
 local PlayerLeveler = THIS.PlayerLeveler
 
 local Golkin = DEPS.Sallo.Golkin
-local Golkin_handle = Golkin.Web.Handle:new()
+local Golkin_handle = Golkin.Web.Handle
 local Golkin_client = Golkin.Web.Client:new()
 local Golkin_protocol = Golkin.Web.Protocol
 local Golkin_param = Golkin.ENV.CONST
@@ -24,8 +24,9 @@ local Golkin_param = Golkin.ENV.CONST
 ---@field __PlayerDetector Vef.AP.PlayerDetector
 ---@field __ChatBox Vef.AP.ChatBox
 ---@field __ChatBoxQueue table<number, Sallo.Web.Server.ChatBoxContent>
----@field __cachedInfos table<number, Sallo.Web.Protocol.Struct.info_t>
+---@field __cachedInfos table<string, Sallo.Web.Protocol.Struct.info_t>
 ---@field __infoPath string
+---@field new fun(self:Sallo.Web.Server):Sallo.Web.Server
 local Server = class("Sallo.Web.Server")
 
 
@@ -59,10 +60,21 @@ function Server:initialize()
 
     self.__PlayerDetector = nil
     self.__ChatBox = nil
-    self.__ChatBoxQueue = nil
+    self.__ChatBoxQueue = {}
 
     self.__cachedInfos = {}
     self.__infoPath = THIS.ENV.PATH .. param.Web.info_dir
+    if (fs.exists(self.__infoPath) == false) then
+        fs.makeDir(self.__infoPath)
+    end
+    local files = fs.list(self.__infoPath)
+    for k, v in pairs(files) do
+        local f = fs.open(self.__infoPath .. "/" .. v, "r")
+        ---@type Sallo.Web.Protocol.Struct.info_t
+        local info = textutils.unserialize(f.readAll())
+        f.close()
+        self.__cachedInfos[info.Name] = info
+    end
 
     --- attach handler of sallo
     self.__Sallo_handle:attachMsgHandle(protocol.Header.CHANGE_SKILL_STAT, function(msg, msgstruct)
@@ -87,9 +99,11 @@ function Server:initialize()
     end)
     self.__Sallo_handle:attachMsgHandle(protocol.Header.BUY_RANK, function(msg, msgstruct)
         ---@cast msgstruct Sallo.Web.Protocol.MsgStruct.BUY_RANK
+        self:__handle_BUY_RANK(msg, msgstruct)
     end)
     self.__Sallo_handle:attachMsgHandle(protocol.Header.BUY_THEMA, function(msg, msgstruct)
         ---@cast msgstruct Sallo.Web.Protocol.MsgStruct.BUY_THEMA
+        self:__handle_BUY_THEMA(msg, msgstruct)
     end)
 
     -- --- attach handler of golkin
@@ -223,8 +237,8 @@ function Server:find_peripheral(peripharalName, time)
     end
 
     local timerID = os.startTimer(time)
+    print("cannot find " .. peripharalName .. ", retry after " .. tostring(time) .. " sec...")
     while true do
-        print("cannot find " .. peripharalName .. ", retry...")
         local a, b, c, d = os.pullEvent()
         if a == "timer" and b == timerID then
             peripharal = peripheral.find(peripharalName)
@@ -233,6 +247,7 @@ function Server:find_peripheral(peripharalName, time)
                 os.cancelTimer(timerID)
                 return peripharal
             else
+                print("cannot find " .. peripharalName .. ", retry after " .. tostring(time) .. " sec...")
                 timerID = os.startTimer(time)
             end
         end
@@ -363,15 +378,17 @@ function Server:start()
     self:find_GolkinServerID();
 
     print("find player detector")
-    self.__PlayerDetector = self:find_peripheral(param.PlayerdetectorName)
+    -- self.__PlayerDetector = self:find_peripheral(param.PlayerdetectorName, 3)
 
     print("find chatbox")
-    self.__ChatBox = self:find_peripheral(param.ChatBoxName)
+    -- self.__ChatBox = self:find_peripheral(param.ChatBoxName, 3)
 
     -- for test
+    self.__PlayerDetector = {}
     self.__PlayerDetector.getOnlinePlayers = function()
         return { "test1", "test2" }
     end
+    self.__ChatBox = {}
     self.__ChatBox.sendMessage = function(message, prefix)
         local a = peripheral.wrap("top")
         a.print("chatbox message : " .. message .. "/" .. prefix)
@@ -409,10 +426,14 @@ function Server:start()
             print("start quarying player datas..")
             self:__quaryPlayerData()
             self.__PlayerQuaryTimerID = os.startTimer(10)
+            print("player quary finished!")
         end
         if a == "timer" and b == self.__ChatboxQueueTimerID then
+            print("----------------")
+            print("start chatbox queue thread..")
             self:__ChatboxQueueCheck()
             self.__ChatboxQueueTimerID = os.startTimer(30)
+            print("chatbox finished!")
         end
 
     end
@@ -936,13 +957,18 @@ function Server:__quaryPlayerData()
     for k, v in pairs(infos) do
         for kk, vv in pairs(currentPlayers) do
             if v.Name == vv then
-                if changeMin then self:changeMin(v) end
+                if changeMin then self:__changeMin(v) end
             end
         end
     end
 
     for k, v in pairs(infos) do
-        if changeDay then self:changeDay(v) end
+        if changeDay then self:__changeDay(v) end
+    end
+
+    -- save all infos
+    for k, v in pairs(infos) do
+        self:__saveInfo(v)
     end
 end
 
@@ -974,7 +1000,7 @@ end
 
 ---change min of info
 ---@param info Sallo.Web.Protocol.Struct.info_t
-function Server:changeMin(info)
+function Server:__changeMin(info)
     local pl = PlayerLeveler:new(info)
     pl:addMin()
     self:__extractMsgsFromPlayerLeveler(pl)
@@ -982,7 +1008,7 @@ end
 
 --- change day of info
 ---@param info Sallo.Web.Protocol.Struct.info_t
-function Server:changeDay(info)
+function Server:__changeDay(info)
     local pl = PlayerLeveler:new(info)
     local todayGold = pl:addDay()
 
@@ -1049,3 +1075,5 @@ function Server:__ChatboxQueueCheck()
     end
 
 end
+
+return Server
