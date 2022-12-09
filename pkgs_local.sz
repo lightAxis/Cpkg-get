@@ -74,6 +74,7 @@
       "gen_Sallo_protocol",
       "gen_param_table",
       "see_scene",
+      "start_server",
     },
     Upgradable = false,
     DescPath = "Cpkg-get/Sallo/pkg_info.sz",
