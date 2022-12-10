@@ -191,7 +191,7 @@ for i = 1, #temp, 1 do
     tb_CON_stat[i] = temp[i]
 end
 
-local PRO_min = 9160 / 60 / 10
+local PRO_min = 6000 / 60 / 10
 local PRO_max = 37302 / 60 / 10
 local tb_PRO_stat = gen_sk(skill_max_level, PRO_min, PRO_max)
 
