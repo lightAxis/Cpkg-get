@@ -312,7 +312,7 @@ function Server:make_new_info()
     main_t.Act_gauge = 480
     main_t.Act_left = 480
     main_t.Exp = 0
-    main_t.Exp_gauge = param.Level[1].mxp_gauge
+    main_t.Exp_gauge = param.Level[1].exp_gauge
     main_t.Level = 1
     main_t.Rank = protocol.Enum.RANK_NAME.UNRANKED
     new_info.Main = main_t
@@ -333,7 +333,7 @@ function Server:make_new_info()
     stat_t.Act_per_minute = param.ACT_per_min_default * stat_t.Act_amplifier
     stat_t.Exp_per_act = param.Skill.EFF[0].EXP_per_ACT
     stat_t.Exp_per_min = stat_t.Exp_per_act * stat_t.Act_per_minute
-    stat_t.Gold_per_act = param.Skill.PRO[0].SAL_per_ACT
+    stat_t.Gold_per_act = param.Skill.PRO[0].GOLD_per_ACT
     stat_t.Gold_per_minute = stat_t.Gold_per_act * stat_t.Act_per_minute
     new_info.Stat = stat_t
 
@@ -771,6 +771,15 @@ function Server:__handle_BUY_RANK(msg, msgStruct)
         return nil
     end
 
+    -- if there is no account linked
+    if curr_info.AccountName == nil then
+        replyMsgStruct.state = replyEnum.NO_CONNECTED_ACCOUNT
+        replyMsgStruct.success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        return nil
+    end
+
     -- prepare send struct
     local send_t = Golkin_client:getSend_t()
     send_t.owner = curr_info.Name
@@ -874,6 +883,14 @@ function Server:__handle_BUY_THEMA(msg, msgStruct)
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
         self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
         return nil
+    end
+
+    -- if there is no linked account to pay
+    if curr_info.AccountName == nil then
+        replyMsgStruct.state = replyEnum.NO_CONNECTED_ACCOUNT
+        replyMsgStruct.success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
     end
 
     -- prepare send struct

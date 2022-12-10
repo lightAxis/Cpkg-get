@@ -9,8 +9,9 @@ a.ACK_BUY_THEMA_R = {
     ["SALLO_PASSWORD_UNMET"] = -702, -- password of sallo info unmnet
     ["THEMA_ALREADY_EXIST"] = -703, -- thema already exist in item
     ["THEMA_UNLOCK_CONDITION_UNMET"] = -704, -- the unlock condition of this thema is unmet
-    ["BANKING_REQUEST_TIMEOUT"] = -705, -- banking request timeout
-    ["BANKING_ERROR"] = -706, -- when banking error occurs
+    ["NO_CONNECTED_ACCOUNT"] = -705, -- no connected account to pay
+    ["BANKING_REQUEST_TIMEOUT"] = -706, -- banking request timeout
+    ["BANKING_ERROR"] = -707, -- when banking error occurs
     ["NORMAL"] = 0, -- standard for success
     ["SUCCESS"] = 701, -- success
 }
@@ -72,8 +73,9 @@ a.ACK_BUY_RANK_R = {
     ["SALLO_PASSWORD_UNMET"] = -602, -- password of sallo info unmnet
     ["RANK_ALREADY_EXIST"] = -603, -- rank already bought
     ["RANK_UNLOCK_CONDITION_UNMET"] = -604, -- the unlock condition of this rank is unmet
-    ["BANKING_REQUEST_TIMEOUT"] = -605, -- banking request timeout
-    ["BANKING_ERROR"] = -606, -- when banking error occurs
+    ["NO_CONNECTED_ACCOUNT"] = -605, -- no connected account to pay
+    ["BANKING_REQUEST_TIMEOUT"] = -606, -- banking request timeout
+    ["BANKING_ERROR"] = -607, -- when banking error occurs
     ["NORMAL"] = 0, -- standard for success
     ["SUCCESS"] = 601, -- success
 }

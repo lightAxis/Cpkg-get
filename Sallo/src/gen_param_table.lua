@@ -58,13 +58,13 @@ local function gen_txp()
     local total_num = 159
     local tb = {}
     table.insert(tb, 0)
-    tb[1] = 100
+    tb[1] = 1000
     for i = 2, total_num, 1 do
         local d = 0
-        if (i <= 39) then d = 1.214575
-        elseif i <= 79 then d = 17.27767
-        elseif i <= 119 then d = 26.0394
-        elseif i <= 159 then d = 79.32645
+        if (i <= 39) then d = 12.14575
+        elseif i <= 79 then d = 172.7767
+        elseif i <= 119 then d = 260.394
+        elseif i <= 159 then d = 793.2645
         end
         tb[i] = tb[i - 1] + d
     end
@@ -191,8 +191,8 @@ for i = 1, #temp, 1 do
     tb_CON_stat[i] = temp[i]
 end
 
-local PRO_min = 9160
-local PRO_max = 37302
+local PRO_min = 9160 / 60 / 10
+local PRO_max = 37302 / 60 / 10
 local tb_PRO_stat = gen_sk(skill_max_level, PRO_min, PRO_max)
 
 glob = {}
