@@ -121,8 +121,9 @@ builder:addEnum(enum("ACK_BUY_RANK_R", "reply enum of ACK_BUY_RANK", {
     enumElm("SALLO_PASSWORD_UNMET", -602, "password of sallo info unmnet"),
     enumElm("RANK_ALREADY_EXIST", -603, "rank already bought"),
     enumElm("RANK_UNLOCK_CONDITION_UNMET", -604, "the unlock condition of this rank is unmet"),
-    enumElm("BANKING_REQUEST_TIMEOUT", -605, "banking request timeout"),
-    enumElm("BANKING_ERROR", -606, "when banking error occurs"),
+    enumElm("NO_CONNECTED_ACCOUNT", -605, "no connected account to pay"),
+    enumElm("BANKING_REQUEST_TIMEOUT", -606, "banking request timeout"),
+    enumElm("BANKING_ERROR", -607, "when banking error occurs"),
     enumElm("NORMAL", 0, "standard for success"),
     enumElm("SUCCESS", 601, "success")
 }))
@@ -133,8 +134,9 @@ builder:addEnum(enum("ACK_BUY_THEMA_R", "reply enum of ACK_BUY_THEMA", {
     enumElm("SALLO_PASSWORD_UNMET", -702, "password of sallo info unmnet"),
     enumElm("THEMA_ALREADY_EXIST", -703, "thema already exist in item"),
     enumElm("THEMA_UNLOCK_CONDITION_UNMET", -704, "the unlock condition of this thema is unmet"),
-    enumElm("BANKING_REQUEST_TIMEOUT", -705, "banking request timeout"),
-    enumElm("BANKING_ERROR", -706, "when banking error occurs"),
+    enumElm("NO_CONNECTED_ACCOUNT", -705, "no connected account to pay"),
+    enumElm("BANKING_REQUEST_TIMEOUT", -706, "banking request timeout"),
+    enumElm("BANKING_ERROR", -707, "when banking error occurs"),
     enumElm("NORMAL", 0, "standard for success"),
     enumElm("SUCCESS", 701, "success")
 }))
