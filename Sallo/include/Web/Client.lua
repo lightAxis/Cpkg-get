@@ -7,6 +7,7 @@ local class = require("Class.middleclass")
 
 ---@class Sallo.Web.Client
 ---@field __SalloServerID number
+---@field new fun(self:Sallo.Web.Client):Sallo.Web.Client
 local Client = class("Sallo.Web.Client")
 
 function Client:initialize()
