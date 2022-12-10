@@ -44,6 +44,9 @@ local Server = class("Sallo.Web.Server")
 
 
 function Server:initialize()
+    -- for test
+    self.__tempCount = 0
+
     self.__Sallo_handle = handle:new()
     self.__Golkin_handle = Golkin_handle:new()
 
@@ -51,10 +54,12 @@ function Server:initialize()
     self.__EventQueue = {}
 
     self.__PlayerQuaryTimerID = nil
+    self.__PlayerQuaryDuration = 10
     self.__lastPlayerQuaryMinuteStr = nil
     self.__lastPlayerQuaryDayStr = nil
 
     self.__ChatboxQueueTimerID = nil
+    self.__ChatboxQueueDuration = 30
 
     self.__GolkinServerID = nil
 
@@ -309,8 +314,8 @@ function Server:make_new_info()
     new_info.Histories = {}
 
     local main_t = protocol.Struct.main_t:new()
-    main_t.Act_gauge = 480
-    main_t.Act_left = 480
+    main_t.Act_gauge = param.ACT_TOTAL
+    main_t.Act_left = param.ACT_TOTAL
     main_t.Exp = 0
     main_t.Exp_gauge = param.Level[1].exp_gauge
     main_t.Level = 1
@@ -386,23 +391,21 @@ function Server:start()
     -- for test
     self.__PlayerDetector = {}
     self.__PlayerDetector.getOnlinePlayers = function()
-        return { "test1", "test2" }
+        return { "test1", "test2", "test11" }
     end
     self.__ChatBox = {}
     self.__ChatBox.sendMessage = function(message, prefix)
-        local a = peripheral.wrap("top")
-        a.print("chatbox message : " .. message .. "/" .. prefix)
+        print("chatbox message : " .. message .. "/" .. prefix)
     end
     self.__ChatBox.sendMessageToPlayer = function(message, user, prefix)
-        local a = peripheral.wrap("top")
-        a.print("chatbox message : " .. message .. "/" .. prefix .. "/" .. user)
+        print("chatbox message : " .. message .. "/" .. prefix .. "/" .. user)
     end
 
     print("start ChatBox thread, 30 sec")
-    self.__ChatboxQueueTimerID = os.startTimer(30)
+    self.__ChatboxQueueTimerID = os.startTimer(self.__ChatboxQueueDuration)
 
     print("start player detector thread, 10 sec")
-    self.__PlayerQuaryTimerID = os.startTimer(10)
+    self.__PlayerQuaryTimerID = os.startTimer(self.__PlayerQuaryDuration)
 
     self.__lastPlayerQuaryDayStr = os.date('%d')
     self.__lastPlayerQuaryMinuteStr = os.date('%M')
@@ -425,14 +428,14 @@ function Server:start()
             print("----------------")
             print("start quarying player datas..")
             self:__quaryPlayerData()
-            self.__PlayerQuaryTimerID = os.startTimer(10)
+            self.__PlayerQuaryTimerID = os.startTimer(self.__PlayerQuaryDuration)
             print("player quary finished!")
         end
         if a == "timer" and b == self.__ChatboxQueueTimerID then
             print("----------------")
             print("start chatbox queue thread..")
             self:__ChatboxQueueCheck()
-            self.__ChatboxQueueTimerID = os.startTimer(30)
+            self.__ChatboxQueueTimerID = os.startTimer(self.__ChatboxQueueDuration)
             print("chatbox finished!")
         end
 
@@ -459,7 +462,7 @@ function Server:__handle_GET_INFO(msg, msgstruct)
     print("handle GET_INFO msg")
     local replyMsgStruct = protocol.MsgStruct.ACK_GET_INFO:new()
     local replyEnum = protocol.Enum.ACK_GET_INFO_R
-    local replyEnum_INV = protocol.Enum_INV.ACK_GET_INFOS_R_INV
+    local replyEnum_INV = protocol.Enum_INV.ACK_GET_INFO_R_INV
     local replyHeader = protocol.Header.ACK_GET_INFO
 
     --- try query info table
@@ -488,25 +491,29 @@ function Server:__handle_GET_INFOS(msg, msgstruct)
     print("handle GET_INFOS msg")
     local replyMsgStruct = protocol.MsgStruct.ACK_GET_INFOS:new()
     local replyEnum = protocol.Enum.ACK_GET_INFOS_R
+    local replyEnum_INV = protocol.Enum_INV.ACK_GET_INFOS_R_INV
     local replyHeader = protocol.Header.ACK_GET_INFOS
 
+    local infoNames = {}
+    for k, v in pairs(self.__cachedInfos) do
+        table.insert(infoNames, k)
+    end
+
     -- chck cached info count
-    if #(self.__cachedInfos) == 0 then
-        replyMsgStruct.state = replyEnum.INFO_NOT_EXIST
-        replyMsgStruct.success = replyEnum.NORMAL < replyMsgStruct.state
+    if #(infoNames) == 0 then
+        replyMsgStruct.State = replyEnum.NO_INFO_EXIST
+        replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
         return nil
     end
 
     -- gen msgstruct
-    local names = {}
-    for k, v in pairs(self.__cachedInfos) do
-        table.insert(names, v.Name)
-    end
-    replyMsgStruct.infos = names
-    replyMsgStruct.state = replyEnum.SUCCESS
-    replyMsgStruct.success = replyEnum.NORMAL < replyMsgStruct.state
+    replyMsgStruct.Infos = infoNames
+    replyMsgStruct.State = replyEnum.SUCCESS
+    replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
     self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+    self:__display_result_msg(true, replyMsgStruct.State, replyEnum_INV)
 end
 
 ---handle REGISTER_INFO msg
@@ -556,7 +563,7 @@ function Server:__handle_SET_INFO_CONNECTED_ACCOUNT(msg, msgStruct)
     -- try parse info from cache
     local prev_info = self:__getInfo(msgStruct.InfoName)
     if prev_info == nil then
-        replyMsgStruct.State = replyEnum.ACCOUNT_NOT_EXIST
+        replyMsgStruct.State = replyEnum.INFO_NOT_EXIST
         replyMsgStruct.Success = false
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
         self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
@@ -580,6 +587,15 @@ function Server:__handle_SET_INFO_CONNECTED_ACCOUNT(msg, msgStruct)
     local golkin_replyEnum = Golkin_protocol.Enum.ACK_GET_ACCOUNT_R
     local golkin_replyEnum_INV = Golkin_protocol.Enum_INV.ACK_GET_ACCOUNT_R_INV
     ---@cast golkinMsgStruct Golkin.Web.Protocol.MsgStruct.ACK_GET_ACCOUNT
+
+    -- if bank request timeout
+    if golkinMsg == nil then
+        replyMsgStruct.State = replyEnum.BANKING_REQUEST_TIMEOUT
+        replyMsgStruct.Success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
+        return nil
+    end
 
     -- if banking failed with no account error
     if golkinMsgStruct.State == golkin_replyEnum.NO_ACCOUNT_FOR_NAME then
@@ -662,6 +678,9 @@ function Server:__handle_CHANGE_SKILL_STAT(msg, msgStruct)
 
     -- change skillstate to new one
     prev_info.SkillState = msgStruct.SkillState
+    local playerLeveler = PlayerLeveler:new(prev_info)
+    playerLeveler:refresh_stat()
+    prev_info = playerLeveler:getPlayerInfo()
     self:__saveInfo(prev_info)
 
     -- return success
@@ -683,40 +702,47 @@ function Server:__checkSkillStateValid(skillState, curr_info)
         skillState.Proficiency_level > 16 or
         skillState.Efficiency_level < 0 or skillState.Concentration_level < 0 or
         skillState.Proficiency_level < 0 then
+        print("skill level is starange, deny skill stat")
         return false
     end
 
     -- check skillstate total sp plus left sp to check with param
-    local total_sp_basic = skillState.Total_sp + skillState.Left_sp
+    local total_sp_basic = skillState.Total_sp
     if total_sp_basic ~= param.Level[curr_info.Main.Level].skill_pt_stack then
+        print("total skill point is starange, deny skill stat")
         return false
     end
 
     -- impossible skill level for current rank check
     local curr_rank_level = param.Rank[curr_info.Main.Rank].rank_level
-    if param.Skill.EFF[skillState.Efficiency_level].unlock_rank_level > curr_rank_level or
-        param.Skill.CON[skillState.Concentration_level].unlock_rank_level > curr_rank_level or
-        param.Skill.PRO[skillState.Proficiency_level].unlock_rank_level > curr_rank_level then
+    if (skillState.Efficiency_level >= 1 and
+        param.Skill.EFF[skillState.Efficiency_level].unlock_rank_level > curr_rank_level) or
+        (skillState.Concentration_level >= 1 and
+            param.Skill.CON[skillState.Concentration_level].unlock_rank_level > curr_rank_level) or
+        (skillState.Proficiency_level >= 1 and
+            param.Skill.PRO[skillState.Proficiency_level].unlock_rank_level > curr_rank_level) then
+        print("skill unlock condition is strange, deny skill stat")
         return false
     end
 
     -- get total sp of all skills
-    local total_sp
+    local used_sp = 0
     for i = 0, skillState.Efficiency_level, 1 do
-        total_sp = total_sp + param.Skill.EFF[i].require_sp
+        used_sp = used_sp + param.Skill.EFF[i].require_sp
     end
     for i = 0, skillState.Concentration_level, 1 do
-        total_sp = total_sp + param.Skill.CON[i].require_sp
+        used_sp = used_sp + param.Skill.CON[i].require_sp
     end
     for i = 0, skillState.Proficiency_level, 1 do
-        total_sp = total_sp + param.Skill.PRO[i].require_sp
+        used_sp = used_sp + param.Skill.PRO[i].require_sp
     end
-    total_sp = total_sp - param.Skill.EFF[skillState.Efficiency_level].require_sp
-    total_sp = total_sp - param.Skill.CON[skillState.Concentration_level].require_sp
-    total_sp = total_sp - param.Skill.PRO[skillState.Proficiency_level].require_sp
+    used_sp = used_sp - param.Skill.EFF[skillState.Efficiency_level].require_sp
+    used_sp = used_sp - param.Skill.CON[skillState.Concentration_level].require_sp
+    used_sp = used_sp - param.Skill.PRO[skillState.Proficiency_level].require_sp
 
     -- check total used sp with skillstate used sp
-    if skillState.Total_sp ~= total_sp then
+    if (skillState.Total_sp - skillState.Left_sp) ~= used_sp then
+        print("used skill point is strange. deny skill stat")
         return false
     end
 
@@ -736,47 +762,47 @@ function Server:__handle_BUY_RANK(msg, msgStruct)
     -- try get current info
     local curr_info = self:__getInfo(msgStruct.OwnerName)
     if curr_info == nil then
-        replyMsgStruct.state = replyEnum.NO_INFO
-        replyMsgStruct.success = false
+        replyMsgStruct.State = replyEnum.NO_INFO
+        replyMsgStruct.Success = false
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
         return nil
     end
 
     -- if info passwd unmet
     if curr_info.Password ~= msgStruct.InfoPasswd then
-        replyMsgStruct.state = replyEnum.SALLO_PASSWORD_UNMET
-        replyMsgStruct.success = false
+        replyMsgStruct.State = replyEnum.SALLO_PASSWORD_UNMET
+        replyMsgStruct.Success = false
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
         return nil
     end
 
     -- if reply msgstruct already achieved
     if curr_info.Main.Rank >= msgStruct.Rank then
-        replyMsgStruct.state = replyEnum.RANK_ALREADY_EXIST
-        replyMsgStruct.success = false
+        replyMsgStruct.State = replyEnum.RANK_ALREADY_EXIST
+        replyMsgStruct.Success = false
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
         return nil
     end
 
     -- check rank validity condition
     if param.Rank[msgStruct.Rank].level_min > curr_info.Main.Level or
         msgStruct.Rank == protocol.Enum.RANK_NAME.UNRANKED then
-        replyMsgStruct.state = replyEnum.RANK_UNLOCK_CONDITION_UNMET
-        replyMsgStruct.success = false
+        replyMsgStruct.State = replyEnum.RANK_UNLOCK_CONDITION_UNMET
+        replyMsgStruct.Success = false
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
         return nil
     end
 
     -- if there is no account linked
     if curr_info.AccountName == nil then
-        replyMsgStruct.state = replyEnum.NO_CONNECTED_ACCOUNT
-        replyMsgStruct.success = false
+        replyMsgStruct.State = replyEnum.NO_CONNECTED_ACCOUNT
+        replyMsgStruct.Success = false
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
         return nil
     end
 
@@ -802,21 +828,21 @@ function Server:__handle_BUY_RANK(msg, msgStruct)
 
     -- if timeout
     if golkin_msg == nil then
-        replyMsgStruct.state = replyEnum.BANKING_REQUEST_TIMEOUT
-        replyMsgStruct.success = false
+        replyMsgStruct.State = replyEnum.BANKING_REQUEST_TIMEOUT
+        replyMsgStruct.Success = false
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
         return nil
     end
 
     -- if banking has error
     if golkin_msgStruct.Success == false then
-        replyMsgStruct.state = replyEnum.BANKING_ERROR
-        replyMsgStruct.success = false
+        replyMsgStruct.State = replyEnum.BANKING_ERROR
+        replyMsgStruct.Success = false
         replyMsgStruct.banking_state = golkin_msgStruct.State
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
-        self:__display_result_msg(false, golkin_msgStruct, golkin_enum_INV)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
+        self:__display_result_msg(false, golkin_msgStruct.State, golkin_enum_INV)
         return nil
     end
 
@@ -825,11 +851,11 @@ function Server:__handle_BUY_RANK(msg, msgStruct)
     self:__saveInfo(curr_info)
 
     -- send success
-    replyMsgStruct.state = replyEnum.SUCCESS
-    replyMsgStruct.success = true
+    replyMsgStruct.State = replyEnum.SUCCESS
+    replyMsgStruct.Success = true
     replyMsgStruct.banking_state = golkin_msgStruct.State
     self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-    self:__display_result_msg(true, replyMsgStruct.state, replyEnum_INV)
+    self:__display_result_msg(true, replyMsgStruct.State, replyEnum_INV)
 end
 
 ---handle msg BUT_THEMA
@@ -844,19 +870,19 @@ function Server:__handle_BUY_THEMA(msg, msgStruct)
     -- try get current info
     local curr_info = self:__getInfo(msgStruct.OwnerName)
     if curr_info == nil then
-        replyMsgStruct.state = replyEnum.NO_INFO
-        replyMsgStruct.success = false
+        replyMsgStruct.State = replyEnum.NO_INFO
+        replyMsgStruct.Success = false
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
         return nil
     end
 
     -- if info passwd unmet
     if curr_info.Password ~= msgStruct.InfoPasswd then
-        replyMsgStruct.state = replyEnum.SALLO_PASSWORD_UNMET
-        replyMsgStruct.success = false
+        replyMsgStruct.State = replyEnum.SALLO_PASSWORD_UNMET
+        replyMsgStruct.Success = false
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
         return nil
     end
 
@@ -869,28 +895,28 @@ function Server:__handle_BUY_THEMA(msg, msgStruct)
         end
     end
     if thema_already_exist == true then
-        replyMsgStruct.state = replyEnum.THEMA_ALREADY_EXIST
-        replyMsgStruct.success = false
+        replyMsgStruct.State = replyEnum.THEMA_ALREADY_EXIST
+        replyMsgStruct.Success = false
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
         return nil
     end
 
     -- check rank validity condition
     if param.Price.Thema[msgStruct.Thema].unlocked_rank_level < curr_info.Main.Rank then
-        replyMsgStruct.state = replyEnum.THEMA_UNLOCK_CONDITION_UNMET
-        replyMsgStruct.success = false
+        replyMsgStruct.State = replyEnum.THEMA_UNLOCK_CONDITION_UNMET
+        replyMsgStruct.Success = false
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
         return nil
     end
 
     -- if there is no linked account to pay
     if curr_info.AccountName == nil then
-        replyMsgStruct.state = replyEnum.NO_CONNECTED_ACCOUNT
-        replyMsgStruct.success = false
+        replyMsgStruct.State = replyEnum.NO_CONNECTED_ACCOUNT
+        replyMsgStruct.Success = false
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
     end
 
     -- prepare send struct
@@ -915,21 +941,21 @@ function Server:__handle_BUY_THEMA(msg, msgStruct)
 
     -- if timeout
     if golkin_msg == nil then
-        replyMsgStruct.state = replyEnum.BANKING_REQUEST_TIMEOUT
-        replyMsgStruct.success = false
+        replyMsgStruct.State = replyEnum.BANKING_REQUEST_TIMEOUT
+        replyMsgStruct.Success = false
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
         return nil
     end
 
     -- if banking has error
     if golkin_msgStruct.Success == false then
-        replyMsgStruct.state = replyEnum.BANKING_ERROR
-        replyMsgStruct.success = false
+        replyMsgStruct.State = replyEnum.BANKING_ERROR
+        replyMsgStruct.Success = false
         replyMsgStruct.banking_state = golkin_msgStruct.State
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-        self:__display_result_msg(false, replyMsgStruct.state, replyEnum_INV)
-        self:__display_result_msg(false, golkin_msgStruct, golkin_enum_INV)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
+        self:__display_result_msg(false, golkin_msgStruct.State, golkin_enum_INV)
         return nil
     end
 
@@ -941,10 +967,10 @@ function Server:__handle_BUY_THEMA(msg, msgStruct)
     self:__saveInfo(curr_info)
 
     -- return success msg
-    replyMsgStruct.state = replyEnum.SUCCESS
-    replyMsgStruct.success = true
+    replyMsgStruct.State = replyEnum.SUCCESS
+    replyMsgStruct.Success = true
     self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
-    self:__display_result_msg(true, replyMsgStruct.state, replyEnum_INV)
+    self:__display_result_msg(true, replyMsgStruct.State, replyEnum_INV)
 end
 
 --- quary player online data, do player info refresh
@@ -962,6 +988,8 @@ function Server:__quaryPlayerData()
     end
 
     -- day changed
+    self.__tempCount = self.__tempCount + 1
+    print(self.__tempCount)
     if currDay ~= self.__lastPlayerQuaryDayStr then
         changeDay = true
     end
@@ -969,6 +997,11 @@ function Server:__quaryPlayerData()
     self.__lastPlayerQuaryDayStr = currDay
     self.__lastPlayerQuaryMinuteStr = currMin
 
+    -- for test
+    changeMin = true
+    if (self.__tempCount % 480 == 0) then
+        changeDay = true
+    end
 
     -- cached & exist now
     for k, v in pairs(infos) do
@@ -1038,6 +1071,13 @@ function Server:__changeDay(info)
     -- add msgs
     self:__extractMsgsFromPlayerLeveler(pl)
 
+    -- if no account linked, skip
+    if info.AccountName == nil then
+        info.SalaryLeft = info.SalaryLeft + todayGold
+        pl:flushMsgs()
+        return nil
+    end
+
     -- make send request to golkin
     local send_t = Golkin_client:getSend_t()
     send_t.owner = param.account.owner
@@ -1047,6 +1087,15 @@ function Server:__changeDay(info)
     send_t.to = info.AccountName
     send_t.toMsg = "Salary"
     send_t.balance = todayGold
+
+    -- if salaryLeft is left, send with it
+    if info.SalaryLeft > 0.001 then
+        send_t.balance = send_t.balance + info.SalaryLeft
+        info.SalaryLeft = 0
+        send_t.toMsg = send_t.toMsg .. "+Old"
+        send_t.fromMsg = info.Name .. " : " .. string.format("%.2f", send_t.balance)
+    end
+
     Golkin_client:send_SEND(send_t)
 
     -- await for golkin response
@@ -1058,21 +1107,22 @@ function Server:__changeDay(info)
     if replyMsg == nil then
         info.SalaryLeft = info.SalaryLeft + todayGold
         print("salary send timeout!")
-        print("player name : " .. info.Name, " / salary : " .. string.format("%.2f", todayGold))
+        print("player name : " .. info.Name, " / salary : " .. string.format("%.2f", send_t.balance))
+        return nil
     end
 
     --reply is not good
     if replyMsgStruct.Success == false then
         info.SalaryLeft = info.SalaryLeft + todayGold
         print("salary send failed!")
-        print("player name : " .. info.Name, " / salary : " .. string.format("%.2f", todayGold))
+        print("player name : " .. info.Name, " / salary : " .. string.format("%.2f", send_t.balance))
         self:__display_result_msg(false, replyMsgStruct.State, Golkin_protocol.Enum_INV.ACK_SEND_R_INV)
         return nil
     end
 
     -- success
     print("salary sended!")
-    print("player name : " .. info.Name, " / salary : " .. string.format("%.2f", todayGold))
+    print("player name : " .. info.Name, " / salary : " .. string.format("%.2f", send_t.balance))
 
 end
 
