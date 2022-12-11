@@ -28,6 +28,4 @@ app:add_addon(bt_sallo,
         app.UIRunner:attachScene(app.Sallo.Scene.InfoMenu)
     end)
 
-
-
 return app
