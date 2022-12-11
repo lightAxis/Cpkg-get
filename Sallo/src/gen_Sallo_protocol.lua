@@ -316,10 +316,10 @@ builder:addHeader(struct("BUY_THEMA", "buy skill from account", {
 }))
 
 builder:addHeader(struct("ACK_BUY_THEMA", "reply msg of BUY_THEMA", {
-    field("state", fieldType(efieldType.custom, builder:getEnumClassName("ACK_BUY_THEMA_R")),
+    field("State", fieldType(efieldType.custom, builder:getEnumClassName("ACK_BUY_THEMA_R")),
         fieldInit(efieldType.num, -1), "result state enum"),
-    field("banking_state", fieldType(efieldType.num), fieldInit(efieldType.num, -1), "banking state from golkin"),
-    field("success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not")
+    field("Banking_state", fieldType(efieldType.num), fieldInit(efieldType.num, -1), "banking state from golkin"),
+    field("Success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not")
 }))
 
 
