@@ -383,23 +383,23 @@ function Server:start()
     self:find_GolkinServerID();
 
     print("find player detector")
-    -- self.__PlayerDetector = self:find_peripheral(param.PlayerdetectorName, 3)
+    self.__PlayerDetector = self:find_peripheral(param.PlayerdetectorName, 3)
 
     print("find chatbox")
-    -- self.__ChatBox = self:find_peripheral(param.ChatBoxName, 3)
+    self.__ChatBox = self:find_peripheral(param.ChatBoxName, 3)
 
     -- for test
-    self.__PlayerDetector = {}
-    self.__PlayerDetector.getOnlinePlayers = function()
-        return { "test1", "test2", "test11" }
-    end
-    self.__ChatBox = {}
-    self.__ChatBox.sendMessage = function(message, prefix)
-        print("chatbox message : " .. message .. "/" .. prefix)
-    end
-    self.__ChatBox.sendMessageToPlayer = function(message, user, prefix)
-        print("chatbox message : " .. message .. "/" .. prefix .. "/" .. user)
-    end
+    -- self.__PlayerDetector = {}
+    -- self.__PlayerDetector.getOnlinePlayers = function()
+    --     return { "test1", "test2", "test11" }
+    -- end
+    -- self.__ChatBox = {}
+    -- self.__ChatBox.sendMessage = function(message, prefix)
+    --     print("chatbox message : " .. message .. "/" .. prefix)
+    -- end
+    -- self.__ChatBox.sendMessageToPlayer = function(message, user, prefix)
+    --     print("chatbox message : " .. message .. "/" .. prefix .. "/" .. user)
+    -- end
 
     print("start ChatBox thread, 30 sec")
     self.__ChatboxQueueTimerID = os.startTimer(self.__ChatboxQueueDuration)
@@ -995,14 +995,13 @@ function Server:__quaryPlayerData()
 
     local changeMin = false
     local changeDay = false
+
     -- min changed
     if currMin ~= self.__lastPlayerQuaryMinuteStr then
         changeMin = true
     end
 
     -- day changed
-    self.__tempCount = self.__tempCount + 1
-    print(self.__tempCount)
     if currDay ~= self.__lastPlayerQuaryDayStr then
         changeDay = true
     end
@@ -1011,10 +1010,12 @@ function Server:__quaryPlayerData()
     self.__lastPlayerQuaryMinuteStr = currMin
 
     -- for test
-    changeMin = true
-    if (self.__tempCount % 480 == 0) then
-        changeDay = true
-    end
+    -- self.__tempCount = self.__tempCount + 1
+    -- print(self.__tempCount)
+    -- changeMin = true
+    -- if (self.__tempCount % 480 == 0) then
+    --     changeDay = true
+    -- end
 
     -- cached & exist now
     for k, v in pairs(infos) do

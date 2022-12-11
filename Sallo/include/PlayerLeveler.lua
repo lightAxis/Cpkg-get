@@ -27,9 +27,8 @@ end
 ---add chatbox event for player string
 ---@param string string
 function playerLeveler:addPlayerMsg(string)
-    print("add player msg!")
-    print(string)
     table.insert(self.__PlayerMsgs, string)
+    table.insert(self.__info.Histories, string)
 end
 
 ---get playermsgs in playerleveler
