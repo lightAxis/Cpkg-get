@@ -26,24 +26,26 @@ local glob = {}
 glob.ranks = {}
 glob.className = "Sallo.Param.Rank"
 for i = 1, #rankNames, 1 do
-    local a = {}
-    a.key = i
-    a.content = {}
-    a.content.rank_name = '"' .. rankNames[i] .. '"'
+    local a              = {}
+    a.key                = i
+    a.content            = {}
+    a.content.rank_name  = '"' .. rankNames[i] .. '"'
     a.content.rank_level = tostring(i)
-    a.content.level_min = 10 * (i - 1)
+    a.content.level_min  = 10 * (i - 1)
+    a.content.rank_rqr   = tostring(i - 1)
     -- a.mxp_gauge = tostring(mxp_rank[i])
     -- a.mxp_total = tostring(mxp_stack[i])
     -- a.skill_pt = tostring(skill_pt)
-    glob.ranks[i] = a
+    glob.ranks[i]        = a
 end
-local a = {}
-a.key = 0
-a.content = {}
-a.content.rank_name = '"Unranked"'
+local a              = {}
+a.key                = 0
+a.content            = {}
+a.content.rank_name  = '"Unranked"'
 a.content.rank_level = "0"
-a.content.level_min = 0
-glob.ranks[0] = a
+a.content.level_min  = 0
+a.content.rank_rqr   = -1
+glob.ranks[0]        = a
 
 cg:GenCode(glob, PKGS.Sallo.ENV.PATH .. "/include/param_template.em",
     PKGS.Sallo.ENV.PATH .. "/include/Param/param_rank.lua")

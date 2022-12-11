@@ -789,7 +789,7 @@ function Server:__handle_BUY_RANK(msg, msgStruct)
 
     -- check rank validity condition
     if param.Rank[msgStruct.Rank].level_min > curr_info.Main.Level or
-        msgStruct.Rank == protocol.Enum.RANK_NAME.UNRANKED then
+        param.Rank[msgStruct.Rank].rank_rqr > curr_info.Main.Rank then
         replyMsgStruct.State = replyEnum.RANK_UNLOCK_CONDITION_UNMET
         replyMsgStruct.Success = false
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)

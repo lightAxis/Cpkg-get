@@ -301,10 +301,10 @@ builder:addHeader(struct("BUY_RANK", "buy skill from account", {
 }))
 
 builder:addHeader(struct("ACK_BUY_RANK", "reply msg of BUY_RANK", {
-    field("state", fieldType(efieldType.custom, builder:getEnumClassName("ACK_BUY_RANK_R")),
+    field("State", fieldType(efieldType.custom, builder:getEnumClassName("ACK_BUY_RANK_R")),
         fieldInit(efieldType.num, -1), "result state enum"),
-    field("banking_state", fieldType(efieldType.num), fieldInit(efieldType.num, -1), "banking state from golkin"),
-    field("success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not")
+    field("Banking_state", fieldType(efieldType.num), fieldInit(efieldType.num, -1), "banking state from golkin"),
+    field("Success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not")
 }))
 
 builder:addHeader(struct("BUY_THEMA", "buy skill from account", {
