@@ -352,8 +352,8 @@ function Server:make_new_info()
     new_info.Statistics = statistics_t
 
     local thema_t = protocol.Struct.thema_t:new()
-    thema_t.Enum = protocol.Enum.THEMA.BACK_TO_NORMAL
-    thema_t.Name = "BACK_TO_NORMAL"
+    thema_t.Enum = protocol.Enum.THEMA.NO_THEMA
+    thema_t.Name = "No Thema"
     thema_t.isAquired = true
     thema_t.isVisible = true
     new_info.Thema = thema_t
@@ -903,7 +903,20 @@ function Server:__handle_BUY_THEMA(msg, msgStruct)
     end
 
     -- check rank validity condition
-    if param.Price.Thema[msgStruct.Thema].unlocked_rank_level > curr_info.Main.Rank then
+    local required_thema_exist = false
+    if param.Price.Thema[msgStruct.Thema] ~= nil then
+        local required_thema = param.Price.Thema[msgStruct.Thema].unlocked_thema_level
+        for k, v in pairs(curr_info.Items) do
+            if v.ItemType == protocol.Enum.ITEM_TYPE.THEMA and
+                v.ItemIndex == required_thema then
+                required_thema_exist = true
+                break
+            end
+        end
+    end
+    if param.Price.Thema[msgStruct.Thema] == nil or
+        param.Price.Thema[msgStruct.Thema].unlocked_rank_level > curr_info.Main.Rank or
+        required_thema_exist == false then
         replyMsgStruct.State = replyEnum.THEMA_UNLOCK_CONDITION_UNMET
         replyMsgStruct.Success = false
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
