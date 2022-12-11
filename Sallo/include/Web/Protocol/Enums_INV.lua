@@ -37,7 +37,7 @@ a.RANK_NAME_INV = {
     [14] = "ARCANE", -- level 14
     [15] = "BLUEHOLE", -- level 15
     [16] = "SKULL", -- level 16
-    [17] = "HALLOFFAME", -- level inf
+    [17] = "INFINITY", -- level inf
 }
 
 ---thema of sallo
@@ -61,8 +61,7 @@ a.THEMA_INV = {
     [14] = "THE_ONYX_NIGHT_SKY", -- level 14 light orange
     [15] = "EYE_OF_EVENT_HORIZON", -- level 15 purple, yellow
     [16] = "PETROLLIC_REPUBLIC", -- level 16 black
-    [17] = "HALLOFFAME", -- level inf
-    [18] = "BACK_TO_NORMAL", -- level 0 normal
+    [17] = "NEWBIE", -- level inf
 }
 
 ---reply enum of ACK_BUY_RANK

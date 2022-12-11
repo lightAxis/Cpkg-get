@@ -96,6 +96,12 @@ local a = {
         ["rank_name"] = "Skull",
         ["rank_rqr"] = 15,
     },
+    [17] = {
+        ["level_min"] = 160,
+        ["rank_level"] = 17,
+        ["rank_name"] = "Infinity",
+        ["rank_rqr"] = 16,
+    },
     [0] = {
         ["level_min"] = 0,
         ["rank_level"] = 0,

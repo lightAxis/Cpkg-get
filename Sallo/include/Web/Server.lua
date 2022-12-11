@@ -903,7 +903,7 @@ function Server:__handle_BUY_THEMA(msg, msgStruct)
     end
 
     -- check rank validity condition
-    if param.Price.Thema[msgStruct.Thema].unlocked_rank_level < curr_info.Main.Rank then
+    if param.Price.Thema[msgStruct.Thema].unlocked_rank_level > curr_info.Main.Rank then
         replyMsgStruct.State = replyEnum.THEMA_UNLOCK_CONDITION_UNMET
         replyMsgStruct.Success = false
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)

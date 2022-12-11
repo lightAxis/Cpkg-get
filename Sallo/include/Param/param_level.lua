@@ -950,8 +950,14 @@ local a = {
     },
     [159] = {
         ["exp_gauge"] = 50518.9465,
-        ["skill_pt"] = 0,
-        ["skill_pt_stack"] = 831,
+        ["skill_pt"] = 9,
+        ["skill_pt_stack"] = 840,
+        ["exp_stack"] = 2198577.32475,
+    },
+    [160] = {
+        ["exp_gauge"] = -1,
+        ["skill_pt"] = 160,
+        ["skill_pt_stack"] = 1000,
         ["exp_stack"] = 2198577.32475,
     },
 }

@@ -20,6 +20,7 @@ local rankNames = {
     "Arcane",
     "BlueHole",
     "Skull",
+    "Infinity"
 }
 
 local glob = {}
@@ -111,7 +112,7 @@ local function gen_sk_pt(total_num)
         if (i <= 39) then plus = 0
         elseif (i <= 79) then plus = 5
         elseif (i <= 119) then plus = 7
-        elseif (i < 159) then plus = 9
+        elseif (i <= 159) then plus = 9
         elseif (i >= 160) then plus = 160
         end
         tb[i] = plus
@@ -129,7 +130,7 @@ end
 local basic_max_hour = 8
 local xmp_per_minute = 50
 local max_day = 30
-local total_level = 159
+local total_level = 160
 
 local mxp_rank, mxp_stack = gen_txp()
 local skill_pt, skill_pt_stack = gen_sk_pt(total_level)
@@ -172,11 +173,11 @@ local function gen_sk(total_num, min, max)
     return tb
 end
 
-local skill_max_level = #rankNames
+local skill_max_level = #rankNames - 1
 local skill_stat_amp = 2.0
 
 local EFF_min = 10
-local EFF_max = 100
+local EFF_max = 42
 local tb_EFF_stat = gen_sk(skill_max_level, EFF_min, EFF_max)
 
 local CON_min = 1
@@ -200,7 +201,7 @@ local tb_PRO_stat = gen_sk(skill_max_level, PRO_min, PRO_max)
 glob = {}
 glob.className = "Sallo.Param.Skill.Efficiency"
 glob.ranks = {}
-for i = 0, #rankNames, 1 do
+for i = 0, #rankNames - 1, 1 do
     local a = {}
     a.key = i
     a.content = {}
@@ -226,7 +227,7 @@ cg:GenCode(glob, PKGS.Sallo.ENV.PATH .. "/include/param_template.em",
 glob = {}
 glob.className = "Sallo.Param.Skill.Concentration"
 glob.ranks = {}
-for i = 0, #rankNames, 1 do
+for i = 0, #rankNames - 1, 1 do
     local a = {}
     a.key = i
     a.content = {}
@@ -251,7 +252,7 @@ cg:GenCode(glob, PKGS.Sallo.ENV.PATH .. "/include/param_template.em",
 glob = {}
 glob.className = "Sallo.Param.Skill.Proficiency"
 glob.ranks = {}
-for i = 0, #rankNames, 1 do
+for i = 0, #rankNames - 1, 1 do
     local a = {}
     a.key = i
     a.content = {}

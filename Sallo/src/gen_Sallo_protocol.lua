@@ -34,7 +34,7 @@ builder:addEnum(enum("RANK_NAME", "enum name", {
     enumElm("ARCANE", 14, "level 14"),
     enumElm("BLUEHOLE", 15, "level 15"),
     enumElm("SKULL", 16, "level 16"),
-    enumElm("HALLOFFAME", 17, "level inf"),
+    enumElm("INFINITY", 17, "level inf"),
 }))
 
 builder:addEnum(enum("THEMA", "thema of sallo", {
@@ -56,8 +56,7 @@ builder:addEnum(enum("THEMA", "thema of sallo", {
     enumElm("THE_ONYX_NIGHT_SKY", 14, "level 14 light orange"),
     enumElm("EYE_OF_EVENT_HORIZON", 15, "level 15 purple, yellow"),
     enumElm("PETROLLIC_REPUBLIC", 16, "level 16 black"),
-    enumElm("HALLOFFAME", 17, "level inf"),
-    enumElm("BACK_TO_NORMAL", 18, "level 0 normal")
+    enumElm("NEWBIE", 17, "level inf"),
 }))
 
 builder:addEnum(enum("SKILLTYPE", "type of skill", {
