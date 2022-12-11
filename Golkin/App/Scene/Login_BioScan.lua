@@ -1,6 +1,8 @@
 local class = require("Class.middleclass")
 
 local TBL = DEPS.Golkin.Tabullet
+local THIS = PKGS.Golkin
+local protocol = THIS.Web.Protocol
 
 ---@class Golkin.App.Scene.Login_BioScan : Tabullet.UIScene
 ---@field Layout Golkin.App.Layout.Login_BioScan
@@ -66,17 +68,88 @@ end
 
 function SCENE:goto_PIN()
     self:detachHandlers()
-    self.PROJ.Scene.PIN.CurrentPrevScene = self.PROJ.Scene.PIN.ePrevScene.Bio
+
     self.PROJ.Scene.PIN:reset()
-    self.PROJ.Scene.PIN.OwnerName = self.Layout.tb_playerName:getText()
+    local ownerName = self.Layout.tb_playerName:getText()
+
+    self.PROJ.Scene.PIN.Event_bt_back = function(PIN)
+        ---@cast PIN Golkin.App.Scene.PIN
+        PIN:detachHandlers()
+        PIN.PROJ.Scene.Login_BioScan:reset()
+        PIN.PROJ.UIRunner:attachScene(PIN.PROJ.Scene.Login_BioScan)
+    end
+
+    self.PROJ.Scene.PIN.Event_bt_enter = function(PIN)
+        ---@cast PIN Golkin.App.Scene.PIN
+
+        PIN.PROJ.Handle:attachMsgHandle(protocol.Header.ACK_OWNER_LOGIN, function(msg, msgstruct)
+            ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.ACK_OWNER_LOGIN
+            if msgstruct.Success == false then
+                PIN:infoStr_error(protocol.Enum_INV.ACK_OWNER_LOGIN_R_INV[msgstruct.State])
+            else
+                self.PROJ.Data.CurrentOwner = protocol.Struct.Owner_t:new()
+                self.PROJ.Data.CurrentOwner.Name = ownerName
+                self.PROJ.Data.CurrentOwner.Password = PIN.password
+
+                PIN:detachHandlers()
+                self.PROJ.Scene.OwnerMenu:reset()
+                self.PROJ.UIRunner:attachScene(self.PROJ.Scene.OwnerMenu)
+            end
+            PIN.PROJ.UIRunner:ReDrawAll()
+        end)
+
+        self.PROJ.Client:send_OWNER_LOGIN(ownerName, PIN.password)
+    end
+
     self.PROJ.UIRunner:attachScene(self.PROJ.Scene.PIN)
 end
 
 function SCENE:goto_PIN_REGISTER()
     self:detachHandlers()
-    self.PROJ.Scene.PIN.CurrentPrevScene = self.PROJ.Scene.PIN.ePrevScene.BioRegister
+    -- self.PROJ.Scene.PIN.CurrentPrevScene = self.PROJ.Scene.PIN.ePrevScene.BioRegister
     self.PROJ.Scene.PIN:reset()
-    self.PROJ.Scene.PIN.OwnerName = self.Layout.tb_playerName:getText()
+    -- self.PROJ.Scene.PIN.OwnerName = self.Layout.tb_playerName:getText()
+    local ownerName = self.Layout.tb_playerName:getText()
+
+    self.PROJ.Scene.PIN:infoStr_normal("Enter new Owner PIN")
+    self.PROJ.Scene.PIN.Event_bt_back = function(PIN)
+        ---@cast PIN Golkin.App.Scene.PIN
+        PIN:detachHandlers()
+        self.PROJ.Scene.Login_BioScan:reset()
+        self.PROJ.UIRunner:attachScene(self.PROJ.Scene.Login_BioScan)
+    end
+
+    self.PROJ.Scene.PIN.Event_bt_enter = function(PIN)
+        ---@cast PIN Golkin.App.Scene.PIN
+        PIN:detachHandlers()
+        self.PROJ.Scene.PINCheck:reset()
+        self.PROJ.Scene.PINCheck.original_password = PIN.password
+        self.PROJ.UIRunner:attachScene(self.PROJ.Scene.PINCheck)
+    end
+
+    self.PROJ.Scene.PINCheck.Event_bt_back = function(PINC)
+        ---@cast PINC Golkin.App.Scene.PINCheck
+        PINC:detachHandlers()
+        self.PROJ.Scene.Login_BioScan:reset()
+        self.PROJ.UIRunner:attachScene(self.PROJ.Scene.Login_BioScan)
+    end
+
+    self.PROJ.Scene.PINCheck.Event_bt_enter = function(PINC)
+        ---@cast PINC Golkin.App.Scene.PINCheck
+
+        self.PROJ.Handle:attachMsgHandle(protocol.Header.ACK_REGISTER_OWNER, function(msg, msgstruct)
+            ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.ACK_REGISTER_OWNER
+            if msgstruct.Success == false then
+                PINC:infoStr_error(protocol.Enum_INV.ACK_REGISTER_OWNER_R_INV[msgstruct.State])
+            else
+                PINC.Event_bt_back(PINC)
+            end
+            self.PROJ.UIRunner:ReDrawAll()
+        end)
+
+        self.PROJ.Client:send_REGISTER_OWNER(ownerName, PINC.password)
+    end
+
     self.PROJ.UIRunner:attachScene(self.PROJ.Scene.PIN)
 end
 
@@ -97,7 +170,7 @@ function SCENE:reset()
     self:attach_handler()
     self:check_playerDetector()
     -- temp for debug
-    -- os.queueEvent("playerClick", "testname1")
+    -- os.queueEvent("playerClick", "testname12")
 
 end
 

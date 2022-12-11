@@ -74,9 +74,42 @@ function SCENE:goto_PIN()
         self:detachHandlers()
         self.SEND_struct.FromMsg = self.Layout.tb_sender_msgC:getText()
         self.SEND_struct.ToMsg = self.Layout.tb_reciever_msgC:getText()
-        self.PROJ.Scene.PIN.SEND_struct = self.SEND_struct
-        self.PROJ.Scene.PIN.CurrentPrevScene = self.PROJ.Scene.PIN.ePrevScene.SendMoney
+        -- self.PROJ.Scene.PIN.SEND_struct = self.SEND_struct
+        -- self.PROJ.Scene.PIN.CurrentPrevScene = self.PROJ.Scene.PIN.ePrevScene.SendMoney
         self.PROJ.Scene.PIN:reset()
+
+        self.PROJ.Scene.PIN:infoStr_normal("Enter your Account PIN")
+
+        self.PROJ.Scene.PIN.Event_bt_back = function(PIN)
+            ---@cast PIN Golkin.App.Scene.PIN
+            PIN:detachHandlers()
+            self.PROJ.UIRunner:attachScene(self.PROJ.Scene.SendMoneyName)
+        end
+
+        self.PROJ.Scene.PIN.Event_bt_enter = function(PIN)
+            ---@cast PIN Golkin.App.Scene.PIN
+            self.PROJ.Handle:attachMsgHandle(protocol.Header.ACK_SEND, function(msg, msgstruct)
+                ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.ACK_SEND
+                if msgstruct.Success == false then
+                    PIN:infoStr_error(protocol.Enum_INV.ACK_SEND_R_INV[msgstruct.State])
+                else
+                    PIN:detachHandlers()
+                    self.PROJ.Scene.OwnerMenu:reset()
+                    self.PROJ.UIRunner:attachScene(self.PROJ.Scene.OwnerMenu)
+                end
+                self.PROJ.UIRunner:ReDrawAll()
+            end)
+            local send_t = self.PROJ.Client:getSend_t()
+            send_t.balance = self.SEND_struct.Balance
+            send_t.from = self.SEND_struct.From
+            send_t.fromMsg = self.SEND_struct.FromMsg
+            send_t.owner = self.SEND_struct.OwnerName
+            send_t.password = PIN.password
+            send_t.to = self.SEND_struct.To
+            send_t.toMsg = self.SEND_struct.ToMsg
+            self.PROJ.Client:send_SEND(send_t)
+        end
+
         self.PROJ.UIRunner:attachScene(self.PROJ.Scene.PIN)
     end
 end

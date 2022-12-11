@@ -53,7 +53,7 @@ function SCENE_L:initialize(attachedScreen, projNamespace)
     bt_Signin:setText("Sign In")
     grid:setPosLen(bt_Signin, 5, 4)
     self.PROJ.Style.BT.func(bt_Signin)
-    self.bt_sendMoney = bt_Signin
+    self.bt_signIn = bt_Signin
 
     -- grid to display left side arrow
     local grid4_GotoLeft = grid:genSubGrid(nil, 1, 3, 5, 1)

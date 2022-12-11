@@ -57,7 +57,7 @@ function SCENE_L:initialize(attachedScreen, projNamespace)
     bt_sendMoney:setText("Send Money")
     grid:setPosLen(bt_sendMoney, 5, 4)
     self.PROJ.Style.BT.func(bt_sendMoney)
-    self.bt_sendMoney = bt_sendMoney
+    self.bt_signIn = bt_sendMoney
 
     self:add_grid_refresh(grid)
 

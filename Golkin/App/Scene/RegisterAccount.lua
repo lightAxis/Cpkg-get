@@ -49,10 +49,50 @@ end
 
 function SCENE:goto_PIN()
     self:detachHandlers()
-    self.PROJ.Scene.PIN.CurrentPrevScene = self.PROJ.Scene.PIN.ePrevScene.RegisterAccount
+    -- self.PROJ.Scene.PIN.CurrentPrevScene = self.PROJ.Scene.PIN.ePrevScene.RegisterAccount
     self.PROJ.Scene.PIN:reset()
-    self.PROJ.Scene.PIN.AccountName = self.Layout.tb_info_accountNameC:getText()
-    self.PROJ.Scene.PIN.OwnerName = self.PROJ.Data.CurrentOwner.Name
+    -- self.PROJ.Scene.PIN.AccountName = self.Layout.tb_info_accountNameC:getText()
+    -- self.PROJ.Scene.PIN.OwnerName = self.PROJ.Data.CurrentOwner.Name
+    local accountName = self.Layout.tb_info_accountNameC:getText()
+
+    self.PROJ.Scene.PIN:infoStr_normal("Enter new Account Sending PIN")
+
+    self.PROJ.Scene.PIN.Event_bt_back = function(PIN)
+        ---@cast PIN Golkin.App.Scene.PIN
+        PIN:detachHandlers()
+        self.PROJ.Scene.OwnerMenu:reset()
+        self.PROJ.UIRunner:attachScene(self.PROJ.Scene.OwnerMenu)
+    end
+
+    self.PROJ.Scene.PIN.Event_bt_enter = function(PIN)
+        ---@cast PIN Golkin.App.Scene.PIN
+        PIN:detachHandlers()
+        self.PROJ.Scene.PINCheck:reset()
+        self.PROJ.Scene.PINCheck.original_password = PIN.password
+        self.PROJ.UIRunner:attachScene(self.PROJ.Scene.PINCheck)
+    end
+
+    self.PROJ.Scene.PINCheck.Event_bt_back = function(PINC)
+        ---@cast PINC Golkin.App.Scene.PINCheck
+        PINC:detachHandlers()
+        self.PROJ.Scene.OwnerMenu:reset()
+        self.PROJ.UIRunner:attachScene(self.PROJ.Scene.OwnerMenu)
+    end
+
+    self.PROJ.Scene.PINCheck.Event_bt_enter = function(PINC)
+        ---@cast PINC Golkin.App.Scene.PINCheck
+        self.PROJ.Handle:attachMsgHandle(protocol.Header.ACK_REGISTER, function(msg, msgstruct)
+            ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.ACK_REGISTER
+            if msgstruct.Success == false then
+                PINC:infoStr_error(protocol.Enum_INV.ACK_REGISTER_R_INV[msgstruct.State])
+            else
+                PINC.Event_bt_back(PINC)
+            end
+            self.PROJ.UIRunner:ReDrawAll()
+        end)
+        self.PROJ.Client:send_REGISTER(accountName, self.PROJ.Data.CurrentOwner.Name, PINC.password)
+    end
+
     self.PROJ.UIRunner:attachScene(self.PROJ.Scene.PIN)
 end
 
@@ -84,26 +124,6 @@ end
 --         self.PROJ.Data.CurrentOwner.Name, self.PROJ.Data.CurrentOwner.Password)
 -- end
 
----comment
----@param msg Golkin.Web.Protocol.Msg
----@param msgstruct Golkin.Web.Protocol.MsgStruct.ACK_REGISTER
-function SCENE:cb_ack_register_account(msg, msgstruct)
-    local replyEnum = protocol.Enum.ACK_REGISTER_R
-    if msgstruct.Success ~= true then
-        if msgstruct.State == replyEnum.ACCOUNT_OWNER_UNMET then
-            self.Layout.tb_info:setText("ACCOUNT_OWNER_UNMET")
-        elseif msgstruct.State == replyEnum.ACCOUNT_ALREADY_EXISTS then
-            self.Layout.tb_info:setText("ACCOUNT_ALREADY_EXISTS")
-        else
-            self.Layout.tb_info:setText("UNKNOWN_ERROR:" .. tostring(msgstruct.State))
-        end
-        self.PROJ.Style.TB.InfoFail(self.Layout.tb_info)
-    else
-        self.Layout.tb_info:setText("SUCCESS!")
-        self.PROJ.Style.TB.InfoSuccess(self.Layout.tb_info)
-    end
-    self.PROJ.UIRunner:ReDrawAll()
-end
 
 function SCENE:reset()
     self.IsMenuEditting = false

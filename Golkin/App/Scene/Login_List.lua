@@ -39,7 +39,7 @@ function SCENE:initialize(ProjNamespace, UILayout)
     self.Layout.lb_names.SelectedIndexChanged = function(obj)
         local name = obj.obj
         self.Layout.tb_name:setText(name)
-        self.Layout.bt_sendMoney.Visible = true
+        self.Layout.bt_signIn.Visible = true
     end
 
     self.Layout.bt_scroll_down.ClickEvent = function(obj, e)
@@ -54,7 +54,7 @@ function SCENE:initialize(ProjNamespace, UILayout)
         end
     end
 
-    self.Layout.bt_sendMoney.ClickEvent = function(obj, e)
+    self.Layout.bt_signIn.ClickEvent = function(obj, e)
         if e.Button == TBL.Enums.MouseButton.left then
             self:goto_PIN()
         end
@@ -78,10 +78,46 @@ end
 
 function SCENE:goto_PIN()
     self:detacheHandlers()
-    self.PROJ.Scene.PIN.CurrentPrevScene = self.PROJ.Scene.PIN.ePrevScene.List
-    self.PROJ.Scene.PIN:reset()
-    self.PROJ.Scene.PIN.OwnerName = self.Layout.tb_name:getText()
-    self.PROJ.UIRunner:attachScene(self.PROJ.Scene.PIN)
+    -- self.PROJ.Scene.PIN.CurrentPrevScene = self.PROJ.Scene.PIN.ePrevScene.List
+
+    local ownerName = self.Layout.tb_name:getText()
+
+    local PINScene = self.PROJ.Scene.PIN
+
+    PINScene:reset()
+    -- self.PROJ.Scene.PIN.OwnerName = self.Layout.tb_name:getText()
+    -- local a = self.PROJ.Scene.PIN
+    -- a
+    PINScene:infoStr_normal("Enter your Owner PIN")
+
+    PINScene.Event_bt_back = function(PIN)
+        ---@cast PIN Golkin.App.Scene.PIN
+        PIN:detachHandlers()
+        PIN.PROJ.Scene.Login_List:reset()
+        PIN.PROJ.UIRunner:attachScene(PIN.PROJ.Scene.Login_List)
+    end
+
+    PINScene.Event_bt_enter = function(PIN)
+        ---@cast PIN Golkin.App.Scene.PIN
+        PIN.PROJ.Handle:attachMsgHandle(protocol.Header.ACK_OWNER_LOGIN, function(msg, msgstruct)
+            ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.ACK_OWNER_LOGIN
+            if msgstruct.Success == false then
+                PIN:infoStr_error(protocol.Enum_INV.ACK_OWNER_LOGIN_R_INV[msgstruct.State])
+            else
+                self.PROJ.Data.CurrentOwner = protocol.Struct.Owner_t:new()
+                self.PROJ.Data.CurrentOwner.Name = ownerName
+                self.PROJ.Data.CurrentOwner.Password = PIN.password
+
+                PIN:detachHandlers()
+                self.PROJ.Scene.OwnerMenu:reset()
+                self.PROJ.UIRunner:attachScene(self.PROJ.Scene.OwnerMenu)
+            end
+            PIN.PROJ.UIRunner:ReDrawAll()
+        end)
+        self.PROJ.Client:send_OWNER_LOGIN(ownerName, PIN.password)
+    end
+
+    self.PROJ.UIRunner:attachScene(PINScene)
 end
 
 ---change infotext style
@@ -126,7 +162,7 @@ function SCENE:reset()
     self.Layout.lb_names:Refresh()
     self.Layout.tb_name:setText("")
     self.Layout.tb_info:setText("Select your name")
-    self.Layout.bt_sendMoney.Visible = false
+    self.Layout.bt_signIn.Visible = false
     self:callback_bt_refresh_list()
     self.PROJ.Style.TB.Info(self.Layout.tb_info)
 end

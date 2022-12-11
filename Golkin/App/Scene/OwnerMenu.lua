@@ -57,7 +57,7 @@ function SCENE:initialize(ProjNamespace, UILayout)
         end
     end
 
-    self.Layout.bt_sendMoney.ClickEvent = function(obj, e)
+    self.Layout.bt_signIn.ClickEvent = function(obj, e)
         if e.Button == TBL.Enums.MouseButton.left then
             if (self.__selectedAccount ~= nil) then
                 self:goto_SendMoney()

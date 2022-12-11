@@ -1,6 +1,8 @@
 local class = require("Class.middleclass")
 
 local TBL = DEPS.Golkin.Tabullet
+local THIS = PKGS.Golkin
+local protocol = THIS.Web.Protocol
 
 ---@class Golkin.App.Scene.RemoveAccount : Tabullet.UIScene
 ---@field Layout Golkin.App.Layout.RemoveAccount
@@ -40,10 +42,39 @@ end
 
 function SCENE:goto_PIN()
     self:detachHandlers()
-    self.PROJ.Scene.PIN.CurrentPrevScene = self.PROJ.Scene.PIN.ePrevScene.RemoveAccount
+    -- self.PROJ.Scene.PIN.CurrentPrevScene = self.PROJ.Scene.PIN.ePrevScene.RemoveAccount
     self.PROJ.Scene.PIN:reset()
-    self.PROJ.Scene.PIN.AccountName = self.SelectedAccountName
-    self.PROJ.Scene.PIN.OwnerName = self.PROJ.Data.CurrentOwner.Name
+    -- self.PROJ.Scene.PIN.AccountName = self.SelectedAccountName
+    -- self.PROJ.Scene.PIN.OwnerName = self.PROJ.Data.CurrentOwner.Name
+    local accountName = self.SelectedAccountName
+    local ownername = self.PROJ.Data.CurrentOwner.Name
+
+    self.PROJ.Scene.PIN:infoStr_normal("Enter your owner PIN")
+
+    self.PROJ.Scene.PIN.Event_bt_back = function(PIN)
+        ---@cast PIN Golkin.App.Scene.PIN
+        PIN:detachHandlers()
+        self.PROJ.Scene.OwnerMenu:reset()
+        self.PROJ.UIRunner:attachScene(self.PROJ.Scene.OwnerMenu)
+    end
+
+    self.PROJ.Scene.PIN.Event_bt_enter = function(PIN)
+        ---@cast PIN Golkin.App.Scene.PIN
+        self.PROJ.Handle:attachMsgHandle(protocol.Header.ACK_REMOVE_ACCOUNT, function(msg, msgstruct)
+            ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.ACK_REMOVE_ACCOUNT
+            if msgstruct.Success == false then
+                PIN:infoStr_error(protocol.Enum_INV.ACK_REMOVE_ACCOUNT_R_INV[msgstruct.State])
+            else
+                PIN:detachHandlers()
+                self.PROJ.Scene.OwnerMenu:reset()
+                self.PROJ.UIRunner:attachScene(self.PROJ.Scene.OwnerMenu)
+            end
+            self.PROJ.UIRunner:ReDrawAll()
+        end)
+        self.PROJ.Client:send_REMOVE_ACCOUNT(accountName, PIN.password, ownername)
+    end
+
+
     self.PROJ.UIRunner:attachScene(self.PROJ.Scene.PIN)
 end
 

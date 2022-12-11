@@ -44,136 +44,50 @@ function SCENE:initialize(ProjNamespace, UILayout)
 
     self.Layout.bt_back.ClickEvent = function(obj, e)
         if e.Button == TBL.Enums.MouseButton.left then
-            self:cb_bt_back()
+            self.Event_bt_back(self)
         end
     end
 
     self.Layout.bt_enter_pin.ClickEvent = function(obj, e)
         if e.Button == TBL.Enums.MouseButton.left then
-            self:cb_bt_done()
+            if (self.password ~= self.original_password) then
+                self:infoStr_error("Password is not same! try again")
+            else
+                self.Event_bt_enter(self)
+            end
+            -- self:cb_bt_done()
         end
     end
 
-    self.OwnerName = ""
-    self.AccountName = ""
     self.original_password = ""
     self.password = ""
     self.maximumCount = 8
 
-    ---@enum Golkin.App.Scene.PinCheck.ePrevScene
-    self.ePrevScene = {
-        ["BioRegister"] = "BioRegister",
-        ["ListRegister"] = "ListRegister",
-        ["AccountRegister"] = "AccountRegister",
-    }
-    ---@type Golkin.App.Scene.PinCheck.ePrevScene|nil
-    self.CurrentPrevScene = nil
+    ---@type fun(PINCheck:Golkin.App.Scene.PINCheck)
+    self.Event_bt_back = function(PINCheck) end
+    ---@type fun(PINCheck:Golkin.App.Scene.PINCheck)
+    self.Event_bt_enter = function(PINCheck) end
 end
 
-function SCENE:goto_Login_BioScan()
-    self:detachHandlers()
-    self.PROJ.Scene.Login_BioScan:reset()
-    self.PROJ.UIRunner:attachScene(self.PROJ.Scene.Login_BioScan)
+---set info string normal
+---@param string string
+function SCENE:infoStr_normal(string)
+    self.Layout.tb_info:setText(string)
+    self.PROJ.Style.TB.Info(self.Layout.tb_info)
 end
 
-function SCENE:goto_Login_List()
-    self:detachHandlers()
-    self.PROJ.Scene.Login_List:reset()
-    self.PROJ.UIRunner:attachScene(self.PROJ.Scene.Login_List)
+---set info string failure
+---@param string string
+function SCENE:infoStr_error(string)
+    self.Layout.tb_info:setText(string)
+    self.PROJ.Style.TB.InfoFail(self.Layout.tb_info)
 end
 
-function SCENE:goto_OwnerMenu()
-    self:detachHandlers()
-    self.PROJ.Scene.OwnerMenu:reset()
-    self.PROJ.UIRunner:attachScene(self.PROJ.Scene.OwnerMenu)
-end
-
-function SCENE:cb_bt_back()
-    if self.CurrentPrevScene == self.ePrevScene.BioRegister then
-        self:goto_Login_BioScan()
-    elseif self.CurrentPrevScene == self.ePrevScene.ListRegister then
-        self:goto_Login_List()
-    elseif self.CurrentPrevScene == self.ePrevScene.AccountRegister or
-        self.CurrentPrevScene == self.ePrevScene.AccountRemove then
-        self:goto_OwnerMenu()
-    else
-        error("cb_bt_back ?? ePrevScene is broken")
-    end
-end
-
-function SCENE:cb_bt_done()
-    if self.original_password ~= self.password then
-        self.Layout.tb_info:setText("Password is not same! try again")
-        self.PROJ.Style.TB.InfoFail(self.Layout.tb_info)
-        self:cb_bt_numpad_reset()
-        return nil
-    end
-
-    if self.CurrentPrevScene == self.ePrevScene.ListRegister or
-        self.CurrentPrevScene == self.ePrevScene.BioRegister then
-        self:requset_REGISTER_OWNER()
-    elseif self.CurrentPrevScene == self.ePrevScene.AccountRegister then
-        self:request_REGISTER_ACCOUNT()
-    else
-        error("cb_bt_done ?? ePrevScene is broken")
-    end
-
-end
-
-function SCENE:requset_REGISTER_OWNER()
-    self.PROJ.Handle:attachMsgHandle(procotol.Header.ACK_REGISTER_OWNER, function(msg, msgstruct)
-        ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.ACK_REGISTER_OWNER
-        self:cb_ack_register_owner(msg, msgstruct)
-    end)
-
-    self.PROJ.Client:send_REGISTER_OWNER(self.OwnerName, self.password)
-end
-
----comment
----@param msg Golkin.Web.Protocol.Msg
----@param msgstruct Golkin.Web.Protocol.MsgStruct.ACK_REGISTER_OWNER
-function SCENE:cb_ack_register_owner(msg, msgstruct)
-    local replyEnum = procotol.Enum.ACK_REGISTER_OWNER_R
-    if msgstruct.Success == false then
-        if msgstruct.State == replyEnum.OWNER_ALREADY_EXISTS then
-            self.Layout.tb_info:setText("OWNER_ALREADY_EXISTS")
-        else
-            self.Layout.tb_info:setText("UNKNOWN_ERROR:" .. tostring(msgstruct.State))
-        end
-        self:cb_bt_numpad_reset()
-        self.PROJ.Style.TB.InfoFail(self.Layout.tb_info)
-    else
-        self:cb_bt_back()
-    end
-    self.PROJ.UIRunner:ReDrawAll()
-end
-
-function SCENE:request_REGISTER_ACCOUNT()
-    self.PROJ.Handle:attachMsgHandle(procotol.Header.ACK_REGISTER, function(msg, msgstruct)
-        ---@cast msgstruct Golkin.Web.Protocol.MsgStruct.ACK_REGISTER
-        self:cb_ack_register_account(msg, msgstruct)
-    end)
-
-    self.PROJ.Client:send_REGISTER(self.AccountName, self.OwnerName, self.password)
-end
-
----comment
----@param msg Golkin.Web.Protocol.Msg
----@param msgstruct Golkin.Web.Protocol.MsgStruct.ACK_REGISTER
-function SCENE:cb_ack_register_account(msg, msgstruct)
-    local replyEnum = procotol.Enum.ACK_REGISTER_R
-    if msgstruct.Success == false then
-        if msgstruct.State == replyEnum.ACCOUNT_ALREADY_EXISTS then
-            self.Layout.tb_info:setText("ACCOUNT_ALREADY_EXISTS")
-        elseif msgstruct.State == replyEnum.ACCOUNT_OWNER_UNMET then
-            self.Layout.tb_info:setText("ACCOUNT_OWNER_UNMET")
-        end
-        self:cb_bt_numpad_reset()
-        self.PROJ.Style.TB.InfoFail(self.Layout.tb_info)
-    else
-        self:cb_bt_back()
-    end
-    self.PROJ.UIRunner:ReDrawAll()
+---set info string success
+---@param string string
+function SCENE:infoStr_success(string)
+    self.Layout.tb_info:setText(string)
+    self.PROJ.Style.TB.InfoSuccess(self.Layout.tb_info)
 end
 
 function SCENE:cb_bt_numpad(number)
@@ -217,8 +131,8 @@ function SCENE:refresh_PINDisplay()
 end
 
 function SCENE:reset()
-    self.OwnerName = ""
-    self.AccountName = ""
+    -- self.OwnerName = ""
+    -- self.AccountName = ""
     self.password = ""
     self.original_password = ""
     self.Layout.tb_info:setText("repeat password again")
