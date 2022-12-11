@@ -1,5 +1,5 @@
 local THIS = PKGS.Sallo
-local param = PKGS.Sallo.Param
+local param = THIS.Param
 
 local class = require("Class.middleclass")
 
@@ -27,6 +27,8 @@ end
 ---add chatbox event for player string
 ---@param string string
 function playerLeveler:addPlayerMsg(string)
+    print("add player msg!")
+    print(string)
     table.insert(self.__PlayerMsgs, string)
 end
 
@@ -91,7 +93,8 @@ function playerLeveler:addMin()
     info.Statistics.Total_exp = info.Statistics.Total_exp + exp_get
 
     info.Main.Exp = info.Main.Exp + exp_get
-    if info.Main.Exp_gauge < info.Main.Exp then
+    if info.Main.Exp_gauge < info.Main.Exp and
+        info.Main.Exp_gauge > 0 then
         local newLevel = self:levelUP()
         local msg = "Level UP! - " .. tostring(newLevel)
         if (newLevel == 40) then
@@ -126,6 +129,9 @@ function playerLeveler:levelUP()
     local left_exp = info.Main.Exp - info.Main.Exp_gauge
     info.Main.Exp_gauge = param.Level[next_level].exp_gauge
     info.Main.Exp = left_exp
+
+    info.SkillState.Total_sp = info.SkillState.Total_sp + param.Level[next_level].skill_pt
+    info.SkillState.Left_sp = info.SkillState.Left_sp + param.Level[next_level].skill_pt
 
     self.__info = info
 

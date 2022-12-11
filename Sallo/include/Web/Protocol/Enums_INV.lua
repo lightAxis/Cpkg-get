@@ -9,8 +9,9 @@ a.ACK_BUY_THEMA_R_INV = {
     [-702] = "SALLO_PASSWORD_UNMET", -- password of sallo info unmnet
     [-703] = "THEMA_ALREADY_EXIST", -- thema already exist in item
     [-704] = "THEMA_UNLOCK_CONDITION_UNMET", -- the unlock condition of this thema is unmet
-    [-705] = "BANKING_REQUEST_TIMEOUT", -- banking request timeout
-    [-706] = "BANKING_ERROR", -- when banking error occurs
+    [-705] = "NO_CONNECTED_ACCOUNT", -- no connected account to pay
+    [-706] = "BANKING_REQUEST_TIMEOUT", -- banking request timeout
+    [-707] = "BANKING_ERROR", -- when banking error occurs
     [0] = "NORMAL", -- standard for success
     [701] = "SUCCESS", -- success
 }
@@ -36,7 +37,7 @@ a.RANK_NAME_INV = {
     [14] = "ARCANE", -- level 14
     [15] = "BLUEHOLE", -- level 15
     [16] = "SKULL", -- level 16
-    [17] = "HALLOFFAME", -- level inf
+    [17] = "INFINITY", -- level inf
 }
 
 ---thema of sallo
@@ -60,8 +61,7 @@ a.THEMA_INV = {
     [14] = "THE_ONYX_NIGHT_SKY", -- level 14 light orange
     [15] = "EYE_OF_EVENT_HORIZON", -- level 15 purple, yellow
     [16] = "PETROLLIC_REPUBLIC", -- level 16 black
-    [17] = "HALLOFFAME", -- level inf
-    [18] = "BACK_TO_NORMAL", -- level 0 normal
+    [17] = "NEWBIE", -- level inf
 }
 
 ---reply enum of ACK_BUY_RANK
@@ -72,8 +72,9 @@ a.ACK_BUY_RANK_R_INV = {
     [-602] = "SALLO_PASSWORD_UNMET", -- password of sallo info unmnet
     [-603] = "RANK_ALREADY_EXIST", -- rank already bought
     [-604] = "RANK_UNLOCK_CONDITION_UNMET", -- the unlock condition of this rank is unmet
-    [-605] = "BANKING_REQUEST_TIMEOUT", -- banking request timeout
-    [-606] = "BANKING_ERROR", -- when banking error occurs
+    [-605] = "NO_CONNECTED_ACCOUNT", -- no connected account to pay
+    [-606] = "BANKING_REQUEST_TIMEOUT", -- banking request timeout
+    [-607] = "BANKING_ERROR", -- when banking error occurs
     [0] = "NORMAL", -- standard for success
     [601] = "SUCCESS", -- success
 }

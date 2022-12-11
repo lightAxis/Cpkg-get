@@ -34,7 +34,7 @@ builder:addEnum(enum("RANK_NAME", "enum name", {
     enumElm("ARCANE", 14, "level 14"),
     enumElm("BLUEHOLE", 15, "level 15"),
     enumElm("SKULL", 16, "level 16"),
-    enumElm("HALLOFFAME", 17, "level inf"),
+    enumElm("INFINITY", 17, "level inf"),
 }))
 
 builder:addEnum(enum("THEMA", "thema of sallo", {
@@ -56,8 +56,7 @@ builder:addEnum(enum("THEMA", "thema of sallo", {
     enumElm("THE_ONYX_NIGHT_SKY", 14, "level 14 light orange"),
     enumElm("EYE_OF_EVENT_HORIZON", 15, "level 15 purple, yellow"),
     enumElm("PETROLLIC_REPUBLIC", 16, "level 16 black"),
-    enumElm("HALLOFFAME", 17, "level inf"),
-    enumElm("BACK_TO_NORMAL", 18, "level 0 normal")
+    enumElm("NEWBIE", 17, "level inf"),
 }))
 
 builder:addEnum(enum("SKILLTYPE", "type of skill", {
@@ -121,8 +120,9 @@ builder:addEnum(enum("ACK_BUY_RANK_R", "reply enum of ACK_BUY_RANK", {
     enumElm("SALLO_PASSWORD_UNMET", -602, "password of sallo info unmnet"),
     enumElm("RANK_ALREADY_EXIST", -603, "rank already bought"),
     enumElm("RANK_UNLOCK_CONDITION_UNMET", -604, "the unlock condition of this rank is unmet"),
-    enumElm("BANKING_REQUEST_TIMEOUT", -605, "banking request timeout"),
-    enumElm("BANKING_ERROR", -606, "when banking error occurs"),
+    enumElm("NO_CONNECTED_ACCOUNT", -605, "no connected account to pay"),
+    enumElm("BANKING_REQUEST_TIMEOUT", -606, "banking request timeout"),
+    enumElm("BANKING_ERROR", -607, "when banking error occurs"),
     enumElm("NORMAL", 0, "standard for success"),
     enumElm("SUCCESS", 601, "success")
 }))
@@ -133,8 +133,9 @@ builder:addEnum(enum("ACK_BUY_THEMA_R", "reply enum of ACK_BUY_THEMA", {
     enumElm("SALLO_PASSWORD_UNMET", -702, "password of sallo info unmnet"),
     enumElm("THEMA_ALREADY_EXIST", -703, "thema already exist in item"),
     enumElm("THEMA_UNLOCK_CONDITION_UNMET", -704, "the unlock condition of this thema is unmet"),
-    enumElm("BANKING_REQUEST_TIMEOUT", -705, "banking request timeout"),
-    enumElm("BANKING_ERROR", -706, "when banking error occurs"),
+    enumElm("NO_CONNECTED_ACCOUNT", -705, "no connected account to pay"),
+    enumElm("BANKING_REQUEST_TIMEOUT", -706, "banking request timeout"),
+    enumElm("BANKING_ERROR", -707, "when banking error occurs"),
     enumElm("NORMAL", 0, "standard for success"),
     enumElm("SUCCESS", 701, "success")
 }))
@@ -299,10 +300,10 @@ builder:addHeader(struct("BUY_RANK", "buy skill from account", {
 }))
 
 builder:addHeader(struct("ACK_BUY_RANK", "reply msg of BUY_RANK", {
-    field("state", fieldType(efieldType.custom, builder:getEnumClassName("ACK_BUY_RANK_R")),
+    field("State", fieldType(efieldType.custom, builder:getEnumClassName("ACK_BUY_RANK_R")),
         fieldInit(efieldType.num, -1), "result state enum"),
-    field("banking_state", fieldType(efieldType.num), fieldInit(efieldType.num, -1), "banking state from golkin"),
-    field("success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not")
+    field("Banking_state", fieldType(efieldType.num), fieldInit(efieldType.num, -1), "banking state from golkin"),
+    field("Success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not")
 }))
 
 builder:addHeader(struct("BUY_THEMA", "buy skill from account", {
@@ -314,10 +315,10 @@ builder:addHeader(struct("BUY_THEMA", "buy skill from account", {
 }))
 
 builder:addHeader(struct("ACK_BUY_THEMA", "reply msg of BUY_THEMA", {
-    field("state", fieldType(efieldType.custom, builder:getEnumClassName("ACK_BUY_THEMA_R")),
+    field("State", fieldType(efieldType.custom, builder:getEnumClassName("ACK_BUY_THEMA_R")),
         fieldInit(efieldType.num, -1), "result state enum"),
-    field("banking_state", fieldType(efieldType.num), fieldInit(efieldType.num, -1), "banking state from golkin"),
-    field("success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not")
+    field("Banking_state", fieldType(efieldType.num), fieldInit(efieldType.num, -1), "banking state from golkin"),
+    field("Success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not")
 }))
 
 

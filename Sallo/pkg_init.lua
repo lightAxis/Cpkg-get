@@ -22,10 +22,9 @@ Sallo.ENV = {}
 --- absolute path of this pkg when runtime
 ---@type string
 Sallo.ENV.PATH = fs.getDir(args[2])
+Sallo.Param = require("Sallo.include.Param.param")
 
 Sallo.PlayerLeveler = require("Sallo.include.PlayerLeveler")
-
-Sallo.Param = require("Sallo.include.Param.param")
 
 Sallo.Web = {}
 Sallo.Web.Protocol = require("Sallo.include.Web.Protocol.Include")
