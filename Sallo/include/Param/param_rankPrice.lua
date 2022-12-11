@@ -85,5 +85,10 @@ local a = {
         ["unlocked_rank_level"] = 15,
         ["rankPrice"] = 140000,
     },
+    [17] = {
+        ["rankName"] = "Infinity",
+        ["unlocked_rank_level"] = 16,
+        ["rankPrice"] = 1000000,
+    }
 }
 return a

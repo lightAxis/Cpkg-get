@@ -1,68 +1,89 @@
 ---@class Sallo.Param.Skill.ThemaPrice
 local a = {
-    ["LESS_THAN_WORM"]       = {
+    [1]  = {
+        ["themaName"] = "Less Than Worm",
         ["unlocked_rank_level"] = 1,
         ["rankPrice"] = 0,
     },
-    ["QUICKSILVER"]          = {
+    [2]  = {
+        ["themaName"] = "QuickSilver",
         ["unlocked_rank_level"] = 2,
         ["rankPrice"] = 1000,
     },
-    ["GOLDILOCKS_ZONE"]      = {
+    [3]  = {
+        ["themaName"] = "Goldilocks Zone",
         ["unlocked_rank_level"] = 3,
         ["rankPrice"] = 2000,
     },
-    ["PLATINA_DISCO"]        = {
+    [4]  = {
+        ["themaName"] = "Platina Disco",
         ["unlocked_rank_level"] = 4,
         ["rankPrice"] = 3000,
     },
-    ["DIAMOND_FOR_EVER"]     = {
+    [5]  = {
+        ["themaName"] = "Diamond For Ever",
         ["unlocked_rank_level"] = 5,
         ["rankPrice"] = 4000,
     },
-    ["MASTERPIECE"]          = {
+    [6]  = {
+        ["themaName"] = "Master Peace",
         ["unlocked_rank_level"] = 6,
         ["rankPrice"] = 8000,
     },
-    ["GRAND_MOMS_TOUCH"]     = {
+    [7]  = {
+        ["themaName"] = "Grand Mom's Touch",
         ["unlocked_rank_level"] = 7,
         ["rankPrice"] = 12000,
     },
-    ["CHALLENGER_DEEP"]      = {
+    [8]  = {
+        ["themaName"] = "Challanger Deep",
         ["unlocked_rank_level"] = 8,
         ["rankPrice"] = 16000,
     },
-    ["MONSTER_CHALLANGE"]    = {
+    [9]  = {
+        ["themaName"] = "Monster Challange",
         ["unlocked_rank_level"] = 9,
         ["rankPrice"] = 20000,
     },
-    ["ARTANIS"]              = {
+    [10] = {
+        ["themaName"] = "Artanis",
         ["unlocked_rank_level"] = 10,
         ["rankPrice"] = 30000,
     },
-    ["HONOR_OF_MANKIND"]     = {
+    [11] = {
+        ["themaName"] = "Horror",
         ["unlocked_rank_level"] = 11,
         ["rankPrice"] = 40000,
     },
-    ["OUTRAGED_JELLYBIN"]    = {
+    [12] = {
+        ["themaName"] = "Outraged Jellybin",
         ["unlocked_rank_level"] = 12,
         ["rankPrice"] = 50000,
     },
-    ["BA(NJU)HAR(A)"]        = {
+    [13] = {
+        ["themaName"] = "BA(NJU)HAR(A)",
         ["unlocked_rank_level"] = 13,
         ["rankPrice"] = 100000,
     },
-    ["THE_ONYX_NIGHT_SKY"]   = {
+    [14] = {
+        ["themaName"] = "The Onyx Night Sky",
         ["unlocked_rank_level"] = 14,
         ["rankPrice"] = 200000,
     },
-    ["EYE_OF_EVENT_HORIZON"] = {
+    [15] = {
+        ["themaName"] = "Eye of Event Horizon",
         ["unlocked_rank_level"] = 15,
         ["rankPrice"] = 300000,
     },
-    ["PETROLLIC_REPUBLIC"]   = {
+    [16] = {
+        ["themaName"] = "Petrollic Republic",
         ["unlocked_rank_level"] = 16,
         ["rankPrice"] = 400000,
+    },
+    [17] = {
+        ["themaName"] = "Newbie!!",
+        ["unlocked_rank_level"] = 17,
+        ["rankPrice"] = 2000000,
     },
 }
 
