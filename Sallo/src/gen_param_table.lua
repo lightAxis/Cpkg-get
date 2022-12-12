@@ -242,7 +242,7 @@ for i = 0, #rankNames - 1, 1 do
     end
     a.content.require_sp = requiresp
     local unlock_rank_level = i + 1
-    if i < 8 then unlock_rank_level = 9 end
+    if i < 12 then unlock_rank_level = 13 end
     a.content.unlock_rank_level = unlock_rank_level
     table.insert(glob.ranks, a)
 end
@@ -267,7 +267,7 @@ for i = 0, #rankNames - 1, 1 do
     end
     a.content.require_sp = requiresp
     local unlock_rank_level = i + 1
-    if i < 12 then unlock_rank_level = 13 end
+    if i < 8 then unlock_rank_level = 9 end
     a.content.unlock_rank_level = unlock_rank_level
     table.insert(glob.ranks, a)
 end
