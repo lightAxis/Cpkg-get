@@ -239,6 +239,15 @@ function a.STR.Balance(str)
         str = str:sub(2, #str)
     end
 
+    local hasComma = false
+    local afterCommaStr = ""
+    local a = str:find("%.")
+    if a ~= nil then
+        hasComma = true
+        afterCommaStr = str:sub(a, #str)
+        str = str:sub(1, a - 1)
+    end
+
     local result = str:sub(-3, -1)
     local i = 2
     while true do
@@ -253,6 +262,11 @@ function a.STR.Balance(str)
     if isMinus then
         result = "-" .. result
     end
+
+    if hasComma then
+        result = result .. afterCommaStr
+    end
+
     return result
 end
 
