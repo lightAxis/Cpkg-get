@@ -74,6 +74,8 @@ builder:addEnum(enum("ITEM_TYPE", "enum of item type", {
 builder:addEnum(enum("ACK_REGISTER_INFO_R", "reply enum of ACK_REGISTER_INFO", {
     enumElm("NONE", -1, "this is error"),
     enumElm("INFO_ALREADY_EXISTS", -101, "info file is already exists"),
+    enumElm("BANKING_REQUEST_TIMEOUT", -102, "timeout error of banking"),
+    enumElm("BANKING_ERROR", -103, "error while do banking"),
     enumElm("NORMAL", 0, "standard for success"),
     enumElm("SUCCESS", 101, "success"),
 }))
@@ -236,6 +238,7 @@ builder:addHeader(struct("REGISTER_INFO", "register new info with passwd", {
 builder:addHeader(struct("ACK_REGISTER_INFO", "reply of REGISTER_INFO", {
     field("State", fieldType(efieldType.custom, builder:getEnumClassName("ACK_REGISTER_INFO_R")),
         fieldInit(efieldType.num, -1), "result state enum"),
+    field("BankinState", fieldType(efieldType.num), fieldInit(efieldType.nil_), "bankin return state"),
     field("Success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not"),
 }))
 

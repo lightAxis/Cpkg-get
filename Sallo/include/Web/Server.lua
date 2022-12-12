@@ -476,7 +476,8 @@ function Server:__handle_GET_INFO(msg, msgstruct)
     end
     local passwd = info.Password
     info.Password = nil
-    replyMsgStruct.Info = textutils.serialize(info)
+    local tempInfo = textutils.serialize(info)
+    replyMsgStruct.Info = textutils.unserialize(tempInfo)
     info.Password = passwd
     replyMsgStruct.State = replyEnum.SUCCESS
     replyMsgStruct.Success = replyEnum.NORMAL < replyMsgStruct.State
@@ -536,6 +537,34 @@ function Server:__handle_REGISTER_INFO(msg, msgstruct)
         return nil
     end
 
+    -- check with golkin bank to see typed right
+    Golkin_client:send_GET_ACCOUNT(msgstruct.OwnerName, msgstruct.Passwd)
+
+    local golkinMsg, golkinMsgStruct = self:__await_pullEvent_Golkin(
+        Golkin_protocol.Header.ACK_GET_ACCOUNT, 1)
+    ---@cast golkinMsgStruct Golkin.Web.Protocol.MsgStruct.ACK_GET_ACCOUNT
+
+    -- if timeout
+    if golkinMsg == nil then
+        replyMsgStruct.State = replyEnum.BANKING_REQUEST_TIMEOUT
+        replyMsgStruct.Success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
+        return nil
+    end
+
+    -- if result is not good
+    if golkinMsgStruct.Success == false then
+        local golkinReplyEnum_INV = Golkin_protocol.Enum_INV.ACK_GET_ACCOUNT_R_INV
+        replyMsgStruct.State = replyEnum.BANKING_ERROR
+        replyMsgStruct.Success = false
+        replyMsgStruct.BankinState = golkinMsgStruct.State
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
+        self:__display_result_msg(false, golkinMsgStruct.State, golkinReplyEnum_INV)
+        return nil
+    end
+
     -- make new info
     local new_info = self:make_new_info()
     new_info.Name = msgstruct.OwnerName
@@ -555,6 +584,7 @@ end
 ---@param msg Sallo.Web.Protocol.Msg
 ---@param msgStruct Sallo.Web.Protocol.MsgStruct.SET_INFO_CONNECTED_ACCOUNT
 function Server:__handle_SET_INFO_CONNECTED_ACCOUNT(msg, msgStruct)
+    print("handle SET_INFO_CONNECTED_ACCOUNT msg")
     local replyMsgStruct = protocol.MsgStruct.ACK_SET_INFO_CONNECTED_ACCOUNT:new()
     local replyEnum = protocol.Enum.ACK_SET_INFO_CONNECTED_ACCOUNT_R
     local replyHeader = protocol.Header.ACK_SET_INFO_CONNECTED_ACCOUNT
@@ -651,6 +681,7 @@ end
 ---@param msg Sallo.Web.Protocol.Msg
 ---@param msgStruct Sallo.Web.Protocol.MsgStruct.CHANGE_SKILL_STAT
 function Server:__handle_CHANGE_SKILL_STAT(msg, msgStruct)
+    print("handle CHANGE_SKILL_STAT msg")
     local replyMsgStruct = protocol.MsgStruct.ACK_CHANGE_SKILL_STAT:new()
     local replyEnum = protocol.Enum.ACK_CHANGE_SKILL_STAT_R
     local replyEnum_INV = protocol.Enum_INV.ACK_CHANGE_SKILL_STAT_R_INV
@@ -754,6 +785,7 @@ end
 ---@param msg Sallo.Web.Protocol.Msg
 ---@param msgStruct Sallo.Web.Protocol.MsgStruct.BUY_RANK
 function Server:__handle_BUY_RANK(msg, msgStruct)
+    print("handle BUY_RANK msg")
     local replyMsgStruct = protocol.MsgStruct.ACK_BUY_RANK:new()
     local replyEnum = protocol.Enum.ACK_BUY_RANK_R
     local replyEnum_INV = protocol.Enum_INV.ACK_BUY_RANK_R_INV
@@ -862,6 +894,7 @@ end
 ---@param msg Sallo.Web.Protocol.Msg
 ---@param msgStruct Sallo.Web.Protocol.MsgStruct.BUY_THEMA
 function Server:__handle_BUY_THEMA(msg, msgStruct)
+    print("handle BUY_THEMA msg")
     local replyMsgStruct = protocol.MsgStruct.ACK_BUY_THEMA:new()
     local replyEnum = protocol.Enum.ACK_BUY_THEMA_R
     local replyEnum_INV = protocol.Enum_INV.ACK_BUY_THEMA_R_INV
