@@ -59,6 +59,7 @@ function SCENE:initialize(ProjNamespace, UILayout)
 
     self.Layout.bt_skill.ClickEvent = function(obj, e)
         if e.Button == TBL.Enums.MouseButton.left then
+            self:goto_Skill()
         end
     end
 
@@ -114,6 +115,13 @@ function SCENE:goto_Store()
     self.PROJ.Sallo.Data.CurrentInfo = self.currInfo
     self.PROJ.Sallo.Scene.Store:reset()
     self.PROJ.UIRunner:attachScene(self.PROJ.Sallo.Scene.Store)
+end
+
+function SCENE:goto_Skill()
+    self:detach_handelers()
+    self.PROJ.Sallo.Data.CurrentInfo = self.currInfo
+    self.PROJ.Sallo.Scene.Skill:reset()
+    self.PROJ.UIRunner:attachScene(self.PROJ.Sallo.Scene.Skill)
 end
 
 function SCENE:menu_control(bool)

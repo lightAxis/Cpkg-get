@@ -12,12 +12,14 @@ Sallo.Layout.InfoMenu = require("Sallo.App.layout.InfoMenu"):new(app.Screens.Mai
 Sallo.Layout.TransferAccount = require("Sallo.App.layout.TransferAccount"):new(app.Screens.MainScreen, app)
 Sallo.Layout.ConnectAccount = require("Sallo.App.layout.ConnectAccount"):new(app.Screens.MainScreen, app)
 Sallo.Layout.Store = require("Sallo.App.layout.Store"):new(app.Screens.MainScreen, app)
+Sallo.Layout.Skill = require("Sallo.App.layout.Skill"):new(app.Screens.MainScreen, app)
 
 Sallo.Scene = {}
 Sallo.Scene.InfoMenu = require("Sallo.App.scene.InfoMenu"):new(app, Sallo.Layout.InfoMenu)
 Sallo.Scene.TransferAccount = require("Sallo.App.scene.TransferAccount"):new(app, Sallo.Layout.TransferAccount)
 Sallo.Scene.ConnectAccount = require("Sallo.App.scene.ConnectAccount"):new(app, Sallo.Layout.ConnectAccount)
 Sallo.Scene.Store = require("Sallo.App.scene.Store"):new(app, Sallo.Layout.Store)
+Sallo.Scene.Skill = require("Sallo.App.scene.Skill"):new(app, Sallo.Layout.Skill)
 
 Sallo.Data = require("Sallo.App.Data")
 Sallo.Client = require("Sallo.include.Web.Client"):new()
