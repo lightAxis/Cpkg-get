@@ -23,7 +23,7 @@ temp.Param = require("Golkin.userdata.param")
 -- local LAYOUT = require("Golkin.App.Layout.ManualTextInput"):new(mon_term, temp)
 local LAYOUT = require("Sallo.App.layout.InfoMenu"):new(mon_term, temp)
 LAYOUT.selectedInfo = protocol.Struct.info_t:new()
-LAYOUT.selectedInfo.main.rank = protocol.Enum.RANK_NAME.BRONZE
+LAYOUT.selectedInfo.Main.rank = protocol.Enum.RANK_NAME.BRONZE
 LAYOUT:select_menu(LAYOUT.eMenu.state)
 
 LAYOUT.attachingScreen:clear()

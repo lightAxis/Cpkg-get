@@ -62,6 +62,7 @@ end
 ---@return fun(obj:any): string, Tabullet.Enums.Color, Tabullet.Enums.Color ItemTemplateFunction
 function ListBox:getItempTemplate() return self._ItemTemplate end
 
+--- return is text, BG, FG
 ---@param template fun(obj:any): string, Tabullet.Enums.Color|nil, Tabullet.Enums.Color|nil
 function ListBox:setItemTemplate(template) self.ItemTemplete = template end
 
