@@ -7,6 +7,8 @@ local procotol = THIS.Web.Protocol
 ---@class Golkin.App.Scene.PINCheck : Tabullet.UIScene
 ---@field Layout Golkin.App.Layout.PIN
 ---@field PROJ Golkin.App
+---@field Event_bt_back fun(PIN:Golkin.App.Scene.PIN)
+---@field Event_bt_enter fun(PIN:Golkin.App.Scene.PIN)
 ---@field new fun(self:Tabullet.UIScene, ProjNamespace:Golkin.App, UILayout:Tabullet.UILayout):Golkin.App.Scene.PINCheck
 local SCENE = class("Golkin.App.Scene.PINCheck", TBL.UIScene)
 
