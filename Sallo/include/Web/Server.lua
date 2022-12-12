@@ -538,11 +538,13 @@ function Server:__handle_REGISTER_INFO(msg, msgstruct)
     end
 
     -- check with golkin bank to see typed right
-    Golkin_client:send_GET_ACCOUNT(msgstruct.OwnerName, msgstruct.Passwd)
+    -- print(msgstruct.OwnerName, msgstruct.Passwd)
+    -- Golkin_client:send_get(msgstruct.OwnerName, msgstruct.Passwd)
+    Golkin_client:send_OWNER_LOGIN(msgstruct.OwnerName, msgstruct.Passwd)
 
     local golkinMsg, golkinMsgStruct = self:__await_pullEvent_Golkin(
-        Golkin_protocol.Header.ACK_GET_ACCOUNT, 1)
-    ---@cast golkinMsgStruct Golkin.Web.Protocol.MsgStruct.ACK_GET_ACCOUNT
+        Golkin_protocol.Header.ACK_OWNER_LOGIN, 1)
+    ---@cast golkinMsgStruct Golkin.Web.Protocol.MsgStruct.ACK_OWNER_LOGIN
 
     -- if timeout
     if golkinMsg == nil then
@@ -555,7 +557,7 @@ function Server:__handle_REGISTER_INFO(msg, msgstruct)
 
     -- if result is not good
     if golkinMsgStruct.Success == false then
-        local golkinReplyEnum_INV = Golkin_protocol.Enum_INV.ACK_GET_ACCOUNT_R_INV
+        local golkinReplyEnum_INV = Golkin_protocol.Enum_INV.ACK_OWNER_LOGIN_R_INV
         replyMsgStruct.State = replyEnum.BANKING_ERROR
         replyMsgStruct.Success = false
         replyMsgStruct.BankinState = golkinMsgStruct.State
@@ -942,14 +944,22 @@ function Server:__handle_BUY_THEMA(msg, msgStruct)
         for k, v in pairs(curr_info.Items) do
             if v.ItemType == protocol.Enum.ITEM_TYPE.THEMA and
                 v.ItemIndex == required_thema then
+                print(v.ItemType, v.ItemIndex)
                 required_thema_exist = true
                 break
             end
         end
+        if msgStruct.Thema == protocol.Enum.THEMA.LESS_THAN_WORM then
+            required_thema_exist = true
+        end
     end
+    print(param.Price.Thema[msgStruct.Thema].unlocked_rank_level)
+    print(curr_info.Main.Rank)
+    print(required_thema_exist)
     if param.Price.Thema[msgStruct.Thema] == nil or
         param.Price.Thema[msgStruct.Thema].unlocked_rank_level > curr_info.Main.Rank or
         required_thema_exist == false then
+
         replyMsgStruct.State = replyEnum.THEMA_UNLOCK_CONDITION_UNMET
         replyMsgStruct.Success = false
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
