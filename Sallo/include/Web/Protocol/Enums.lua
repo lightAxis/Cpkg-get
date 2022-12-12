@@ -128,6 +128,8 @@ a.ACK_SET_INFO_CONNECTED_ACCOUNT_R = {
 a.ACK_REGISTER_INFO_R = {
     ["NONE"] = -1, -- this is error
     ["INFO_ALREADY_EXISTS"] = -101, -- info file is already exists
+    ["BANKING_REQUEST_TIMEOUT"] = -102, -- timeout error of banking
+    ["BANKING_ERROR"] = -103, -- error while do banking
     ["NORMAL"] = 0, -- standard for success
     ["SUCCESS"] = 101, -- success
 }
