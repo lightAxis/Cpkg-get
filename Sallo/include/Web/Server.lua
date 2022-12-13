@@ -361,6 +361,12 @@ function Server:make_new_info()
 
     new_info.SalaryLeft = 0
 
+    local item_t = protocol.Struct.item_t:new()
+    item_t.ItemType = protocol.Enum.ITEM_TYPE.THEMA
+    item_t.ItemIndex = protocol.Enum.THEMA.NONE
+    item_t.Name = param.Thema[protocol.Enum.THEMA.NONE].themaName
+    table.insert(new_info.Items, item_t)
+
     return new_info
 end
 
@@ -384,23 +390,23 @@ function Server:start()
     self:find_GolkinServerID();
 
     print("find player detector")
-    self.__PlayerDetector = self:find_peripheral(param.PlayerdetectorName, 3)
+    -- self.__PlayerDetector = self:find_peripheral(param.PlayerdetectorName, 3)
 
     print("find chatbox")
-    self.__ChatBox = self:find_peripheral(param.ChatBoxName, 3)
+    -- self.__ChatBox = self:find_peripheral(param.ChatBoxName, 3)
 
     -- for test
-    -- self.__PlayerDetector = {}
-    -- self.__PlayerDetector.getOnlinePlayers = function()
-    --     return { "test1", "test2", "test11" }
-    -- end
-    -- self.__ChatBox = {}
-    -- self.__ChatBox.sendMessage = function(message, prefix)
-    --     print("chatbox message : " .. message .. "/" .. prefix)
-    -- end
-    -- self.__ChatBox.sendMessageToPlayer = function(message, user, prefix)
-    --     print("chatbox message : " .. message .. "/" .. prefix .. "/" .. user)
-    -- end
+    self.__PlayerDetector = {}
+    self.__PlayerDetector.getOnlinePlayers = function()
+        return { "test1", "test2", "test11" }
+    end
+    self.__ChatBox = {}
+    self.__ChatBox.sendMessage = function(message, prefix)
+        print("chatbox message : " .. message .. "/" .. prefix)
+    end
+    self.__ChatBox.sendMessageToPlayer = function(message, user, prefix)
+        print("chatbox message : " .. message .. "/" .. prefix .. "/" .. user)
+    end
 
     print("start ChatBox thread, 30 sec")
     self.__ChatboxQueueTimerID = os.startTimer(self.__ChatboxQueueDuration)
@@ -1111,12 +1117,12 @@ function Server:__quaryPlayerData()
     self.__lastPlayerQuaryMinuteStr = currMin
 
     -- for test
-    -- self.__tempCount = self.__tempCount + 1
-    -- print(self.__tempCount)
-    -- changeMin = true
-    -- if (self.__tempCount % 480 == 0) then
-    --     changeDay = true
-    -- end
+    self.__tempCount = self.__tempCount + 1
+    print(self.__tempCount)
+    changeMin = true
+    if (self.__tempCount % 480 == 0) then
+        changeDay = true
+    end
 
     -- cached & exist now
     for k, v in pairs(infos) do
