@@ -45,6 +45,8 @@ function app:build_sallo()
         function(obj)
             -- for test
             app.Scene.Addons:detach_handelers()
+            local a = { ["Name"] = app.Data.CurrentOwner.Name }
+            app.Sallo.Scene.InfoMenu:reset_before(a)
             app.Sallo.Scene.InfoMenu:reset()
             app.UIRunner:attachScene(app.Sallo.Scene.InfoMenu)
         end)

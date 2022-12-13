@@ -295,32 +295,51 @@ function SCENE_L:refresh_display(skillState, rank)
         end
     end
 
+
+    local EFFStat_next = param.Skill.EFF[skillState.Efficiency_level + 1]
+    local EFF_next_rq_rank = nil
+    if EFFStat_next ~= nil then
+        EFF_next_rq_rank = EFFStat_next.unlock_rank_level
+    end
+
+    local PROStat_next = param.Skill.PRO[skillState.Proficiency_level + 1]
+    local PRO_next_rq_rank = nil
+    if PROStat_next ~= nil then
+        PRO_next_rq_rank = PROStat_next.unlock_rank_level
+    end
+
+    local CONStat_next = param.Skill.CON[skillState.Concentration_level + 1]
+    local CON_next_rq_rank = nil
+    if CONStat_next ~= nil then
+        CON_next_rq_rank = CONStat_next.unlock_rank_level
+    end
+
     self:refresh_updown(self.bt_EFF_up, self.bt_EFF_down,
-        skillState.Efficiency_level, EFFStat.unlock_rank_level, rank,
+        skillState.Efficiency_level, EFF_next_rq_rank, rank,
         skillState.Left_sp, EFFStat.require_sp)
     self:refresh_updown(self.bt_PRO_up, self.bt_PRO_down,
-        skillState.Proficiency_level, PROStat.unlock_rank_level, rank,
+        skillState.Proficiency_level, PRO_next_rq_rank, rank,
         skillState.Left_sp, PROStat.require_sp)
     self:refresh_updown(self.bt_CON_up, self.bt_CON_down,
-        skillState.Concentration_level, CONStat.unlock_rank_level, rank,
+        skillState.Concentration_level, CON_next_rq_rank, rank,
         skillState.Left_sp, CONStat.require_sp)
 end
 
 ---@param up Tabullet.Button
 ---@param down Tabullet.Button
 ---@param nowLevel number
----@param unlockRankLevel number
+---@param nextUnlockRankLevel number|nil
 ---@param rank number
 ---@param leftSP number
----@param requireSP
-function SCENE_L:refresh_updown(up, down, nowLevel, unlockRankLevel, rank, leftSP, requireSP)
+---@param requireSP number
+function SCENE_L:refresh_updown(up, down, nowLevel, nextUnlockRankLevel, rank, leftSP, requireSP)
     if nowLevel <= 0 then
         down.Visible = false
     else
         down.Visible = true
     end
 
-    if nowLevel > 17 or unlockRankLevel > rank then
+    if nowLevel > 17 or nextUnlockRankLevel > rank then
         up.Visible = false
     else
         up.Visible = true

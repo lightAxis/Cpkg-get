@@ -53,6 +53,7 @@ function SCENE:initialize(ProjNamespace, UILayout)
 
     self.Layout.bts_menu.Thema.ClickEvent = function(obj, e)
         if e.Button == TBL.Enums.MouseButton.left then
+            self:goto_ChangeThema()
         end
     end
 
@@ -144,6 +145,15 @@ function SCENE:goto_Inspector()
     self.PROJ.UIRunner:attachScene(self.PROJ.Sallo.Scene.Inspector)
 end
 
+function SCENE:goto_ChangeThema()
+    self:detach_handelers()
+    if self.currLayoutMode == self.Layout.eMode.OWNER then
+        self.PROJ.Sallo.Data.CurrentInfo = self.currInfo
+    end
+    self.PROJ.Sallo.Scene.ChangeThema:reset()
+    self.PROJ.UIRunner:attachScene(self.PROJ.Sallo.Scene.ChangeThema)
+end
+
 function SCENE:menu_control(bool)
     for k, v in pairs(self.Layout.bts_menu) do
         v.Visible = bool
@@ -157,7 +167,7 @@ function SCENE:reset_before(info_t)
 end
 
 function SCENE:reset()
-    self.Layout.tb_info:setText("Welcome Back! " .. self.PROJ.Data.CurrentOwner.Name)
+    self.Layout.tb_info:setText("Welcome Back! " .. self.currInfo.Name)
     self.PROJ.Style.TB.Info(self.Layout.tb_info)
     self.Layout.bt_menu.IsButtonPressed = false
     self:menu_control(false)
@@ -174,6 +184,7 @@ end
 function SCENE:reset_after_VIEWERmode()
     self.Layout:setMode(self.Layout.eMode.VIEWER)
     self.currLayoutMode = self.Layout.eMode.VIEWER
+    self.Layout:select_menu(self.Layout.eMenu.stat, self.currInfo)
 end
 
 ---refresh info from server
@@ -188,6 +199,9 @@ function SCENE:refresh_info_fromServer(targetMenu)
         else
             -- self.PROJ.Sallo.Data.CurrentInfo = msgstruct.Info
             self.currInfo = msgstruct.Info
+            if (self.currLayoutMode == self.Layout.eMode.OWNER) then
+                self.PROJ.Sallo.Data.CurrentInfo = msgstruct.Info
+            end
 
             self.Layout:refresh_info(self.currInfo)
             local target = targetMenu or self.Layout.currMenu
@@ -195,7 +209,7 @@ function SCENE:refresh_info_fromServer(targetMenu)
         end
         self.PROJ.UIRunner:ReDrawAll()
     end)
-    self.PROJ.Sallo.Client:send_GET_INFO(self.PROJ.Data.CurrentOwner.Name)
+    self.PROJ.Sallo.Client:send_GET_INFO(self.currInfo.Name)
 end
 
 function SCENE:detach_handelers()

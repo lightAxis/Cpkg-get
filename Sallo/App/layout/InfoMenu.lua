@@ -418,7 +418,10 @@ function SCENE_L:select_menu(eMenu, info_t)
     for k, v in pairs(self.tbs_main) do
         v.Visible = show_main
     end
-    self:setMode(self.eMode.OWNER)
+
+    self.bt_menu.Visible = true
+    self.bt_skill.Visible = true
+    self.bt_store.Visible = true
     self.bt_refresh.Visible = true
     self.bt_trasferInfo.Visible = false
 
@@ -454,6 +457,9 @@ function SCENE_L:select_menu(eMenu, info_t)
         self.tbs_menu_3.ConLevelC.Visible = false
     end
 
+    if self.currMode == self.eMode.VIEWER then
+        self:setMode(self.eMode.VIEWER)
+    end
 end
 
 ---scroll menu to left
@@ -525,6 +531,7 @@ end
 ---set mode of info memu view
 ---@param mode Sallo.App.Scene.InfoMenu.eMode
 function SCENE_L:setMode(mode)
+    self.currMode = mode
     if mode == self.eMode.OWNER then
         self.bt_menu.Visible = true
         self.bt_skill.Visible = true

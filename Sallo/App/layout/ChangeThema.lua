@@ -83,7 +83,7 @@ function SCENE_L:make_grid_main(grid_p)
     self.bt_arrow_right = bt_arrow_right
 end
 
----@param themaIdx Sallo.Web.Protocol.Enum.THEMA
+---@param themaIdx number
 function SCENE_L:show_thema(themaIdx)
     local BG = TBL.Enums.Color[param.Thema[themaIdx].BG]
     local FG = TBL.Enums.Color[param.Thema[themaIdx].FG]

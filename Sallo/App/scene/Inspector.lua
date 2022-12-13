@@ -29,7 +29,7 @@ function SCENE:initialize(ProjNamespace, UILayout)
     self.Layout.bt_inspect.ClickEvent = function(obj, e)
         if e.Button == TBL.Enums.MouseButton.left then
             if self.selectedInfo ~= nil then
-                self:goto_InfoMenu_VIEWER()
+                self:goto_InfoMenu_Viewer(self.selectedInfo)
             end
         end
     end
@@ -65,14 +65,6 @@ function SCENE:goto_InfoMenu()
     self:detachHandlers()
     self.PROJ.Sallo.Scene.InfoMenu:reset_before(self.PROJ.Sallo.Data.CurrentInfo)
     self.PROJ.Sallo.Scene.InfoMenu:reset()
-    self.PROJ.UIRunner:attachScene(self.PROJ.Sallo.Scene.InfoMenu)
-end
-
-function SCENE:goto_InfoMenu_VIEWER()
-    self:detachHandlers()
-    self.PROJ.Sallo.Scene.InfoMenu:reset_before(self.selectedInfo)
-    self.PROJ.Sallo.Scene.InfoMenu:reset()
-    self.PROJ.Sallo.Scene.InfoMenu:reset_after_VIEWERmode()
     self.PROJ.UIRunner:attachScene(self.PROJ.Sallo.Scene.InfoMenu)
 end
 
