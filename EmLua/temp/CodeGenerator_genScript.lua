@@ -2,17 +2,52 @@ local args = {...}
 local __GenVariables = args[1]
 local f = args[2]
 
-local ranks = __GenVariables["ranks"]
-local className = __GenVariables["className"]
+local Builder = __GenVariables["Builder"]
+local classIncludeStr = __GenVariables["classIncludeStr"]
 
-f.writeLine("".."---@class "..className)
-f.writeLine("".."local a = {")
-for k,rank in pairs(ranks) do
-f.writeLine("".."    ["..rank.key.."] = {")
-for k,v in pairs(rank.content) do
-f.writeLine("".."        [\""..k.."\"] = "..v..",")
-end
-f.writeLine("".."    },")
-end
-f.writeLine("".."}")
-f.writeLine("".."return a")
+f.writeLine("".."---@class "..Builder.Name..".Handle")
+f.writeLine("".."---@field new fun(self:"..Builder.Name..".Handle):"..Builder.Name..".Handle")
+f.writeLine("".."local handle = "..classIncludeStr.."(\""..Builder.Name..".Handle\")")
+f.writeLine("")
+f.writeLine("".."---constructor")
+f.writeLine("".."function handle:initialize()")
+f.writeLine("".."    ---@type table<"..Builder.Name..".Enum, fun(msg:"..Builder.Name..".Msg, msgstruct:"..Builder:__makeHeaderClassName("IMsgStruct")..")>")
+f.writeLine("".."    self.__MsgStructMap = {}")
+f.writeLine("".."end")
+f.writeLine("")
+f.writeLine("".."---trigger handler from msg")
+f.writeLine("".."---@param msgStr string")
+f.writeLine("".."---@return "..Builder.Name..".Msg msg")
+f.writeLine("".."---@return "..Builder:__makeHeaderClassName("IMsgStruct").." msgStruct")
+f.writeLine("".."function handle:parse(msgStr)")
+f.writeLine("".."    ---@type "..Builder.Name..".Msg")
+f.writeLine("".."    local msg = textutils.unserialize(msgStr)")
+f.writeLine("".."    local msgStruct = textutils.unserialize(msg.MsgStructStr)")
+f.writeLine("".."    local func = self.__MsgStructMap[msg.Header]")
+f.writeLine("".."    if func ~= nil then")
+f.writeLine("".."        func(msg, msgStruct)")
+f.writeLine("".."    end")
+f.writeLine("".."    return msg, msgStruct")
+f.writeLine("".."end")
+f.writeLine("")
+f.writeLine("".."---attach message handle to header")
+f.writeLine("".."---@param msgType "..Builder.Name..".Header")
+f.writeLine("".."---@param func fun(msg:"..Builder.Name..".Msg, msgstruct:"..Builder:__makeHeaderClassName("IMsgStruct")..")")
+f.writeLine("".."function handle:attachMsgHandle(msgType, func)")
+f.writeLine("".."    self.__MsgStructMap[msgType] = func")
+f.writeLine("".."end")
+f.writeLine("")
+f.writeLine("".."---detach message handle to header")
+f.writeLine("".."---@param msgType "..Builder.Name..".Header")
+f.writeLine("".."function handle:detachMsgHandle(msgType)")
+f.writeLine("".."    self.__MsgStructMap[msgType] = nil")
+f.writeLine("".."end")
+f.writeLine("")
+f.writeLine("".."---clear all message handle")
+f.writeLine("".."function handle:clearAllMsgHandle()")
+f.writeLine("".."    for k,v in pairs(self.__MsgStructMap) do")
+f.writeLine("".."        self.__MsgStructMap[k] = nil")
+f.writeLine("".."    end")
+f.writeLine("".."end")
+f.writeLine("")
+f.writeLine("".."return handle")

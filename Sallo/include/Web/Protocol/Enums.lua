@@ -64,6 +64,15 @@ a.THEMA = {
     ["NEWBIE"] = 17, -- level inf
 }
 
+---reply enum of ACK_GET_INFO
+---@enum Sallo.Web.Protocol.Enum.ACK_GET_INFO_R 
+a.ACK_GET_INFO_R = {
+    ["NONE"] = -1, -- this is error!
+    ["NORMAL"] = 0, -- standard for success or not
+    ["INFO_NOT_EXIST"] = -301, -- info file is corrupted
+    ["SUCCESS"] = 301, -- success
+}
+
 ---reply enum of ACK_BUY_RANK
 ---@enum Sallo.Web.Protocol.Enum.ACK_BUY_RANK_R 
 a.ACK_BUY_RANK_R = {
@@ -99,13 +108,15 @@ a.ACK_CHANGE_SKILL_STAT_R = {
     ["SUCCESS"] = 501, -- success
 }
 
----reply enum of ACK_GET_INFO
----@enum Sallo.Web.Protocol.Enum.ACK_GET_INFO_R 
-a.ACK_GET_INFO_R = {
+---reply enum of ACK_CHANGE_THEMA
+---@enum Sallo.Web.Protocol.Enum.ACK_CHANGE_THEMA_R 
+a.ACK_CHANGE_THEMA_R = {
     ["NONE"] = -1, -- this is error!
-    ["NORMAL"] = 0, -- standard for success or not
-    ["INFO_NOT_EXIST"] = -301, -- info file is corrupted
-    ["SUCCESS"] = 301, -- success
+    ["NO_INFO"] = -801, -- to info exist in owner name
+    ["INFO_PASSWD_UNMET"] = -802, -- info passwd umnet
+    ["THEMA_NEEDED_TO_BUY"] = -803, -- no item thema in info
+    ["NORMAL"] = 0, -- standard for success
+    ["SUCCESS"] = 801, -- success
 }
 
 ---reply enum of ACK_SET_INFO_CONNECTED_ACCOUNT

@@ -1,7 +1,7 @@
 ---@class Sallo.Web.Protocol.MsgStruct.ACK_GET_INFOS : Sallo.Web.Protocol.MsgStruct.IMsgStruct
 ---@field State Sallo.Web.Protocol.Enum.ACK_GET_INFOS_R state of reply
 ---@field Success boolean success or not
----@field Infos table<number, Sallo.Web.Protocol.Struct.info_t> info name list from server
+---@field Infos table<number, string> info name list from server
 ---@field new fun():Sallo.Web.Protocol.MsgStruct.ACK_GET_INFOS
 local struct = {}
 
@@ -17,7 +17,7 @@ function struct.new()
     ---@type boolean
     a.Success = nil -- success or not
     
-    ---@type table<number, Sallo.Web.Protocol.Struct.info_t>
+    ---@type table<number, string>
     a.Infos = {} -- info name list from server
     
     return a

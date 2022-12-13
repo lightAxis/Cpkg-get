@@ -19,7 +19,6 @@ protocol.Struct = {}
 protocol.Struct.main_t = require("Sallo.include.Web.Protocol.Struct.main_t")
 protocol.Struct.item_t = require("Sallo.include.Web.Protocol.Struct.item_t")
 protocol.Struct.statistics_t = require("Sallo.include.Web.Protocol.Struct.statistics_t")
-protocol.Struct.thema_t = require("Sallo.include.Web.Protocol.Struct.thema_t")
 protocol.Struct.history_t = require("Sallo.include.Web.Protocol.Struct.history_t")
 protocol.Struct.skillState_t = require("Sallo.include.Web.Protocol.Struct.skillState_t")
 protocol.Struct.stat_t = require("Sallo.include.Web.Protocol.Struct.stat_t")
@@ -28,6 +27,8 @@ protocol.Struct.info_t = require("Sallo.include.Web.Protocol.Struct.info_t")
 --- include MsgStructs
 ---@class Sallo.Web.Protocol.MsgStruct
 protocol.MsgStruct = {}
+protocol.MsgStruct.ACK_CHANGE_THEMA = require("Sallo.include.Web.Protocol.MsgStruct.ACK_CHANGE_THEMA")
+protocol.MsgStruct.CHANGE_THEMA = require("Sallo.include.Web.Protocol.MsgStruct.CHANGE_THEMA")
 protocol.MsgStruct.ACK_BUY_THEMA = require("Sallo.include.Web.Protocol.MsgStruct.ACK_BUY_THEMA")
 protocol.MsgStruct.ACK_REGISTER_INFO = require("Sallo.include.Web.Protocol.MsgStruct.ACK_REGISTER_INFO")
 protocol.MsgStruct.ACK_GET_INFO = require("Sallo.include.Web.Protocol.MsgStruct.ACK_GET_INFO")

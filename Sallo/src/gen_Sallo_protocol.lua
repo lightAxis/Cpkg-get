@@ -142,17 +142,17 @@ builder:addEnum(enum("ACK_BUY_THEMA_R", "reply enum of ACK_BUY_THEMA", {
     enumElm("SUCCESS", 701, "success")
 }))
 
+builder:addEnum(enum("ACK_CHANGE_THEMA_R", "reply enum of ACK_CHANGE_THEMA", {
+    enumElm("NONE", -1, "this is error!"),
+    enumElm("NO_INFO", -801, "to info exist in owner name"),
+    enumElm("INFO_PASSWD_UNMET", -802, "info passwd umnet"),
+    enumElm("THEMA_NEEDED_TO_BUY", -803, "no item thema in info"),
+    enumElm("NORMAL", 0, "standard for success"),
+    enumElm("SUCCESS", 801, "success"),
+}))
 
 
 --- structs
-builder:addStruct(struct("thema_t", "struct of thema by sallo", {
-    field("Enum", fieldType(efieldType.custom, builder:getEnumClassName("THEMA")), fieldInit(efieldType.num, -1),
-        "enum of thema"),
-    field("Name", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of thema"),
-    field("isAquired", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "boolean is get?"),
-    field("isVisible", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "is visible in the rank?"),
-}))
-
 builder:addStruct(struct("main_t", "struct of main bu sallo", {
     field("Level", fieldType(efieldType.num), fieldInit(efieldType.nil_), "level number of info"),
     field("Rank", fieldType(efieldType.custom, builder:getEnumClassName("RANK_NAME")), fieldInit(efieldType.num, -1),
@@ -207,8 +207,8 @@ builder:addStruct(struct("info_t", "all information table of one person", {
     field("Password", fieldType(efieldType.str), fieldInit(efieldType.nil_),
         "password when used to revise the info content"),
     field("AccountName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "account connected to this info"),
-    field("Thema", fieldType(efieldType.custom, builder:getStructClassName("thema_t")), fieldInit(efieldType.nil_),
-        "thema struct field"),
+    field("Thema", fieldType(efieldType.custom, builder:getEnumClassName("THEMA")), fieldInit(efieldType.num, -1),
+        "thema enum"),
     field("Main", fieldType(efieldType.custom, builder:getStructClassName("main_t")),
         fieldInit(efieldType.table, nil, nil),
         "main field of info"),
@@ -278,7 +278,7 @@ builder:addHeader(struct("ACK_GET_INFOS", "reply of GET_INFOS", {
     field("State", fieldType(efieldType.custom, builder:getEnumClassName("ACK_GET_INFOS_R")),
         fieldInit(efieldType.num, -1), "state of reply"),
     field("Success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not"),
-    field("Infos", fieldType(efieldType.table, "number", builder:getStructClassName("info_t")),
+    field("Infos", fieldType(efieldType.table, "number", "string"),
         fieldInit(efieldType.table, nil, nil), "info name list from server")
 }))
 
@@ -324,6 +324,18 @@ builder:addHeader(struct("ACK_BUY_THEMA", "reply msg of BUY_THEMA", {
     field("Success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not")
 }))
 
+builder:addHeader(struct("CHANGE_THEMA", "request change thema for info", {
+    field("InfoName", fieldType(efieldType.str), fieldInit(efieldType.nil_), "info name to change"),
+    field("InfoPasswd", fieldType(efieldType.str), fieldInit(efieldType.nil_), "info passwd to authenticate"),
+    field("Thema", fieldType(efieldType.custom, builder:getEnumClassName("THEMA")),
+        fieldInit(efieldType.num, -1), "thema to change"),
+}))
+
+builder:addHeader(struct("ACK_CHANGE_THEMA", "reply of CHANGE_THEMA", {
+    field("State", fieldType(efieldType.custom, builder:getEnumClassName("ACK_CHANGE_THEMA_R")),
+        fieldInit(efieldType.num, -1), "State reply"),
+    field("Success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not"),
+}))
 
 
 

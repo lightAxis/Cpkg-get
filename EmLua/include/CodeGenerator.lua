@@ -6,7 +6,7 @@ local tool = require("__Cpkg.Tool")
 ---constructor
 function CodeGenerator:initialize()
 
-    self.getScriptPath = PKGS.EmLua.ENV.PATH .. "/temp/CodeGenerator_genScript.lua"
+    self.genScriptPath = PKGS.EmLua.ENV.PATH .. "/temp/CodeGenerator_genScript.lua"
 
     self.__rawScriptLevel = 0
     self.__variableLevel = 0
@@ -49,7 +49,7 @@ function CodeGenerator:GenCode(global, tempPath, outputPath)
     end
 
     --- prepare genScript
-    local f = fs.open(self.getScriptPath, "w")
+    local f = fs.open(self.genScriptPath, "w")
     -- prepare for input of global variable to genScript
     f.writeLine("local args = {...}")
     f.writeLine("local __GenVariables = args[1]")
@@ -73,7 +73,7 @@ function CodeGenerator:GenCode(global, tempPath, outputPath)
     os.sleep(0.5)
 
     local f = fs.open(outputPath, "w")
-    local script, scriptError = loadfile(self.getScriptPath, "t")
+    local script, scriptError = loadfile(self.genScriptPath, "t")
     if (scriptError ~= nil) then
         tool.colorPrint(colors.red, scriptError)
         tool.colorPrint(colors.red, "failed")
