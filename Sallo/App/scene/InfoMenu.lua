@@ -19,7 +19,11 @@ function SCENE:initialize(ProjNamespace, UILayout)
 
     self.Layout.bt_back.ClickEvent = function(obj, e)
         if e.Button == TBL.Enums.MouseButton.left then
-            self:goto_Addons()
+            if self.currLayoutMode == self.Layout.eMode.OWNER then
+                self:goto_Addons()
+            elseif self.currLayoutMode == self.Layout.eMode.VIEWER then
+                self:goto_Inspector()
+            end
         end
     end
 
@@ -38,6 +42,7 @@ function SCENE:initialize(ProjNamespace, UILayout)
 
     self.Layout.bts_menu.Inspector.ClickEvent = function(obj, e)
         if e.Button == TBL.Enums.MouseButton.left then
+            self:goto_Inspector()
         end
     end
 
@@ -88,6 +93,7 @@ function SCENE:initialize(ProjNamespace, UILayout)
     end
 
     self.currInfo = nil
+    self.currLayoutMode = nil
 end
 
 function SCENE:goto_Addons()
@@ -98,30 +104,44 @@ end
 
 function SCENE:goto_TransferAccount()
     self:detach_handelers()
-    self.PROJ.Sallo.Data.CurrentInfo = self.currInfo
+    if self.currLayoutMode == self.Layout.eMode.OWNER then
+        self.PROJ.Sallo.Data.CurrentInfo = self.currInfo
+    end
     self.PROJ.Sallo.Scene.TransferAccount:reset()
     self.PROJ.UIRunner:attachScene(self.PROJ.Sallo.Scene.TransferAccount)
 end
 
 function SCENE:goto_ConnectAccount()
     self:detach_handelers()
-    self.PROJ.Sallo.Data.CurrentInfo = self.currInfo
+    if self.currLayoutMode == self.Layout.eMode.OWNER then
+        self.PROJ.Sallo.Data.CurrentInfo = self.currInfo
+    end
     self.PROJ.Sallo.Scene.ConnectAccount:reset()
     self.PROJ.UIRunner:attachScene(self.PROJ.Sallo.Scene.ConnectAccount)
 end
 
 function SCENE:goto_Store()
     self:detach_handelers()
-    self.PROJ.Sallo.Data.CurrentInfo = self.currInfo
+    if self.currLayoutMode == self.Layout.eMode.OWNER then
+        self.PROJ.Sallo.Data.CurrentInfo = self.currInfo
+    end
     self.PROJ.Sallo.Scene.Store:reset()
     self.PROJ.UIRunner:attachScene(self.PROJ.Sallo.Scene.Store)
 end
 
 function SCENE:goto_Skill()
     self:detach_handelers()
-    self.PROJ.Sallo.Data.CurrentInfo = self.currInfo
+    if self.currLayoutMode == self.Layout.eMode.OWNER then
+        self.PROJ.Sallo.Data.CurrentInfo = self.currInfo
+    end
     self.PROJ.Sallo.Scene.Skill:reset()
     self.PROJ.UIRunner:attachScene(self.PROJ.Sallo.Scene.Skill)
+end
+
+function SCENE:goto_Inspector()
+    self:detach_handelers()
+    self.PROJ.Sallo.Scene.Inspector:reset()
+    self.PROJ.UIRunner:attachScene(self.PROJ.Sallo.Scene.Inspector)
 end
 
 function SCENE:menu_control(bool)
@@ -141,12 +161,19 @@ function SCENE:reset()
     self.PROJ.Style.TB.Info(self.Layout.tb_info)
     self.Layout.bt_menu.IsButtonPressed = false
     self:menu_control(false)
+    self.Layout:setMode(self.Layout.eMode.OWNER)
+    self.currLayoutMode = self.Layout.eMode.OWNER
     self:refresh_info_fromServer(self.Layout.eMenu.stat)
 
     -- if self.PROJ.Sallo.Data.CurrentInfo == nil then
     --     error("current sallo info struct is null!")
     -- end
 
+end
+
+function SCENE:reset_after_VIEWERmode()
+    self.Layout:setMode(self.Layout.eMode.VIEWER)
+    self.currLayoutMode = self.Layout.eMode.VIEWER
 end
 
 ---refresh info from server
