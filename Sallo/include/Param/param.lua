@@ -30,5 +30,6 @@ param.Skill.PRO = require("Sallo.include.Param.param_skill_PRO")
 param.Price = {}
 param.Price.Rank = require("Sallo.include.Param.param_rankPrice")
 param.Price.Thema = require("Sallo.include.Param.param_rankthemaPrice")
+param.Thema = require("Sallo.include.Param.param_thema")
 
 return param
