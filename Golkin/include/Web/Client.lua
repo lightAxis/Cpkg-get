@@ -24,21 +24,44 @@ local const = THIS.ENV.CONST
 local client = class("Golkin.Web.Client")
 
 function client:initialize()
-    self.__serverID = nil
+
+    print("open rednet on side" .. CPKG.rednetSide)
+    rednet.open(CPKG.rednetSide)
+
+    print("find Golkin server..")
+    self.__serverID = self:findServerID()
 end
 
 ---get golkin server id
 ---@return number
 function client:getServerID()
-    if (self.__serverID == nil) then
+    if self.__serverID == nil then
         local id = rednet.lookup(const.protocol, const.serverName)
-        if id == nil then
-            error("no Golkin Server is exist!")
-        end
         self.__serverID = id
         return id
     else
         return self.__serverID
+    end
+end
+
+function client:findServerID()
+    local id = self:getServerID()
+    if id ~= nil then
+        return id
+    end
+
+    local timer = os.startTimer(3)
+    while true do
+        print("there is no golkin server exist. retrying...")
+        local a, b, c, d = os.pullEvent()
+        if a == "timer" and b == timer then
+            id = self:getServerID()
+            if id ~= nil then
+                return id
+            end
+            timer = os.startTimer(3)
+        end
+
     end
 end
 

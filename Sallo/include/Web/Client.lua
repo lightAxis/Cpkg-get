@@ -38,7 +38,7 @@ function Client:findServerID()
 
     local timer = os.startTimer(3)
     while true do
-        print("there is no golkin server exist. retrying...")
+        print("there is no sallo server exist. retrying...")
         local a, b, c, d = os.pullEvent()
         if a == "timer" and b == timer then
             id = self:getServerID()
@@ -136,6 +136,18 @@ function Client:send_SET_INFO_CONNECTED_ACCOUNT(infoName, infoPasswd, accountNam
     msgStruct.AccountOwner = accountOwner
     msgStruct.AccountPasswd = accountPasswd
     self:__send_Msg(protocol.Header.SET_INFO_CONNECTED_ACCOUNT, msgStruct)
+end
+
+---send CHANGE_THEMA msg to sallo server
+---@param infoName string
+---@param infoPasswd string
+---@param thema Sallo.Web.Protocol.Enum.THEMA
+function Client:send_CHANGE_THEMA(infoName, infoPasswd, thema)
+    local msgStruct = protocol.MsgStruct.CHANGE_THEMA:new()
+    msgStruct.InfoName = infoName
+    msgStruct.InfoPasswd = infoPasswd
+    msgStruct.Thema = thema
+    self:__send_Msg(protocol.Header.CHANGE_THEMA, msgStruct)
 end
 
 return Client

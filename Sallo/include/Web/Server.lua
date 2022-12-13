@@ -8,7 +8,7 @@ local PlayerLeveler = THIS.PlayerLeveler
 
 local Golkin = DEPS.Sallo.Golkin
 local Golkin_handle = Golkin.Web.Handle
-local Golkin_client = Golkin.Web.Client:new()
+local Golkin_client = nil --Golkin.Web.Client:new()
 local Golkin_protocol = Golkin.Web.Protocol
 local Golkin_param = Golkin.ENV.CONST
 
@@ -46,6 +46,8 @@ local Server = class("Sallo.Web.Server")
 function Server:initialize()
     -- for test
     self.__tempCount = 0
+
+    Golkin_client = Golkin.Web.Client:new()
 
     self.__Sallo_handle = handle:new()
     self.__Golkin_handle = Golkin_handle:new()
@@ -109,6 +111,10 @@ function Server:initialize()
     self.__Sallo_handle:attachMsgHandle(protocol.Header.BUY_THEMA, function(msg, msgstruct)
         ---@cast msgstruct Sallo.Web.Protocol.MsgStruct.BUY_THEMA
         self:__handle_BUY_THEMA(msg, msgstruct)
+    end)
+    self.__Sallo_handle:attachMsgHandle(protocol.Header.CHANGE_THEMA, function(msg, msgstruct)
+        ---@cast msgstruct Sallo.Web.Protocol.MsgStruct.CHANGE_THEMA
+        self:__handle_CHANGE_THEMA(msg, msgstruct)
     end)
 
     -- --- attach handler of golkin
@@ -351,12 +357,7 @@ function Server:make_new_info()
     statistics_t.Total_gold = 0
     new_info.Statistics = statistics_t
 
-    local thema_t = protocol.Struct.thema_t:new()
-    thema_t.Enum = protocol.Enum.THEMA.NO_THEMA
-    thema_t.Name = "No Thema"
-    thema_t.isAquired = true
-    thema_t.isVisible = true
-    new_info.Thema = thema_t
+    new_info.Thema = protocol.Enum.THEMA.NONE
 
     new_info.SalaryLeft = 0
 
@@ -1023,6 +1024,63 @@ function Server:__handle_BUY_THEMA(msg, msgStruct)
     self:__saveInfo(curr_info)
 
     -- return success msg
+    replyMsgStruct.State = replyEnum.SUCCESS
+    replyMsgStruct.Success = true
+    self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+    self:__display_result_msg(true, replyMsgStruct.State, replyEnum_INV)
+end
+
+---handle msg CHANGE_THEMA
+---@param msg Sallo.Web.Protocol.Msg
+---@param msgStruct Sallo.Web.Protocol.MsgStruct.CHANGE_THEMA
+function Server:__handle_CHANGE_THEMA(msg, msgStruct)
+    print("handle CHANGE_THEMA msg")
+    local replyMsgStruct = protocol.MsgStruct.ACK_CHANGE_THEMA:new()
+    local replyEnum = protocol.Enum.ACK_CHANGE_THEMA_R
+    local replyEnum_INV = protocol.Enum_INV.ACK_CHANGE_THEMA_R_INV
+    local replyHeader = protocol.Header.ACK_CHANGE_THEMA
+
+    --- try to parse info
+    local currInfo = self:__getInfo(msgStruct.InfoName)
+    if currInfo == nil then
+        replyMsgStruct.State = replyEnum.NO_INFO
+        replyMsgStruct.Success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
+        return nil
+    end
+
+    -- if passwd unmet
+    if currInfo.Password ~= msgStruct.InfoPasswd then
+        replyMsgStruct.State = replyEnum.INFO_PASSWD_UNMET
+        replyMsgStruct.Success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
+        return nil
+    end
+
+    -- if no current them item owned
+    local isItemExist = false
+    for k, v in pairs(currInfo.Items) do
+        if v.ItemType == protocol.Enum.ITEM_TYPE.THEMA and
+            v.ItemIndex == msgStruct.Thema then
+            isItemExist = true
+            break
+        end
+    end
+    if isItemExist == false then
+        replyMsgStruct.State = replyEnum.THEMA_NEEDED_TO_BUY
+        replyMsgStruct.Success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
+        return nil
+    end
+
+    -- apply to info and save
+    currInfo.Thema = msgStruct.Thema
+    self:__saveInfo(currInfo)
+
+    -- give success msg
     replyMsgStruct.State = replyEnum.SUCCESS
     replyMsgStruct.Success = true
     self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
