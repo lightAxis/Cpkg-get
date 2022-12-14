@@ -16,6 +16,15 @@ a.ACK_BUY_THEMA_R = {
     ["SUCCESS"] = 701, -- success
 }
 
+---reply enum of ACK_GET_LEADERBOARD_INFOS
+---@enum Sallo.Web.Protocol.Enum.ACK_GET_LEADERBOARD_INFOS_R 
+a.ACK_GET_LEADERBOARD_INFOS_R = {
+    ["NONE"] = -1, -- this is error
+    ["NO_INFO"] = -901, -- no info left in server
+    ["NORMAL"] = 0, -- standard for success
+    ["SUCCESS"] = 901, -- success
+}
+
 ---enum name
 ---@enum Sallo.Web.Protocol.Enum.RANK_NAME 
 a.RANK_NAME = {

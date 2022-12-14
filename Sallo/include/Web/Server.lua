@@ -116,6 +116,10 @@ function Server:initialize()
         ---@cast msgstruct Sallo.Web.Protocol.MsgStruct.CHANGE_THEMA
         self:__handle_CHANGE_THEMA(msg, msgstruct)
     end)
+    self.__Sallo_handle:attachMsgHandle(protocol.Header.GET_LEADERBOARD_INFOS, function(msg, msgstruct)
+        ---@cast msgstruct Sallo.Web.Protocol.MsgStruct.GET_LEADERBOARD_INFOS
+        self:__handle_GET_LEADERBOARD_INFOS(msg, msgstruct)
+    end)
 
     -- --- attach handler of golkin
     -- self.__Golkin_handle:attachMsgHandle(Golkin_protocol.Header.GET_ACCOUNT, function(msg, msgstruct)
@@ -1087,6 +1091,49 @@ function Server:__handle_CHANGE_THEMA(msg, msgStruct)
     self:__saveInfo(currInfo)
 
     -- give success msg
+    replyMsgStruct.State = replyEnum.SUCCESS
+    replyMsgStruct.Success = true
+    self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+    self:__display_result_msg(true, replyMsgStruct.State, replyEnum_INV)
+end
+
+---handle GET_LEADERBOARD_INFOS msg
+---@param msg Sallo.Web.Protocol.Msg
+---@param msgStruct Sallo.Web.Protocol.MsgStruct.GET_LEADERBOARD_INFOS
+function Server:__handle_GET_LEADERBOARD_INFOS(msg, msgStruct)
+    print("handle GET_LEADERBOARD_INFOS msg")
+    local replyMsgStruct = protocol.MsgStruct.ACK_GET_LEADERBOARD_INFOS:new()
+    local replyEnum = protocol.Enum.ACK_GET_LEADERBOARD_INFOS_R
+    local replyEnum_INV = protocol.Enum_INV.ACK_GET_LEADERBOARD_INFOS_R_INV
+    local replyHeader = protocol.Header.ACK_GET_LEADERBOARD_INFOS
+
+    -- if there is no infos in server
+    if #self.__cachedInfos == 0 then
+        replyMsgStruct.State = replyEnum.NONE
+        replyMsgStruct.Success = false
+        self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
+        self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
+        return nil
+    end
+
+    -- prepare data
+    ---@type table<number, Sallo.Web.Protocol.Struct.leaderboardInfo_t>
+    local infos = {}
+    for k, v in pairs(self.__cachedInfos) do
+        ---@type Sallo.Web.Protocol.Struct.leaderboardInfo_t
+        local a = {}
+        a.Level = v.Main.Level
+        a.Name = v.Name
+        a.Rank = v.Main.Rank
+        a.Thema = v.Thema
+        a.TotalExp = v.Statistics.Total_exp
+        table.insert(infos, a)
+    end
+    -- sort by total exp, descend order
+    table.sort(infos, function(a, b) return a.TotalExp > b.TotalExp end)
+
+    -- send with success
+    replyMsgStruct.LeaderboardInfos = infos
     replyMsgStruct.State = replyEnum.SUCCESS
     replyMsgStruct.Success = true
     self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)

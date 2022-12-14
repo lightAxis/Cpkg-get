@@ -151,6 +151,13 @@ builder:addEnum(enum("ACK_CHANGE_THEMA_R", "reply enum of ACK_CHANGE_THEMA", {
     enumElm("SUCCESS", 801, "success"),
 }))
 
+builder:addEnum(enum("ACK_GET_LEADERBOARD_INFOS_R", "reply enum of ACK_GET_LEADERBOARD_INFOS", {
+    enumElm("NONE", -1, "this is error"),
+    enumElm("NO_INFO", -901, "no info left in server"),
+    enumElm("NORMAL", 0, "standard for success"),
+    enumElm("SUCCESS", 901, "success"),
+}))
+
 
 --- structs
 builder:addStruct(struct("main_t", "struct of main bu sallo", {
@@ -201,7 +208,17 @@ builder:addStruct(struct("item_t", "struct of item", {
     field("Name", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of the item")
 }))
 
--- struct
+builder:addStruct(struct("leaderboardInfo_t", "struct of ledaerboard account info",
+    {
+        field("Name", fieldType(efieldType.str), fieldInit(efieldType.nil_), "name of leaderboard info"),
+        field("Level", fieldType(efieldType.num), fieldInit(efieldType.nil_), "Level of info"),
+        field("Rank", fieldType(efieldType.custom, builder:getEnumClassName("RANK_NAME")),
+            fieldInit(efieldType.num, -1), "Rank of info"),
+        field("TotalExp", fieldType(efieldType.num), fieldInit(efieldType.nil_), "total exp of info"),
+        field("Thema", fieldType(efieldType.custom, builder:getEnumClassName("THEMA")),
+            fieldInit(efieldType.num, -1), "thema of info"),
+    }))
+
 builder:addStruct(struct("info_t", "all information table of one person", {
     field("Name", fieldType(efieldType.str), fieldInit(efieldType.nil_), "owner name of sallo info"),
     field("Password", fieldType(efieldType.str), fieldInit(efieldType.nil_),
@@ -335,6 +352,17 @@ builder:addHeader(struct("ACK_CHANGE_THEMA", "reply of CHANGE_THEMA", {
     field("State", fieldType(efieldType.custom, builder:getEnumClassName("ACK_CHANGE_THEMA_R")),
         fieldInit(efieldType.num, -1), "State reply"),
     field("Success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not"),
+}))
+
+builder:addHeader(struct("GET_LEADERBOARD_INFOS", "request leaderboard info to server", {
+}))
+
+builder:addHeader(struct("ACK_GET_LEADERBOARD_INFOS", "reply of GET_LEADERBOARD_INFOS", {
+    field("State", fieldType(efieldType.custom, builder:getEnumClassName("ACK_GET_LEADERBOARD_INFOS_R")),
+        fieldInit(efieldType.num, -1), "reply state"),
+    field("Success", fieldType(efieldType.bool), fieldInit(efieldType.nil_), "success or not"),
+    field("LeaderboardInfos", fieldType(efieldType.table, "number", builder:getStructClassName("leaderboardInfo_t"))
+        , fieldInit(efieldType.table, nil, nil), "leaderboard infos parsed"),
 }))
 
 

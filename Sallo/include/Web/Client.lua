@@ -150,4 +150,9 @@ function Client:send_CHANGE_THEMA(infoName, infoPasswd, thema)
     self:__send_Msg(protocol.Header.CHANGE_THEMA, msgStruct)
 end
 
+---send GET_LEADERBOARD_INFOS to sallo server
+function Client:send_GET_LEADERBOARD_INFOS()
+    local msgStruct = protocol.MsgStruct.GET_LEADERBOARD_INFOS:new()
+end
+
 return Client

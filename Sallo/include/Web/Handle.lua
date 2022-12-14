@@ -38,7 +38,7 @@ end
 
 ---clear all message handle
 function handle:clearAllMsgHandle()
-    for k, v in pairs(self.__MsgStructMap) do
+    for k,v in pairs(self.__MsgStructMap) do
         self.__MsgStructMap[k] = nil
     end
 end
