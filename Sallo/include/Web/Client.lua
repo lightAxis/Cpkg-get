@@ -153,6 +153,7 @@ end
 ---send GET_LEADERBOARD_INFOS to sallo server
 function Client:send_GET_LEADERBOARD_INFOS()
     local msgStruct = protocol.MsgStruct.GET_LEADERBOARD_INFOS:new()
+    self:__send_Msg(protocol.Header.GET_LEADERBOARD_INFOS, msgStruct)
 end
 
 return Client
