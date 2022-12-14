@@ -85,6 +85,8 @@ function SCENE:reset()
     local skillState_t = textutils.serialize(self.PROJ.Sallo.Data.CurrentInfo.SkillState)
     self.newSkillState = textutils.unserialize(skillState_t)
     self.Layout:refresh_display(self.newSkillState, self.PROJ.Sallo.Data.CurrentInfo.Main.Rank)
+    self.Layout.tb_info:setText("Invest Your Skill Points")
+    self.PROJ.Style.TB.Info(self.Layout.tb_info)
 end
 
 ---@param dir number -1 or 1
