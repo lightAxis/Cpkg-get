@@ -16,7 +16,7 @@ function SCENE_L:initialize(attachedScreen, projNamespace)
     TBL.UILayout.initialize(self, attachedScreen, projNamespace)
 
     self.__NameLen = -1
-    self.__LeveLen = -1
+    self.__LevelLen = -1
     self.__RankLen = -1
     self.__TotalExpLen = -1
 
@@ -79,17 +79,17 @@ function SCENE_L:make_grid_main(grid_p)
     tb_lbtitle_Level:setText("Level")
     grid_main:setPosLen(tb_lbtitle_Level, 3, 2)
     self.PROJ.Style.TB.ListTitle(tb_lbtitle_Level)
-    self.__LeveLen = tb_lbtitle_Level.Len.x
+    self.__LevelLen = tb_lbtitle_Level.Len.x
 
     local tb_lbtitle_Rank = TBL.TextBlock:new(self.rootScreenCanvas, self.attachingScreen, "tb_lbtitle_Rank")
     tb_lbtitle_Rank:setText("Rank")
-    grid_main:setPosLen(tb_lbtitle_Rank, 4, 1)
+    grid_main:setPosLen(tb_lbtitle_Rank, 4, 2)
     self.PROJ.Style.TB.ListTitle(tb_lbtitle_Rank)
     self.__RankLen = tb_lbtitle_Rank.Len.x
 
     local tb_lbtitle_TotalExp = TBL.TextBlock:new(self.rootScreenCanvas, self.attachingScreen, "tb_lbtitle_TotalExp")
     tb_lbtitle_TotalExp:setText("TotalExp")
-    grid_main:setPosLen(tb_lbtitle_TotalExp, 5, 1)
+    grid_main:setPosLen(tb_lbtitle_TotalExp, 5, 2)
     self.PROJ.Style.TB.ListTitle(tb_lbtitle_TotalExp)
     self.__TotalExpLen = tb_lbtitle_TotalExp.Len.x
 
@@ -104,7 +104,7 @@ function SCENE_L:make_grid_main(grid_p)
 
         local dispStr = ""
         dispStr = dispStr .. self:get_middle_str(NameStr, self.__NameLen)
-        dispStr = dispStr .. self:get_middle_str(LevelStr, self.__LeveLen)
+        dispStr = dispStr .. self:get_middle_str(LevelStr, self.__LevelLen)
         dispStr = dispStr .. self:get_middle_str(RankStr, self.__RankLen)
         dispStr = dispStr .. self:get_middle_str(TotalExpStr, self.__TotalExpLen)
         local BG = TBL.Enums.Color[param.Thema[obj.Thema].BG]
@@ -117,11 +117,9 @@ function SCENE_L:make_grid_main(grid_p)
 end
 
 function SCENE_L:get_middle_str(str, len)
-    local startPos = TBL.UITools.calcHorizontalAlignPos(1, #str, len, TBL.Enums.HorizontalAlignmentMode.center)
-
+    local startPos = TBL.UITools.calcHorizontalAlignPos(1, len, #str, TBL.Enums.HorizontalAlignmentMode.center)
     local forwardLen = startPos - 1
     local backLen = len - forwardLen - #str
-
     return TBL.UITools.getEmptyString(forwardLen) .. str .. TBL.UITools.getEmptyString(backLen)
 end
 
