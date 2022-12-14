@@ -48,6 +48,7 @@ function SCENE:initialize(ProjNamespace, UILayout)
 
     self.Layout.bts_menu.LeaderBoard.ClickEvent = function(obj, e)
         if e.Button == TBL.Enums.MouseButton.left then
+            self:goto_Leaderboard()
         end
     end
 
@@ -152,6 +153,15 @@ function SCENE:goto_ChangeThema()
     end
     self.PROJ.Sallo.Scene.ChangeThema:reset()
     self.PROJ.UIRunner:attachScene(self.PROJ.Sallo.Scene.ChangeThema)
+end
+
+function SCENE:goto_Leaderboard()
+    self:detach_handelers()
+    if self.currLayoutMode == self.Layout.eMode.OWNER then
+        self.PROJ.Sallo.Data.currMenu = self.currLayoutMode
+    end
+    self.PROJ.Sallo.Scene.Leaderboard:reset()
+    self.PROJ.UIRunner:attachScene(self.PROJ.Sallo.Scene.Leaderboard)
 end
 
 function SCENE:menu_control(bool)
