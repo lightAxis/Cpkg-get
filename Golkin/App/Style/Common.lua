@@ -98,7 +98,7 @@ end
 ---comment
 ---@param tb Tabullet.TextBlock
 function a.TB.Level(tb)
-    tb:setTextHorizontalAlignment(TBL.Enums.HorizontalAlignmentMode.left)
+    tb:setTextHorizontalAlignment(TBL.Enums.HorizontalAlignmentMode.center)
     tb:setTextVerticalAlignment(TBL.Enums.VerticalAlignmentMode.center)
     tb:setBackgroundColor(TBL.Enums.Color.orange)
     tb:setTextColor(TBL.Enums.Color.white)
@@ -107,7 +107,7 @@ end
 ---comment
 ---@param tb Tabullet.TextBlock
 function a.TB.RankName(tb)
-    tb:setTextHorizontalAlignment(TBL.Enums.HorizontalAlignmentMode.right)
+    tb:setTextHorizontalAlignment(TBL.Enums.HorizontalAlignmentMode.center)
     tb:setTextVerticalAlignment(TBL.Enums.VerticalAlignmentMode.center)
     tb:setBackgroundColor(TBL.Enums.Color.brown)
     tb:setTextColor(TBL.Enums.Color.white)
