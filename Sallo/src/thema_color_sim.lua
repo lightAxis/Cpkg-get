@@ -42,11 +42,9 @@ end
 
 while true do
     local a, b, c, d = os.pullEvent("mouse_click")
-
-    draw(thema_want, currentIdx)
     if currentIdx > 16 then
         currentIdx = 1
     end
-
+    draw(thema_want, currentIdx)
     currentIdx = currentIdx + 1
 end
