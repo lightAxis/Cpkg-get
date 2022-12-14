@@ -75,6 +75,7 @@
       "gen_param_table",
       "see_scene",
       "start_server",
+      "thema_color_sim",
     },
     Upgradable = false,
     DescPath = "Cpkg-get/Sallo/pkg_info.sz",
