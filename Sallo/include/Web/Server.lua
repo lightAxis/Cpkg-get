@@ -361,7 +361,7 @@ function Server:make_new_info()
     statistics_t.Total_gold = 0
     new_info.Statistics = statistics_t
 
-    new_info.Thema = protocol.Enum.THEMA.NONE
+    new_info.Thema = protocol.Enum.THEMA.NO_THEMA
 
     new_info.SalaryLeft = 0
 
