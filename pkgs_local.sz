@@ -73,6 +73,7 @@
       "app",
       "gen_Sallo_protocol",
       "gen_param_table",
+      "leaderboard",
       "see_scene",
       "start_server",
       "thema_color_sim",
