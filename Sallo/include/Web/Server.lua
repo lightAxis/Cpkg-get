@@ -44,8 +44,8 @@ local Server = class("Sallo.Web.Server")
 
 
 function Server:initialize()
-    -- for test
-    self.__tempCount = 0
+    -- -- for test
+    -- self.__tempCount = 0
 
     Golkin_client = Golkin.Web.Client:new()
 
@@ -394,23 +394,23 @@ function Server:start()
     self:find_GolkinServerID();
 
     print("find player detector")
-    -- self.__PlayerDetector = self:find_peripheral(param.PlayerdetectorName, 3)
+    self.__PlayerDetector = self:find_peripheral(param.PlayerdetectorName, 3)
 
     print("find chatbox")
-    -- self.__ChatBox = self:find_peripheral(param.ChatBoxName, 3)
+    self.__ChatBox = self:find_peripheral(param.ChatBoxName, 3)
 
     -- for test
-    self.__PlayerDetector = {}
-    self.__PlayerDetector.getOnlinePlayers = function()
-        return { "test1", "test2", "test11" }
-    end
-    self.__ChatBox = {}
-    self.__ChatBox.sendMessage = function(message, prefix)
-        print("chatbox message : " .. message .. "/" .. prefix)
-    end
-    self.__ChatBox.sendMessageToPlayer = function(message, user, prefix)
-        print("chatbox message : " .. message .. "/" .. prefix .. "/" .. user)
-    end
+    -- self.__PlayerDetector = {}
+    -- self.__PlayerDetector.getOnlinePlayers = function()
+    --     return { "test1", "test2", "test11" }
+    -- end
+    -- self.__ChatBox = {}
+    -- self.__ChatBox.sendMessage = function(message, prefix)
+    --     print("chatbox message : " .. message .. "/" .. prefix)
+    -- end
+    -- self.__ChatBox.sendMessageToPlayer = function(message, user, prefix)
+    --     print("chatbox message : " .. message .. "/" .. prefix .. "/" .. user)
+    -- end
 
     print("start ChatBox thread, 30 sec")
     self.__ChatboxQueueTimerID = os.startTimer(self.__ChatboxQueueDuration)

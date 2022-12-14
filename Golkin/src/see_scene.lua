@@ -6,7 +6,7 @@ local mon_term = TBL.Screen:new(term, TBL.Enums.Side.NONE)
 -- local mon_term = TBL.Screen:new(peripheral.wrap("left"), TBL.Enums.Side.left)
 local temp = {}
 temp.Style = require("Golkin.App.Style.Common")
-temp.Param = require("Golkin.userdata.param")
+-- temp.Param = require("Golkin.userdata.param")
 
 -- local LAYOUT = require("Golkin.App.Layout.Cover"):new(mon_term, temp)
 -- local LAYOUT = require("Golkin.App.Layout.Login_BioScan"):new(mon_term, temp)

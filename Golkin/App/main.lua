@@ -34,7 +34,7 @@ function GolkinApp:build()
 
     ------------ Param -------------
 
-    GolkinApp.Param = require("Golkin.userdata.param")
+    -- GolkinApp.Param = require("Golkin.userdata.param")
     GolkinApp.Style = require("Golkin.App.Style.Common")
     GolkinApp.Data = require("Golkin.App.Data")
 
@@ -102,7 +102,7 @@ function GolkinApp:build()
     ------------ peripherals --------
     GolkinApp.Peripheral = {}
     ---@type Vef.AP.PlayerDetector
-    GolkinApp.Peripheral.PlayerDetector = peripheral.find(GolkinApp.Param.PlayerDetectorName)
+    GolkinApp.Peripheral.PlayerDetector = peripheral.find("playerDetector")
 
     --- register each screen sides initialize Scene
     GolkinApp.UIRunner:attachScene(GolkinApp.Scene.ManualTextInput)
