@@ -368,7 +368,7 @@ function Server:make_new_info()
     local item_t = protocol.Struct.item_t:new()
     item_t.ItemType = protocol.Enum.ITEM_TYPE.THEMA
     item_t.ItemIndex = protocol.Enum.THEMA.NONE
-    item_t.Name = param.Thema[protocol.Enum.THEMA.NONE].themaName
+    item_t.Name = param.Thema[protocol.Enum.THEMA.NO_THEMA].themaName
     table.insert(new_info.Items, item_t)
 
     return new_info
