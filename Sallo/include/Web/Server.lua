@@ -1108,8 +1108,12 @@ function Server:__handle_GET_LEADERBOARD_INFOS(msg, msgStruct)
     local replyHeader = protocol.Header.ACK_GET_LEADERBOARD_INFOS
 
     -- if there is no infos in server
-    if #self.__cachedInfos == 0 then
-        replyMsgStruct.State = replyEnum.NONE
+    local totalInfoNum = 0
+    for k, v in pairs(self.__cachedInfos) do
+        totalInfoNum = totalInfoNum + 1
+    end
+    if totalInfoNum == 0 then
+        replyMsgStruct.State = replyEnum.NO_INFO
         replyMsgStruct.Success = false
         self:__sendMsgStruct(replyHeader, replyMsgStruct, msg.SendID)
         self:__display_result_msg(false, replyMsgStruct.State, replyEnum_INV)
@@ -1251,7 +1255,7 @@ function Server:__changeDay(info)
     send_t.owner = param.account.owner
     send_t.password = param.account.passwd
     send_t.from = param.account.name
-    send_t.fromMsg = info.Name .. " : " .. string.format("%.2f", todayGold)
+    send_t.fromMsg = info.Name .. " : " .. string.format("%.0f", todayGold)
     send_t.to = info.AccountName
     send_t.toMsg = "Salary"
     send_t.balance = todayGold
@@ -1264,6 +1268,7 @@ function Server:__changeDay(info)
         send_t.fromMsg = info.Name .. " : " .. string.format("%.2f", send_t.balance)
     end
 
+    send_t.balance = math.floor(send_t.balance)
     Golkin_client:send_SEND(send_t)
 
     -- await for golkin response
