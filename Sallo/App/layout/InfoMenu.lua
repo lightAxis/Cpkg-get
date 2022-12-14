@@ -293,6 +293,11 @@ end
 ---@param max number
 function SCENE_L:set_exp_gauge(now, max)
     local text = tostring(string.format("%.2f / %.2f (%.2f", now, max, 100 * now / max) .. "%)")
+    if (max < 0) then
+        text = tostring(string.format("%.2f", now) .. " / 0 (Infinite %)")
+        now = 0
+        max = 1
+    end
     self.pgb_exp_gauge:setValue(now / max)
     self.tb_exp_gauge:setText(text)
 end
@@ -331,9 +336,9 @@ function SCENE_L:make_grid_info2(grid_p)
     self.tbs_menu_1.ActPerMinN, self.tbs_menu_1.ActPerMinC = self:make_grid_info_combo("ACT/min", 1, 7,
         grid_main_infopanel2)
 
-    self.tbs_menu_1.ExpPerActN, self.tbs_menu_1.ExpPerActC = self:make_grid_info_combo("EXP/CAP", 3, 1,
+    self.tbs_menu_1.ExpPerActN, self.tbs_menu_1.ExpPerActC = self:make_grid_info_combo("EXP/ACT", 3, 1,
         grid_main_infopanel2)
-    self.tbs_menu_1.GoldPerActN, self.tbs_menu_1.GoldPerActC = self:make_grid_info_combo("GOLD/CAP", 3, 4,
+    self.tbs_menu_1.GoldPerActN, self.tbs_menu_1.GoldPerActC = self:make_grid_info_combo("GOLD/ACT", 3, 4,
         grid_main_infopanel2)
     self.tbs_menu_1.ActAmpN, self.tbs_menu_1.ActAmpC = self:make_grid_info_combo("ACT Amplifier", 3, 7,
         grid_main_infopanel2)
