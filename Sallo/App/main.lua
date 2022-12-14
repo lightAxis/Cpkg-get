@@ -18,6 +18,7 @@ function app:build_sallo()
     app.Sallo.Layout.Skill = require("Sallo.App.layout.Skill"):new(app.Screens.MainScreen, app)
     app.Sallo.Layout.Inspector = require("Sallo.App.layout.Inspector"):new(app.Screens.MainScreen, app)
     app.Sallo.Layout.ChangeThema = require("Sallo.App.layout.ChangeThema"):new(app.Screens.MainScreen, app)
+    app.Sallo.Layout.Leaderboard = require("Sallo.App.layout.Leaderboard"):new(app.Screens.MainScreen, app)
 
     app.Sallo.Scene = {}
     app.Sallo.Scene.InfoMenu = require("Sallo.App.scene.InfoMenu"):new(app, app.Sallo.Layout.InfoMenu)
@@ -29,6 +30,7 @@ function app:build_sallo()
     app.Sallo.Scene.Skill = require("Sallo.App.scene.Skill"):new(app, app.Sallo.Layout.Skill)
     app.Sallo.Scene.Inspector = require("Sallo.App.scene.Inspector"):new(app, app.Sallo.Layout.Inspector)
     app.Sallo.Scene.ChangeThema = require("Sallo.App.scene.ChangeThema"):new(app, app.Sallo.Layout.ChangeThema)
+    app.Sallo.Scene.Leaderboard = require("Sallo.App.scene.Leaderboard"):new(app, app.Sallo.Layout.Leaderboard)
 
     app.Sallo.Data = require("Sallo.App.Data")
     app.Sallo.Client = require("Sallo.include.Web.Client"):new()
