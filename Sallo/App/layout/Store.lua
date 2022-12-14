@@ -139,7 +139,7 @@ function SCENE_L:setItemName(string)
 end
 
 function SCENE_L:setItemPrice(number)
-    self.tb_itemPriceN:setText(self.PROJ.Style.STR.Balance(string.format("%2.f", number)))
+    self.tb_itemPriceN:setText(self.PROJ.Style.STR.Balance(string.format("%2.f", number)) .. " GOLD")
 end
 
 ---@param bool boolean
