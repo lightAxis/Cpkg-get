@@ -56,12 +56,12 @@ function Server:initialize()
     self.__EventQueue = {}
 
     self.__PlayerQuaryTimerID = nil
-    self.__PlayerQuaryDuration = 10
+    self.__PlayerQuaryDuration = 30
     self.__lastPlayerQuaryMinuteStr = nil
     self.__lastPlayerQuaryDayStr = nil
 
     self.__ChatboxQueueTimerID = nil
-    self.__ChatboxQueueDuration = 30
+    self.__ChatboxQueueDuration = 10
 
     self.__GolkinServerID = nil
 
@@ -412,10 +412,10 @@ function Server:start()
     --     print("chatbox message : " .. message .. "/" .. prefix .. "/" .. user)
     -- end
 
-    print("start ChatBox thread, 30 sec")
+    print("start ChatBox thread, " .. tostring(self.__ChatboxQueueDuration) .. " sec")
     self.__ChatboxQueueTimerID = os.startTimer(self.__ChatboxQueueDuration)
 
-    print("start player detector thread, 10 sec")
+    print("start player detector thread, " .. tostring(self.__PlayerQuaryDuration) .. " sec")
     self.__PlayerQuaryTimerID = os.startTimer(self.__PlayerQuaryDuration)
 
     self.__lastPlayerQuaryDayStr = os.date('%d')
