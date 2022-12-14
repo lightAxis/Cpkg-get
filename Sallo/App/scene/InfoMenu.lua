@@ -96,6 +96,9 @@ function SCENE:initialize(ProjNamespace, UILayout)
 
     self.currInfo = nil
     self.currLayoutMode = nil
+
+    self.__refreshTimerID = nil
+    self.__autoRefreshDuration = 30 -- sec
 end
 
 function SCENE:goto_Addons()
@@ -170,6 +173,21 @@ function SCENE:menu_control(bool)
     end
 end
 
+function SCENE:start_refresh_thread()
+    self.PROJ.EventRouter:attachEventCallback("timer", function(a, b, c, d)
+        if a == "timer" and b == self.__refreshTimerID then
+            self:refresh_info_fromServer(nil)
+            self.__refreshTimerID = os.startTimer(self.__autoRefreshDuration)
+        end
+    end)
+    self.__refreshTimerID = os.startTimer(self.__autoRefreshDuration)
+end
+
+function SCENE:remove_refresh_thread()
+    self.PROJ.EventRouter:removeEventCallback("timer")
+    os.cancelTimer(self.__refreshTimerID)
+end
+
 --- a function must use before do reset
 ---@param info_t Sallo.Web.Protocol.Struct.info_t
 function SCENE:reset_before(info_t)
@@ -184,6 +202,7 @@ function SCENE:reset()
     self.Layout:setMode(self.Layout.eMode.OWNER)
     self.currLayoutMode = self.Layout.eMode.OWNER
     self:refresh_info_fromServer(self.Layout.eMenu.stat)
+    self:start_refresh_thread()
 
     -- if self.PROJ.Sallo.Data.CurrentInfo == nil then
     --     error("current sallo info struct is null!")
@@ -223,6 +242,7 @@ function SCENE:refresh_info_fromServer(targetMenu)
 end
 
 function SCENE:detach_handelers()
+    self:remove_refresh_thread()
     self.PROJ.Handle:clearAllMsgHandle()
     self.PROJ.Sallo.Handle:clearAllMsgHandle()
 end

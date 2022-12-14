@@ -281,7 +281,7 @@ function SCENE_L:set_info_top(level, name, rank)
     self.grid_main_infoTop:setHorizontalSetting({ "6",
         tostring(#self.tb_username:getText() + 2),
         "*",
-        tostring(#self.tb_rankName:getText()) })
+        tostring(#self.tb_rankName:getText() + 2) })
     self.grid_main_infoTop:updatePosLen()
     self.grid_main_infoTop:setPosLen(self.tb_level, 1, 1)
     self.grid_main_infoTop:setPosLen(self.tb_username, 2, 1)

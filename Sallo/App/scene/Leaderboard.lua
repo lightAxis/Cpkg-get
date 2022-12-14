@@ -34,6 +34,9 @@ function SCENE:initialize(ProjNamespace, UILayout)
 
     ---@type table<number, Sallo.Web.Protocol.Struct.leaderboardInfo_t>
     self.__currentLeaderArr = {}
+
+    self.__refreshTimerID = nil
+    self.__autoRefreshDuration = 30 -- sec
 end
 
 function SCENE:goto_InfoMenu()
@@ -62,13 +65,30 @@ function SCENE:refresh_leaderboard_fromServer()
     self.PROJ.Sallo.Client:send_GET_LEADERBOARD_INFOS()
 end
 
+function SCENE:start_refresh_thread()
+    self.PROJ.EventRouter:attachEventCallback("timer", function(a, b, c, d)
+        if a == "timer" and b == self.__refreshTimerID then
+            self:refresh_leaderboard_fromServer()
+            self.__refreshTimerID = os.startTimer(self.__autoRefreshDuration)
+        end
+    end)
+    self.__refreshTimerID = os.startTimer(self.__autoRefreshDuration)
+end
+
+function SCENE:remove_refresh_thread()
+    self.PROJ.EventRouter:removeEventCallback("timer")
+    os.cancelTimer(self.__refreshTimerID)
+end
+
 function SCENE:reset()
     self.Layout.tb_info:setText("Who is the 1st?")
     self.PROJ.Style.TB.Info(self.Layout.tb_info)
     self:refresh_leaderboard_fromServer()
+    self:start_refresh_thread()
 end
 
 function SCENE:detachHandlers()
+    self:remove_refresh_thread()
     self.PROJ.Handle:clearAllMsgHandle()
     self.PROJ.Sallo.Handle:clearAllMsgHandle()
 end
