@@ -34,14 +34,14 @@ function SCENE_L:make_grid()
     --- title block
     local title_textblock = TBL.TextBlock:new(self.rootScreenCanvas, self.attachingScreen, "title_textblock")
     grid:setPosLen(title_textblock, 1, 1, 5, 1)
-    title_textblock:setText("Connect Wallet")
+    title_textblock:setText("Skill")
     self.PROJ.Style.TB.title(title_textblock)
     self.tb_title = title_textblock
 
     --- info block
     local info_tb = TBL.TextBlock:new(self.rootScreenCanvas, self.attachingScreen, "info_textblock")
     grid:setPosLen(info_tb, 1, 2, 5, 1)
-    info_tb:setText("There is no info for " .. "[testname]")
+    info_tb:setText("Invest Your Skill Points")
     self.PROJ.Style.TB.Info(info_tb)
     self.tb_info = info_tb
 
@@ -258,10 +258,14 @@ function SCENE_L:refresh_display(skillState, rank)
     local bs = { false, false, false }
     local EFFStat = param.Skill.EFF[skillState.Efficiency_level]
     if param.Skill.EFF[0].unlock_rank_level <= rank then
-        local EFFstr = "Increase Efficiency of working.\n"
+        local EFFstr = "Efficiency\nGet more Experience per activity.\n"
         EFFstr = EFFstr ..
             "EXP/ACT : " .. self.PROJ.Style.STR.Balance(string.format("%.2f", EFFStat.EXP_per_ACT)) .. "\n"
-        EFFstr = EFFstr .. "next SP : " .. tostring(EFFStat.require_sp)
+        if (EFFStat.require_sp > 0) then
+            EFFstr = EFFstr .. "next SP : " .. tostring(EFFStat.require_sp)
+        else
+            EFFstr = EFFstr .. "Max Level!"
+        end
         self.tb_EFF_Level:setText(tostring(EFFStat.Level))
         self.tb_EFF_desc:setText(EFFstr)
         bs[1] = true
@@ -269,10 +273,14 @@ function SCENE_L:refresh_display(skillState, rank)
 
     local PROStat = param.Skill.PRO[skillState.Proficiency_level]
     if param.Skill.PRO[0].unlock_rank_level <= rank then
-        local PROstr = "Increase Proficiency of working\n"
+        local PROstr = "Proficiency\nEarn more Gold per Activity.\n"
         PROstr = PROstr ..
             "GOLD/ACT : " .. self.PROJ.Style.STR.Balance(string.format("%.2f", PROStat.GOLD_per_ACT)) .. "\n"
-        PROstr = PROstr .. "next SP : " .. tostring(PROStat.require_sp)
+        if PROStat.require_sp > 0 then
+            PROstr = PROstr .. "next SP : " .. tostring(PROStat.require_sp)
+        else
+            PROstr = PROstr .. "Max Level!"
+        end
         self.tb_PRO_Level:setText(tostring(PROStat.Level))
         self.tb_PRO_desc:setText(PROstr)
         bs[2] = true
@@ -280,10 +288,14 @@ function SCENE_L:refresh_display(skillState, rank)
 
     local CONStat = param.Skill.CON[skillState.Concentration_level]
     if param.Skill.CON[0].unlock_rank_level <= rank then
-        local CONstr = "Increate Concentration of workin\n"
+        local CONstr = "Concentration\nAmplifies Activity consumption speed.\n"
         CONstr = CONstr ..
             "ACT amp : " .. self.PROJ.Style.STR.Balance(string.format("%.2f", CONStat.ACT_amplifier)) .. "\n"
-        CONstr = CONstr .. "next SP : " .. tostring(CONStat.require_sp)
+        if CONStat.require_sp > 0 then
+            CONstr = CONstr .. "next SP : " .. tostring(CONStat.require_sp)
+        else
+            CONstr = CONstr .. "Max Level!"
+        end
         self.tb_CON_Level:setText(tostring(CONStat.Level))
         self.tb_CON_desc:setText(CONstr)
         bs[3] = true
@@ -339,7 +351,7 @@ function SCENE_L:refresh_updown(up, down, nowLevel, nextUnlockRankLevel, rank, l
         down.Visible = true
     end
 
-    if nowLevel > 17 or nextUnlockRankLevel > rank then
+    if nowLevel > 17 or nextUnlockRankLevel == nil or nextUnlockRankLevel > rank then
         up.Visible = false
     else
         up.Visible = true
