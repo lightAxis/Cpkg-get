@@ -108,6 +108,8 @@ function SCENE_L:make_grid_itemSpec(grid_p)
 
     local tb_itemNameN = TBL.TextBlock:new(self.rootScreenCanvas, self.attachingScreen, "tb_itemNameN")
     tb_itemNameN:setText("testText")
+    tb_itemNameN:setMarginLeft(1)
+    tb_itemNameN:setMarginRight(1)
     self.PROJ.Style.TB.infoName(tb_itemNameN)
     grid_itemSpec:setPosLen(tb_itemNameN, 1, 1)
     self.tb_itemNameN = tb_itemNameN
