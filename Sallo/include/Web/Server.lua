@@ -1168,12 +1168,12 @@ function Server:__quaryPlayerData()
     self.__lastPlayerQuaryMinuteStr = currMin
 
     -- for test
-    self.__tempCount = self.__tempCount + 1
-    print(self.__tempCount)
-    changeMin = true
-    if (self.__tempCount % 480 == 0) then
-        changeDay = true
-    end
+    -- self.__tempCount = self.__tempCount + 1
+    -- print(self.__tempCount)
+    -- changeMin = true
+    -- if (self.__tempCount % 480 == 0) then
+    --     changeDay = true
+    -- end
 
     -- cached & exist now
     for k, v in pairs(infos) do
