@@ -37,3 +37,9 @@ Package management cli tool for my custom packages in Minecraft ComputerCraft mo
 
 - **Tabullet**  
   lightweight GUI interface
+  
+- **Golkin**
+  Banking server & client inside minecraft server using Crotocol & Tabullet
+  
+- **Sallo**
+  Addon of Golkin, provides salary system merged with RPG-like leveling & leaderboard.
