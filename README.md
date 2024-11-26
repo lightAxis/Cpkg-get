@@ -43,3 +43,7 @@ Package management cli tool for my custom packages in Minecraft ComputerCraft mo
   
 - **Sallo**  
   Addon of Golkin, provides salary system merged with RPG-like leveling & leaderboard.
+
+## Real Server implementation
+[![Video Label](http://img.youtube.com/vi/KcvpjeTZf6w/0.jpg)](https://youtu.be/KcvpjeTZf6w)  
+[[Youtube Video](https://www.youtube.com/watch?v=KcvpjeTZf6w)]
